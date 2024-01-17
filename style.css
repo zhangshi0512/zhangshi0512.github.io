@@ -48,14 +48,6 @@ a:hover {
   margin: 20px;
 }
 
-/* Sidebar Styles */
-.side {
-  flex: 1;
-  background-color: #e7e7e7;
-  padding: 20px;
-  margin-right: 20px;
-}
-
 /* Content Styles */
 .content {
   flex: 3;
