@@ -31,9 +31,12 @@
           <img src="https://i.imgur.com/rCsq16M.gif" alt="Project 1 Preview" />
         </div>
         <div class="card-content">
-          <h3>FactHub | Full-stack Web Application</h3>
+          <a href="https://factup.netlify.app/" target="_blank"
+            ><h3>FactHub | Full-stack Web Application</h3></a
+          >
           <p>Full-stack web application for sharing fun facts.</p>
-          <ul>
+          <button class="expand-btn">Expand Details</button>
+          <ul class="project-details">
             <li>
               Architected interactive social web app with community engagement;
               built React frontend implementing hooks and state management for
@@ -61,7 +64,8 @@
         <div class="card-content">
           <h3>Expense Tracker Visualizer | Desktop Application</h3>
           <p>JavaFX application to visualize expense and tax from csv file.</p>
-          <ul>
+          <button class="expand-btn">Expand Details</button>
+          <ul class="project-details">
             <li>
               Designed the TaxCalculatorApp class to load, manage, and save
               shopping items from/to a CSV file and to perform tax calculations
@@ -91,12 +95,15 @@
           <img src="https://i.imgur.com/XmdpSKn.gif" alt="Project 3 Preview" />
         </div>
         <div class="card-content">
-          <h3>StayStocked | Android Mobile App</h3>
+          <a href="https://vimeo.com/822187167" target="_blank"
+            ><h3>StayStocked | Android Mobile App</h3></a
+          >
           <p>
             Android Mobile application to track and manage grocery inventory
             effectively.
           </p>
-          <ul>
+          <button class="expand-btn">Expand Details</button>
+          <ul class="project-details">
             <li>
               Developed core functionalities using Kotlin, incorporating
               features like product listings, search filters, and user
@@ -121,7 +128,8 @@
             A real-time object recognition system for video streams using C++
             and OpenCV.
           </p>
-          <ul>
+          <button class="expand-btn">Expand Details</button>
+          <ul class="project-details">
             <li>
               Designed an image database for feature vector storage, object
               matching, and automated labeling.
@@ -153,7 +161,8 @@
             A real-time augmented reality application for video streams using
             C++ and OpenCV.
           </p>
-          <ul>
+          <button class="expand-btn">Expand Details</button>
+          <ul class="project-details">
             <li>
               Engineered a C++ application integrating OpenCV for camera
               calibration and enabling real-time 3D object projection.
@@ -183,7 +192,8 @@
             A user-friendly interface for "Sea Monster Crowdfunding" to showcase
             funded and unfunded games.
           </p>
-          <ul>
+          <button class="expand-btn">Expand Details</button>
+          <ul class="project-details">
             <li>
               Incorporated interactive features, including buttons to filter
               games by funding status.
@@ -205,5 +215,16 @@
     <div class="footer">
       <p>© 2024 by Shi Zhang. All rights reserved.</p>
     </div>
+
+    <!-- Scripting to Control Expand and Collapse for project details-->
+    <script>
+      document.querySelectorAll(".expand-btn").forEach((button) => {
+        button.addEventListener("click", () => {
+          const projectDetails = button.nextElementSibling;
+          projectDetails.style.display =
+            projectDetails.style.display === "none" ? "block" : "none";
+        });
+      });
+    </script>
   </body>
 </html>

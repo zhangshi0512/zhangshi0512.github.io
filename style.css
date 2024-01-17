@@ -7,7 +7,7 @@ body {
 }
 
 a {
-  color: #1a1aff;
+  color: #00003c;
   text-decoration: none;
 }
 
@@ -72,14 +72,34 @@ a:hover {
   justify-content: space-around;
 }
 
+.project-details {
+  display: none;
+}
+
+.expand-btn {
+  align-self: center; /* Center the button */
+  background-color: #05001c;
+  color: white;
+  padding: 5px 10px;
+  margin: 10px 0;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.expand-btn:focus {
+  outline: none;
+}
+
 .card {
   border: 1px solid #ddd;
   border-radius: 10px;
   margin: 10px;
-  max-width: 300px; /* Adjust this as needed */
-  overflow: hidden;
+  width: 300px; /* Fixed width */
   display: flex;
   flex-direction: column;
+  overflow: hidden; /* Hide overflow */
+  height: 400px; /* Fixed height, adjust as needed */
 }
 
 .card-image img {
@@ -90,10 +110,20 @@ a:hover {
 
 .card-content {
   padding: 15px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow-y: auto; /* Allow vertical scrolling */
+  flex-grow: 1; /* Allow the content to grow */
 }
 
 .card-content h3 {
   margin-top: 0;
+}
+
+.card-content p {
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* Responsive Design */
