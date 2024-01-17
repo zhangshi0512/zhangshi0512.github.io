@@ -102,10 +102,17 @@ a:hover {
   height: 400px; /* Fixed height, adjust as needed */
 }
 
+.card-image {
+  display: flex; /* Use flexbox for alignment */
+  justify-content: center; /* Center horizontally */
+  align-items: center; /* Center vertically */
+  height: 200px; /* Set a fixed height for the image container */
+  overflow: hidden; /* Hide overflow */
+}
+
 .card-image img {
-  max-width: 100%;
-  max-height: 200px; /* Set a maximum height for the image */
-  height: auto;
+  max-width: 100%; /* Maximum width of image */
+  max-height: 100%; /* Maximum height of image */
   display: block; /* Ensures no extra space below the image */
   object-fit: cover; /* Cover the area without distorting the image */
 }
