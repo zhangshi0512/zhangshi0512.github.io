@@ -104,8 +104,10 @@ a:hover {
 
 .card-image img {
   max-width: 100%;
+  max-height: 200px; /* Set a maximum height for the image */
   height: auto;
   display: block; /* Ensures no extra space below the image */
+  object-fit: cover; /* Cover the area without distorting the image */
 }
 
 .card-content {
