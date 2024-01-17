@@ -74,6 +74,33 @@ a:hover {
   width: 100%;
 }
 
+.projects {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+}
+
+.card {
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  margin: 10px;
+  width: 300px;
+  overflow: hidden;
+}
+
+.card-image img {
+  width: 100%;
+  height: auto;
+}
+
+.card-content {
+  padding: 15px;
+}
+
+.card-content h3 {
+  margin-top: 0;
+}
+
 /* Responsive Design */
 @media screen and (max-width: 768px) {
   .navbar a {
