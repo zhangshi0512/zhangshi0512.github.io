@@ -84,13 +84,16 @@ a:hover {
   border: 1px solid #ddd;
   border-radius: 10px;
   margin: 10px;
-  width: 300px;
+  max-width: 300px; /* Adjust this as needed */
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
 .card-image img {
-  width: 100%;
+  max-width: 100%;
   height: auto;
+  display: block; /* Ensures no extra space below the image */
 }
 
 .card-content {
