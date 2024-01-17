@@ -1,0 +1,92 @@
+/* General Styles */
+body {
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  margin: 0;
+  background-color: #f4f4f4;
+  color: #333;
+}
+
+a {
+  color: #1a1aff;
+  text-decoration: none;
+}
+
+a:hover {
+  color: #0000ff;
+}
+
+/* Header Styles */
+.header {
+  background-color: #05001c;
+  color: white;
+  padding: 20px;
+  text-align: center;
+}
+
+/* Navbar Styles */
+.navbar {
+  display: flex;
+  justify-content: center;
+  background-color: #333;
+}
+
+.navbar a {
+  color: white;
+  padding: 14px 20px;
+  text-align: center;
+}
+
+.navbar a:hover {
+  background-color: #ddd;
+  color: black;
+}
+
+/* Main Content Styles */
+.main {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 20px;
+}
+
+/* Sidebar Styles */
+.side {
+  flex: 1;
+  background-color: #e7e7e7;
+  padding: 20px;
+  margin-right: 20px;
+}
+
+/* Content Styles */
+.content {
+  flex: 3;
+  background-color: white;
+  padding: 20px;
+}
+
+/* Footer Styles */
+.footer {
+  background-color: #333;
+  color: white;
+  text-align: center;
+  padding: 10px;
+  position: relative;
+  bottom: 0;
+  width: 100%;
+}
+
+/* Responsive Design */
+@media screen and (max-width: 768px) {
+  .navbar a {
+    display: block;
+    width: 100%;
+  }
+
+  .main {
+    flex-direction: column;
+  }
+
+  .side {
+    margin-right: 0;
+    margin-bottom: 20px;
+  }
+}
