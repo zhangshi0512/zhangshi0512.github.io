@@ -94,12 +94,18 @@ a:hover {
 .card {
   border: 1px solid #ddd;
   border-radius: 10px;
-  margin: 10px;
+  margin: 5px;
   width: 300px; /* Fixed width */
   display: flex;
   flex-direction: column;
   overflow: hidden; /* Hide overflow */
-  height: 500px; /* Fixed height, adjust as needed */
+  height: 445px; /* Fixed height, adjust as needed */
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+  transform: scale(1.03); /* Slightly enlarge the card */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Add shadow effect */
 }
 
 .card-image {
@@ -111,8 +117,8 @@ a:hover {
 }
 
 .card-image img {
-  max-width: 85%; /* Maximum width of image */
-  max-height: 85%; /* Maximum height of image */
+  max-width: 90%; /* Maximum width of image */
+  max-height: 90%; /* Maximum height of image */
   display: block; /* Ensures no extra space below the image */
   object-fit: cover; /* Cover the area without distorting the image */
 }
@@ -131,6 +137,7 @@ a:hover {
 }
 
 .card-content p {
+  margin-top: 3px;
   overflow: hidden;
   text-overflow: ellipsis;
 }
