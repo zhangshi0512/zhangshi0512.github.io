@@ -99,7 +99,7 @@ a:hover {
   display: flex;
   flex-direction: column;
   overflow: hidden; /* Hide overflow */
-  height: 400px; /* Fixed height, adjust as needed */
+  height: 450px; /* Fixed height, adjust as needed */
 }
 
 .card-image {
@@ -111,8 +111,8 @@ a:hover {
 }
 
 .card-image img {
-  max-width: 100%; /* Maximum width of image */
-  max-height: 100%; /* Maximum height of image */
+  max-width: 85%; /* Maximum width of image */
+  max-height: 85%; /* Maximum height of image */
   display: block; /* Ensures no extra space below the image */
   object-fit: cover; /* Cover the area without distorting the image */
 }
