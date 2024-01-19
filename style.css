@@ -53,6 +53,9 @@ a:hover {
   flex: 3;
   background-color: white;
   padding: 20px;
+  max-width: 800px; /* Set a maximum width */
+  margin: auto; /* Center the content */
+  overflow-y: auto; /* In case content overflows vertically */
 }
 
 /* Footer Styles */
