@@ -4,7 +4,7 @@
     <title>Shi Zhang's Resume</title>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="style-new.css" />
   </head>
   <body>
     <!-- Header -->
@@ -17,41 +17,51 @@
     <div class="navbar">
       <a href="index.html">Home</a>
       <a href="biography.html">Biography</a>
-      <a href="resume.html">Resume</a>
+      <a href="resume.html" class="active">Resume</a>
       <a href="projects.html">Projects</a>
       <a href="contact.html">Contact</a>
     </div>
 
     <!-- Resume Content -->
-    <div class="content">
+    <div class="content resume-content">
+      <!-- Added class 'resume-content' -->
       <h2>Education</h2>
-      <p>
-        Northeastern University, Seattle WA - Master of Science in Computer
-        Science (Jan 2023 - May 2025)
-      </p>
-      <p>
-        University of Pennsylvania, Philadelphia PA - Master of Science in
-        Design (Aug 2018 - Dec 2019)
-      </p>
-      <p>
-        Rensselaer Polytechnic Institute, Troy NY - Bachelor of Architecture
-        (Aug 2013 - May 2018)
-      </p>
-
-      <h2>Technical Skills</h2>
-      <p>Languages: Java, Python, Kotlin, C++, JavaScript, TypeScript, SQL</p>
-      <p>Tools: Oracle VM Virtual Box, AWS Amplify Studio, Git, Open CV</p>
-      <p>Frameworks: Node.js, Next.js, React.js, Java Spring Boot</p>
+      <div class="resume-entry">
+        <div class="resume-main">
+          <span>Northeastern University, Seattle WA</span>
+          <span class="degree">Master of Science in Computer Science</span>
+        </div>
+        <div class="resume-date">
+          <span>Jan 2023 - May 2025</span>
+        </div>
+      </div>
+      <div class="resume-entry">
+        <div class="resume-main">
+          <span>University of Pennsylvania, Philadelphia PA</span>
+          <span class="degree">Master of Science in Design</span>
+        </div>
+        <div class="resume-date">
+          <span>Aug 2018 - Dec 2019</span>
+        </div>
+      </div>
+      <div class="resume-entry">
+        <div class="resume-main">
+          <span>Rensselaer Polytechnic Institute, Troy NY</span>
+          <span class="degree">Bachelor of Architecture</span>
+        </div>
+        <div class="resume-date">
+          <span>Aug 2013 - May 2018</span>
+        </div>
+      </div>
 
       <h2>Professional Experience</h2>
-      <h4>
-        Northeastern University, Seattle WA - Research Assistant (Sep 2023 - Dec
-        2023)
-      </h4>
-      <p>
-        Contribution on Open Source Cloud Database using Java & SQL (Sep 2023 -
-        Dec 2023) - Onsite
-      </p>
+      <div class="resume-entry">
+        <strong
+          >Northeastern University, Seattle WA - Research Assistant</strong
+        >
+        <strong class="date">Sep 2023 - Dec 2023</strong>
+      </div>
+      <span> Contribution on Open Source Cloud Database using Java & SQL </span>
       <ul>
         <li>
           Analyzed performance trade-offs between NoSQL and Distributed SQL
@@ -68,10 +78,9 @@
         </li>
       </ul>
 
-      <p>
-        Contribution on Resume Match System using Python & Transformer (May 2023
-        - Aug 2023) - Remote
-      </p>
+      <span>
+        Contribution on Resume Match System using Python & Transformer
+      </span>
       <ul>
         <li>
           Conducted NLP and Machine Learning research to semantically match
@@ -88,10 +97,10 @@
         </li>
       </ul>
 
-      <h4>
-        Ballinger, Philadelphia PA - Architectural BIM Designer (Feb 2020 - Nov
-        2022)
-      </h4>
+      <div class="resume-entry">
+        <strong>Ballinger, Philadelphia PA - Architectural BIM Designer</strong>
+        <strong class="date">Feb 2020 - Nov 2022</strong>
+      </div>
       <ul>
         <li>
           Managed project documentation across entire design life cycle for a
@@ -112,9 +121,12 @@
       </ul>
 
       <h2>Relevant Projects</h2>
-      <h4>
-        Camera Calibration & Augmented Reality Computer Vision App (Nov 2023)
-      </h4>
+      <div class="resume-entry">
+        <strong
+          >Camera Calibration & Augmented Reality Computer Vision App</strong
+        >
+        <strong>Nov 2023</strong>
+      </div>
       <ul>
         <li>
           Engineered a C++ application integrating OpenCV for camera calibration
@@ -130,7 +142,11 @@
           and real-time rendering adjustments based on user input.
         </li>
       </ul>
-      <h4>StayStocked Android Mobile App (Apr 2023)</h4>
+
+      <div class="resume-entry">
+        <strong>StayStocked Android Mobile App</strong>
+        <strong>Apr 2023</strong>
+      </div>
       <ul>
         <li>
           Recognized a need for a user-friendly mobile app to track and manage
@@ -146,7 +162,11 @@
           from 140+ audience members.
         </li>
       </ul>
-      <h4>Fun Facts Share Website Full-Stack Web App (Feb 2023)</h4>
+
+      <div class="resume-entry">
+        <strong>Fun Facts Share Website Full-Stack Web App</strong>
+        <strong>Feb 2023</strong>
+      </div>
       <ul>
         <li>
           Architected interactive social web app with community engagement;
@@ -164,6 +184,22 @@
           facilitate community contribution.
         </li>
       </ul>
+
+      <h2>Technical Skills</h2>
+      <div class="resume-entry single-column">
+        <span
+          >Languages: Java, Python, Kotlin, C++, JavaScript, TypeScript,
+          SQL</span
+        >
+      </div>
+      <div class="resume-entry single-column">
+        <span>Tools: Docker, Linux, AWS, Git, Open CV, MySQL, MongoDB</span>
+      </div>
+      <div class="resume-entry single-column">
+        <span>
+          Frameworks: Node.js, Next.js, React.js, Java Spring Boot, Restful API
+        </span>
+      </div>
     </div>
 
     <!-- Footer -->

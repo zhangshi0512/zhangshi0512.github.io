@@ -1,0 +1,260 @@
+/* General Styles */
+body {
+  font-family: "Helvetica Neue", Arial, sans-serif; /* Clean, modern font */
+  margin: 0; /* Remove default margin */
+  background-color: #ffffff; /* Crisp white background */
+  color: #333333; /* Readable, dark text */
+}
+
+a {
+  color: #0057b8; /* Highlight links with a brand color */
+  text-decoration: none; /* Cleaner look without underlines */
+}
+
+a:hover {
+  color: #003cba; /* Slightly darker blue for link hover effect */
+}
+
+/* Header Styles */
+.header {
+  background-color: #333333; /* Dark background for the header for contrast */
+  color: white; /* White text for legibility */
+  padding: 20px; /* Spacing inside the header */
+  text-align: center; /* Center the text within the header */
+}
+
+/* Navbar Styles */
+.navbar {
+  display: flex; /* Align navbar items in a row */
+  justify-content: center; /* Center navbar items */
+  background-color: #e0e0e0; /* Light grey background for navbar */
+}
+
+.navbar a {
+  color: #333333; /* Dark text for navbar items */
+  padding: 14px 20px; /* Spacing around navbar links */
+  text-align: center; /* Center text in navbar links */
+}
+
+.navbar a:hover {
+  background-color: #bdbdbd; /* Darker grey background for navbar items on hover */
+  color: #333333; /* Keep text color the same on hover */
+}
+
+/* Main Content Styles */
+.main {
+  display: flex; /* Use flexbox for main content layout */
+  flex-wrap: wrap; /* Allow wrapping of items */
+  margin: 20px; /* Space around the main content area */
+}
+
+/* Content Styles */
+
+.content h2,
+p {
+  margin-top: 20px; /* Spacing above the section header */
+  margin-bottom: 10px; /* Spacing below the section header */
+  text-align: center; /* Center-align section headers */
+}
+
+.content {
+  flex: 3; /* Flex-grow value to allow the content to take up space */
+  background-color: white; /* White background for content area */
+  padding: 20px; /* Padding inside content area */
+  max-width: 800px; /* Max width for optimal reading line length */
+  margin: auto; /* Center the content block horizontally */
+  overflow-y: auto; /* Allow vertical scrolling if needed */
+  text-align: center; /* Center-align text by default */
+  display: flex; /* Use flexbox for layout */
+  flex-direction: column; /* Stack children vertically */
+  justify-content: center; /* Center children vertically */
+}
+
+/* Footer Styles */
+.footer {
+  background-color: #333; /* Dark background for footer */
+  color: white; /* White text in footer */
+  text-align: center; /* Center-align footer text */
+  padding: 10px; /* Padding inside the footer */
+  position: relative; /* Positioning for potential absolute child elements */
+  bottom: 0; /* Stick to the bottom */
+  width: 100%; /* Full width */
+}
+
+/* Resume Page Specific Styles */
+.resume-content {
+  text-align: left; /* Default text alignment to the left */
+  display: block; /* Display as a block for standard flow layout */
+}
+
+/* Adjusting heading styles to fix spacing issues */
+.resume-content h2 {
+  margin-top: 20px; /* Spacing above the section header */
+  margin-bottom: 10px; /* Spacing below the section header */
+  text-align: center; /* Center-align section headers */
+}
+
+/* Adjusting the top margin for entries that are not the first child to ensure consistent spacing */
+.resume-entry:not(:first-child) {
+  margin-top: 15px; /* Consistent space between resume entries */
+}
+
+/* Ensuring the bullet points in lists are positioned correctly and have no default padding */
+.resume-content ul {
+  list-style-position: inside; /* Bullet points inside list area */
+  padding-left: 0; /* No padding to the left of bullet points */
+}
+
+/* List item styles for spacing and text alignment */
+.resume-content li {
+  margin-bottom: 10px; /* Space below list items */
+  text-align: left; /* Text aligned to the left */
+}
+
+/* Paragraph and list indenting for alignment and better text block appearance */
+.resume-content p,
+.resume-content ul {
+  padding-left: 20px; /* Space to the left for indenting */
+  padding-right: 20px; /* Space to the right for a balanced look */
+}
+
+/* Additional content centering styles */
+.content {
+  padding: 20px 0; /* Vertical padding for content */
+  max-width: 800px; /* Maximum width for content area */
+  margin: 0 auto; /* Centering content area */
+  text-align: left; /* Aligning text to the left */
+}
+
+/* Resume entry styles for a two-column layout with dates right-aligned */
+.resume-entry {
+  display: flex; /* Flexbox for layout */
+  justify-content: space-between; /* Space between the main content and dates */
+  align-items: baseline; /* Align items on their baseline for a neat appearance */
+  margin-bottom: 10px; /* Space below each entry */
+}
+
+/* Main content within a resume entry alignment */
+.resume-main {
+  text-align: left; /* Text aligned to the left */
+  flex-grow: 1; /* Allow it to grow to fill space as needed */
+}
+
+/* Degree information styling, ensuring it's on its own line */
+.degree {
+  display: block; /* New line for the degree */
+  font-weight: normal; /* Standard font weight */
+  margin-top: 5px; /* Space between the institution and degree */
+}
+
+/* Date alignment within resume entries */
+.resume-date {
+  text-align: right; /* Dates aligned to the right */
+  white-space: nowrap; /* Prevent dates from wrapping */
+}
+
+/* For list items within professional experience and projects */
+.resume-content ul {
+  padding: 0; /* No padding for lists */
+}
+
+/* Smaller bottom margin for list items within resume content for a compact look */
+.resume-content ul li {
+  margin-bottom: 5px;
+}
+
+/* Alignment for paragraphs and list items within resume content */
+.resume-content p,
+.resume-content li {
+  text-align: left; /* Text aligned to the left */
+}
+
+/* Project Card Styles */
+
+.projects {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+}
+
+.project-details {
+  display: none;
+}
+
+.expand-btn {
+  align-self: center; /* Center the button */
+  background-color: #05001c;
+  color: white;
+  padding: 5px 5px;
+  margin: 5px 0;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.expand-btn:focus {
+  outline: none;
+}
+
+.card {
+  border: 1px solid #e0e0e0; /* Light grey border for subtlety */
+  border-radius: 10px;
+  margin: 5px;
+  width: 300px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  height: 445px; /* Adjust height as necessary */
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+  transform: scale(1.03); /* Slight scale on hover for interaction feedback */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Softer shadow for a subtle lift effect */
+}
+
+.card-image {
+  display: flex; /* Use flexbox for alignment */
+  justify-content: center; /* Center horizontally */
+  align-items: center; /* Center vertically */
+  height: 200px; /* Set a fixed height for the image container */
+  overflow: hidden; /* Hide overflow */
+}
+
+.card-image img {
+  max-width: 90%; /* Maximum width of image */
+  max-height: 90%; /* Maximum height of image */
+  display: block; /* Ensures no extra space below the image */
+  object-fit: cover; /* Cover the area without distorting the image */
+}
+
+.card-content {
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow-y: auto; /* Allow vertical scrolling */
+  flex-grow: 1; /* Allow the content to grow */
+}
+
+.card-content h3 {
+  margin-top: 0;
+}
+
+.card-content p {
+  margin-top: 3px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Responsive Design */
+@media screen and (max-width: 768px) {
+  .navbar a {
+    display: block;
+    width: 100%;
+  }
+
+  .main {
+    flex-direction: column;
+  }
+}
