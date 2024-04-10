@@ -81,6 +81,27 @@ p {
   width: 100%; /* Full width */
 }
 
+/* Bibliography Page Styles */
+.clearfix::after {
+  content: "";
+  clear: both;
+  display: table;
+}
+
+.mermaid-container {
+  width: 80%; /* Control width based on your layout needs */
+  padding-top: 45%; /* Padding-top for 16:9 aspect ratio */
+  position: relative;
+  margin: 0 auto; /* Center the diagram */
+}
+
+.mermaid {
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
 /* Resume Page Specific Styles */
 .resume-content {
   text-align: left; /* Default text alignment to the left */

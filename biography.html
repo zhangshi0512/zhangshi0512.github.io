@@ -6,12 +6,29 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="icon" type="image/png" href="favicon.png" />
     <link rel="stylesheet" href="style-new.css" />
+    <script src="https://unpkg.com/mermaid/dist/mermaid.min.js"></script>
+    <script>
+      mermaid.initialize({
+        startOnLoad: true,
+        theme: "base", // Use the base theme as a starting point
+        themeVariables: {
+          primaryColor: "#333", // Dark grey for lines and text
+          lineColor: "#333", // Line color
+          textColor: "#333", // Text color
+          mainBkg: "#f0f0f0", // Light background color for nodes
+          edgeLabelBackground: "#f0f0f0", // Background color for edge labels
+          // You can add more variables to customize fonts, node styles, etc.
+        },
+        securityLevel: "loose", // Allow HTML in node descriptions for more styling options
+      });
+    </script>
+
     <!-- Head content (similar to index.html) -->
   </head>
   <body>
     <!-- Header -->
     <div class="header">
-      <h1>Shi Zhang's Projects</h1>
+      <h1>Shi Zhang's Biography</h1>
       <p>A showcase of my professional projects and accomplishments.</p>
     </div>
 
@@ -26,42 +43,67 @@
 
     <!-- Biography Content -->
     <div class="content">
-      <h2>About Me</h2>
-      <p>
-        As a former architectural designer turned computer scientist, I am
-        currently enrolled in the Align Master program of Computer Science at
-        Northeastern University, Seattle Campus. My journey in the tech industry
-        is fueled by a passion for innovation and solving complex problems in
-        software development. Bringing a unique perspective to my next role, I
-        aim to blend my diverse experiences in architecture and computer
-        science.
-      </p>
+      <div class="section">
+        <h2>About Me</h2>
+        <p>
+          As a former architectural designer turned computer scientist, I am
+          currently enrolled in the Align Master program of Computer Science at
+          Northeastern University, Seattle Campus. My journey in the tech
+          industry is fueled by a passion for innovation and solving complex
+          problems in software development. Bringing a unique perspective to my
+          next role, I aim to blend my diverse experiences in architecture and
+          computer science.
+        </p>
+        <div class="mermaid">
+          graph LR; A[Architectural Design] -->|Transition| B[Computer Science];
+          B --> C[Passion for Innovation]; C -->|Aims| D[Blend Diverse
+          Experiences]; D --> E[Solve Complex Problems]
+        </div>
+      </div>
+      <div class="clearfix"></div>
 
-      <h2>Professional Background</h2>
-      <p>
-        My professional journey began with a Bachelor of Architecture from
-        Rensselaer Polytechnic Institute, followed by a Master of Science in
-        Design from the University of Pennsylvania. Currently, I am pursuing a
-        Master of Science in Computer Science at Northeastern University, where
-        I engage in research and practical projects that allow me to apply my
-        technical skills in real-world scenarios.
-      </p>
+      <div class="section">
+        <h2>Professional Background</h2>
+        <p>
+          My professional journey began with a Bachelor of Architecture from
+          Rensselaer Polytechnic Institute, followed by a Master of Science in
+          Design from the University of Pennsylvania. Currently, I am pursuing a
+          Master of Science in Computer Science at Northeastern University,
+          where I engage in research and practical projects that allow me to
+          apply my technical skills in real-world scenarios.
+        </p>
+        <p>
+          My technical expertise spans a wide range of programming languages and
+          frameworks, including Java, Python, Kotlin, C++, JavaScript, React.js,
+          and Node.js. My experience in architectural design has honed my
+          abilities in project management and creative problem-solving.
+        </p>
+        <div class="mermaid">
+          graph LR; E[Academic Research & Practical Projects]; E -->
+          F[Real-world Application]; F --> G[Programming Languages &
+          Frameworks]; G --> H[Java, Python, Kotlin, C++, JavaScript, React.js,
+          Node.js]; G --> I[Docker, Linux, AWS, Azure, Git, OpenCV, MySQL]
+        </div>
+      </div>
+      <div class="clearfix"></div>
 
-      <p>
-        My technical expertise spans a wide range of programming languages and
-        frameworks, including Java, Python, Kotlin, C++, JavaScript, React.js,
-        and Node.js. My experience in architectural design has honed my
-        abilities in project management and creative problem-solving.
-      </p>
-
-      <h2>Interests and Achievements</h2>
-      <p>
-        In addition to my academic pursuits, I have been recognized for my
-        contributions to architectural competitions and have a keen interest in
-        augmented reality and mobile application development. My projects, such
-        as the Fun Facts Share Website and the StayStocked Android Mobile App,
-        showcase my capability to innovate and deliver user-centric solutions.
-      </p>
+      <div class="section">
+        <h2>Interests and Achievements</h2>
+        <p>
+          In addition to my academic pursuits, I have been recognized for my
+          contributions to architectural competitions and have a keen interest
+          in augmented reality and mobile application development. My projects,
+          such as the Fun Facts Share Website and the StayStocked Android Mobile
+          App, showcase my capability to innovate and deliver user-centric
+          solutions.
+        </p>
+        <div class="mermaid">
+          graph TD; A[Interests & Achievements] --> B[Web App Development]; A
+          --> C[Mobile App Development]; A --> D[Computer Vision]; A -->
+          E[Artificial Intelligence]; A --> F[Databases];
+        </div>
+      </div>
+      <div class="clearfix"></div>
     </div>
 
     <!-- Footer -->
