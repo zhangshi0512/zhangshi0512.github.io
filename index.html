@@ -6,7 +6,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="icon" type="image/png" href="favicon.png" />
     <link rel="stylesheet" href="style-new.css" />
-    <!-- Other head content -->
+    <style>
+      #donutCanvas {
+        background-color: #ffffff;
+        display: block;
+        margin: 20px auto;
+      }
+    </style>
   </head>
   <body>
     <!-- Header -->
@@ -34,11 +40,100 @@
       </p>
       <p>Feel free to explore my portfolio and get in touch!</p>
       <p>Have fun and happy coding!</p>
+
+      <!-- Infinity Ring Canvas -->
+      <canvas id="donutCanvas" width="400" height="300"></canvas>
     </div>
 
     <!-- Footer -->
     <div class="footer">
       <p>© 2024 by Shi Zhang. All rights reserved.</p>
     </div>
+
+    <script>
+      const canvas = document.getElementById("donutCanvas");
+      const ctx = canvas.getContext("2d");
+      canvas.width = 400;
+      canvas.height = 300;
+
+      let A = 0,
+        B = 0;
+      const R = 0.85; // Radius of the infinity ring
+      const K2 = 5;
+      const K1 = ((canvas.width * K2 * 3) / (8 * R)) * 0.6; // Adjust scaling factor to 60%
+
+      // Characters for shading from light to dark
+      const shadingChars = ".,-~:;=!*#$@";
+
+      function render() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        const z = new Array(canvas.width * canvas.height).fill(0);
+        const b = new Array(canvas.width * canvas.height).fill(" ");
+
+        A += 0.07;
+        B += 0.03;
+        const cosA = Math.cos(A),
+          sinA = Math.sin(A);
+        const cosB = Math.cos(B),
+          sinB = Math.sin(B);
+
+        for (let u = 0; u < 6.28; u += 0.1) {
+          // Parametric variable for the infinity ring
+          const cosU = Math.cos(u),
+            sinU = Math.sin(u);
+          for (let v = -0.5; v <= 0.5; v += 0.1) {
+            // Width of the strip
+            // Parametric equations for a 3D infinity ring
+            const x = (R + v * Math.cos(u / 2)) * Math.cos(u);
+            const y = (R + v * Math.cos(u / 2)) * Math.sin(u);
+            const z0 = v * Math.sin(u / 2);
+
+            const D = 1 / (z0 * sinA + y * cosA + K2);
+            const t1 = z0 * cosA - y * sinA;
+
+            const x1 = Math.floor(
+              canvas.width / 2 + K1 * D * (x * cosB - t1 * sinB)
+            );
+            const y1 = Math.floor(
+              canvas.height / 2 + K1 * D * (x * sinB + t1 * cosB)
+            );
+            const o = x1 + canvas.width * y1;
+            const L = Math.floor(
+              8 *
+                ((y * sinA - z0 * cosA) * cosB -
+                  z0 * sinA -
+                  y * cosA -
+                  x * cosB)
+            );
+
+            if (
+              canvas.width > x1 &&
+              x1 > 0 &&
+              y1 > 0 &&
+              canvas.height > y1 &&
+              D > z[o]
+            ) {
+              z[o] = D;
+              b[o] = shadingChars[Math.max(L, 0)];
+            }
+          }
+        }
+
+        ctx.fillStyle = "white";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = "black";
+        ctx.font = "10px monospace";
+
+        for (let k = 0; k < canvas.width * canvas.height; k++) {
+          if (z[k] > 0) {
+            const x = k % canvas.width;
+            const y = Math.floor(k / canvas.width);
+            ctx.fillText(b[k], x, y);
+          }
+        }
+      }
+
+      setInterval(render, 80);
+    </script>
   </body>
 </html>
