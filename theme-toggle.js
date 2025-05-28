@@ -1,5 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
     const themeToggleButton = document.getElementById('theme-toggle-button');
+
     const body = document.body;
 
     // Function to apply the current theme
@@ -28,6 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             localStorage.setItem('theme', currentTheme);
             applyTheme(currentTheme);
+
         });
     }
 });

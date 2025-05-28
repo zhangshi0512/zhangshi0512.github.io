@@ -38,7 +38,6 @@
   --tag-networking-text-color: #00838f;
   --tag-desktop-background-color: #fce4ec;
   --tag-desktop-text-color: #c2185b;
-
   /* Theme Toggle Switch Variables */
   --theme-switch-bg-light: #e0e0e0; /* Light grey, similar to navbar */
   --theme-switch-border-light: #333333; /* Dark border */
@@ -46,6 +45,7 @@
   --theme-switch-bg-dark: #0057b8; /* Blue, similar to link color for 'on' state */
   --theme-switch-border-dark: #0057b8; /* Matching blue border */
   --theme-switch-knob-dark: #ffffff; /* White knob for dark theme */
+
 }
 
 .dark-theme {
@@ -489,7 +489,25 @@ p {
 .tag.desktop {
   background-color: var(--tag-desktop-background-color);
   color: var(--tag-desktop-text-color);
+
 }
+.tag.vision {
+  background-color: var(--tag-vision-background-color);
+  color: var(--tag-vision-text-color);
+}
+.tag.ai {
+  background-color: var(--tag-ai-background-color);
+  color: var(--tag-ai-text-color);
+}
+.tag.networking {
+  background-color: var(--tag-networking-background-color);
+  color: var(--tag-networking-text-color);
+}
+.tag.desktop {
+  background-color: var(--tag-desktop-background-color);
+  color: var(--tag-desktop-text-color);
+}
+
 
 
 /* Responsive Design */
