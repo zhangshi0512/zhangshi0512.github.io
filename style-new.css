@@ -38,6 +38,14 @@
   --tag-networking-text-color: #00838f;
   --tag-desktop-background-color: #fce4ec;
   --tag-desktop-text-color: #c2185b;
+  /* Theme Toggle Switch Variables */
+  --theme-switch-bg-light: #e0e0e0; /* Light grey, similar to navbar */
+  --theme-switch-border-light: #333333; /* Dark border */
+  --theme-switch-knob-light: #333333; /* Dark knob */
+  --theme-switch-bg-dark: #0057b8; /* Blue, similar to link color for 'on' state */
+  --theme-switch-border-dark: #0057b8; /* Matching blue border */
+  --theme-switch-knob-dark: #ffffff; /* White knob for dark theme */
+
 }
 
 .dark-theme {
@@ -80,6 +88,11 @@
   --tag-networking-text-color: #a0d8e0;
   --tag-desktop-background-color: #5a3a4b;
   --tag-desktop-text-color: #f0a8c0;
+
+  /* Update switch variables for dark theme (using the specific dark theme values) */
+  --theme-switch-bg-light: var(--theme-switch-bg-dark);
+  --theme-switch-border-light: var(--theme-switch-border-dark);
+  --theme-switch-knob-light: var(--theme-switch-knob-dark);
 }
 
 /* General Styles */
@@ -105,6 +118,7 @@ a:hover {
   color: var(--header-text-color); /* White text for legibility */
   padding: 20px; /* Spacing inside the header */
   text-align: center; /* Center the text within the header */
+  position: relative; /* This is crucial for absolute positioning of children */
 }
 
 /* Navbar Styles */
@@ -475,7 +489,25 @@ p {
 .tag.desktop {
   background-color: var(--tag-desktop-background-color);
   color: var(--tag-desktop-text-color);
+
 }
+.tag.vision {
+  background-color: var(--tag-vision-background-color);
+  color: var(--tag-vision-text-color);
+}
+.tag.ai {
+  background-color: var(--tag-ai-background-color);
+  color: var(--tag-ai-text-color);
+}
+.tag.networking {
+  background-color: var(--tag-networking-background-color);
+  color: var(--tag-networking-text-color);
+}
+.tag.desktop {
+  background-color: var(--tag-desktop-background-color);
+  color: var(--tag-desktop-text-color);
+}
+
 
 
 /* Responsive Design */
@@ -488,4 +520,45 @@ p {
   .main {
     flex-direction: column;
   }
+}
+
+/* Theme Toggle Switch Styles */
+#theme-toggle-button {
+  background-color: var(--theme-switch-bg-light);
+  border: 1px solid var(--theme-switch-border-light);
+  border-radius: 30px; /* Rounded edges for the switch */
+  cursor: pointer;
+  display: inline-flex; /* Use flex to align items inside */
+  align-items: center;
+  justify-content: space-between; /* Push content to sides */
+  padding: 4px;
+  /* position: relative; */ /* Changed for absolute positioning */
+  width: 60px; /* Fixed width for the switch */
+  height: 30px; /* Fixed height */
+  outline: none;
+  position: absolute; /* Positioned relative to .header */
+  top: 20px;    /* Adjust as needed for vertical alignment */
+  right: 20px;  /* Adjust as needed for horizontal alignment */
+  text-indent: -9999px; /* Hide the text "Toggle Theme" */
+  -webkit-tap-highlight-color: transparent; /* Remove tap highlight on mobile */
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+#theme-toggle-button::after {
+  content: "";
+  background-color: var(--theme-switch-knob-light); /* Knob color */
+  border-radius: 50%; /* Make it a circle */
+  position: absolute;
+  top: 2px; /* Adjust positioning */
+  left: 2px; /* Adjust positioning */
+  width: 24px; /* Size of the knob */
+  height: 24px; /* Size of the knob */
+  transition: transform 0.3s ease, background-color 0.3s ease;
+}
+
+/* Dark theme specific styles for the switch */
+/* When .dark-theme is on body, the button's ::after pseudo-element is transformed */
+.dark-theme #theme-toggle-button::after {
+  /* background-color will use the remapped --theme-switch-knob-light which is --theme-switch-knob-dark */
+  transform: translateX(30px); /* Move the knob to the right */
 }
