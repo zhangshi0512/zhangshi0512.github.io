@@ -1,44 +1,142 @@
+:root {
+  --background-color: #ffffff;
+  --text-color: #333333;
+  --header-background-color: #333333;
+  --header-text-color: white;
+  --navbar-background-color: #e0e0e0;
+  --navbar-text-color: #333333;
+  --navbar-hover-background-color: #bdbdbd;
+  --navbar-hover-text-color: #333333;
+  --link-color: #0057b8;
+  --link-hover-color: #003cba;
+  --footer-background-color: #333;
+  --footer-text-color: white;
+  --card-background-color: white;
+  --card-border-color: #e0e0e0;
+  --button-background-color: #05001c;
+  --button-text-color: white;
+  --donut-canvas-background-color: #ffffff;
+  --contact-card-background: white;
+  --contact-card-text-color: #333;
+  --contact-card-icon-color: #2c3e50; /* Example, adjust as needed */
+  --contact-card-border-top-email: #e74c3c;
+  --contact-card-border-top-linkedin: #0077b5;
+  --contact-card-border-top-github: #333;
+  --contact-card-border-top-behance: #1769ff;
+  --contact-card-border-top-ideogram: #6c5ce7;
+  --tag-background-color: #f0f0f0;
+  --tag-text-color: #666;
+  --tag-web-background-color: #e3f2fd;
+  --tag-web-text-color: #1976d2;
+  --tag-mobile-background-color: #e8f5e9;
+  --tag-mobile-text-color: #2e7d32;
+  --tag-vision-background-color: #fff3e0;
+  --tag-vision-text-color: #f57c00;
+  --tag-ai-background-color: #f3e5f5;
+  --tag-ai-text-color: #7b1fa2;
+  --tag-networking-background-color: #e0f7fa;
+  --tag-networking-text-color: #00838f;
+  --tag-desktop-background-color: #fce4ec;
+  --tag-desktop-text-color: #c2185b;
+
+  /* Theme Toggle Switch Variables */
+  --theme-switch-bg-light: #e0e0e0; /* Light grey, similar to navbar */
+  --theme-switch-border-light: #333333; /* Dark border */
+  --theme-switch-knob-light: #333333; /* Dark knob */
+  --theme-switch-bg-dark: #0057b8; /* Blue, similar to link color for 'on' state */
+  --theme-switch-border-dark: #0057b8; /* Matching blue border */
+  --theme-switch-knob-dark: #ffffff; /* White knob for dark theme */
+}
+
+.dark-theme {
+  --background-color: #121212;
+  --text-color: #e0e0e0;
+  --header-background-color: #1e1e1e;
+  --header-text-color: #e0e0e0;
+  --navbar-background-color: #2c2c2c;
+  --navbar-text-color: #e0e0e0;
+  --navbar-hover-background-color: #4f4f4f;
+  --navbar-hover-text-color: #e0e0e0;
+  --link-color: #bb86fc;
+  --link-hover-color: #9e66fc;
+  --footer-background-color: #1e1e1e;
+  --footer-text-color: #e0e0e0;
+  --card-background-color: #1e1e1e;
+  --card-border-color: #424242;
+  --button-background-color: #bb86fc; /* Example dark theme button */
+  --button-text-color: #121212;
+  --donut-canvas-background-color: #121212; /* Or a slightly different dark shade */
+  --contact-card-background: #1e1e1e;
+  --contact-card-text-color: #e0e0e0;
+  --contact-card-icon-color: #bb86fc; /* Example, adjust as needed */
+  --contact-card-border-top-email: #cf6679; /* Dark theme accent */
+  --contact-card-border-top-linkedin: #bb86fc; /* Dark theme accent */
+  --contact-card-border-top-github: #e0e0e0; /* Dark theme accent */
+  --contact-card-border-top-behance: #03dac6; /* Dark theme accent */
+  --contact-card-border-top-ideogram: #6200ee; /* Dark theme accent */
+  --tag-background-color: #2c2c2c;
+  --tag-text-color: #bdbdbd;
+  --tag-web-background-color: #3a506b;
+  --tag-web-text-color: #a7d8f0;
+  --tag-mobile-background-color: #3b523f;
+  --tag-mobile-text-color: #a6d9a0;
+  --tag-vision-background-color: #5a4e3e;
+  --tag-vision-text-color: #f0d1a0;
+  --tag-ai-background-color: #533a5b;
+  --tag-ai-text-color: #d5a8e0;
+  --tag-networking-background-color: #3a5a60;
+  --tag-networking-text-color: #a0d8e0;
+  --tag-desktop-background-color: #5a3a4b;
+  --tag-desktop-text-color: #f0a8c0;
+
+  /* Update switch variables for dark theme (using the specific dark theme values) */
+  --theme-switch-bg-light: var(--theme-switch-bg-dark);
+  --theme-switch-border-light: var(--theme-switch-border-dark);
+  --theme-switch-knob-light: var(--theme-switch-knob-dark);
+}
+
 /* General Styles */
 body {
   font-family: "Helvetica Neue", Arial, sans-serif; /* Clean, modern font */
   margin: 0; /* Remove default margin */
-  background-color: #ffffff; /* Crisp white background */
-  color: #333333; /* Readable, dark text */
+  background-color: var(--background-color); /* Crisp white background */
+  color: var(--text-color); /* Readable, dark text */
 }
 
 a {
-  color: #0057b8; /* Highlight links with a brand color */
+  color: var(--link-color); /* Highlight links with a brand color */
   text-decoration: none; /* Cleaner look without underlines */
 }
 
 a:hover {
-  color: #003cba; /* Slightly darker blue for link hover effect */
+  color: var(--link-hover-color); /* Slightly darker blue for link hover effect */
 }
 
 /* Header Styles */
 .header {
-  background-color: #333333; /* Dark background for the header for contrast */
-  color: white; /* White text for legibility */
+  background-color: var(--header-background-color); /* Dark background for the header for contrast */
+  color: var(--header-text-color); /* White text for legibility */
   padding: 20px; /* Spacing inside the header */
   text-align: center; /* Center the text within the header */
+  position: relative; /* This is crucial for absolute positioning of children */
 }
 
 /* Navbar Styles */
 .navbar {
   display: flex; /* Align navbar items in a row */
   justify-content: center; /* Center navbar items */
-  background-color: #e0e0e0; /* Light grey background for navbar */
+  background-color: var(--navbar-background-color); /* Light grey background for navbar */
 }
 
 .navbar a {
-  color: #333333; /* Dark text for navbar items */
+  color: var(--navbar-text-color); /* Dark text for navbar items */
   padding: 14px 20px; /* Spacing around navbar links */
   text-align: center; /* Center text in navbar links */
 }
 
 .navbar a:hover {
-  background-color: #bdbdbd; /* Darker grey background for navbar items on hover */
-  color: #333333; /* Keep text color the same on hover */
+  background-color: var(--navbar-hover-background-color); /* Darker grey background for navbar items on hover */
+  color: var(--navbar-hover-text-color); /* Keep text color the same on hover */
 }
 
 /* Main Content Styles */
@@ -59,7 +157,7 @@ p {
 
 .content {
   flex: 3; /* Flex-grow value to allow the content to take up space */
-  background-color: white; /* White background for content area */
+  background-color: var(--background-color); /* White background for content area */
   padding: 20px; /* Padding inside content area */
   max-width: 800px; /* Max width for optimal reading line length */
   margin: auto; /* Center the content block horizontally */
@@ -72,15 +170,15 @@ p {
 
 /* Donut Styles */
 #donutCanvas {
-  background-color: #ffffff;
+  background-color: var(--donut-canvas-background-color);
   display: block;
   margin: 20px auto;
 }
 
 /* Footer Styles */
 .footer {
-  background-color: #333; /* Dark background for footer */
-  color: white; /* White text in footer */
+  background-color: var(--footer-background-color); /* Dark background for footer */
+  color: var(--footer-text-color); /* White text in footer */
   text-align: center; /* Center-align footer text */
   padding: 10px; /* Padding inside the footer */
   position: relative; /* Positioning for potential absolute child elements */
@@ -211,8 +309,8 @@ p {
 
 .expand-btn {
   align-self: center; /* Center the button */
-  background-color: #05001c;
-  color: white;
+  background-color: var(--button-background-color);
+  color: var(--button-text-color);
   padding: 5px 5px;
   margin: 5px 0;
   border: none;
@@ -225,7 +323,8 @@ p {
 }
 
 .card {
-  border: 1px solid #e0e0e0; /* Light grey border for subtlety */
+  border: 1px solid var(--card-border-color); /* Light grey border for subtlety */
+  background-color: var(--card-background-color);
   border-radius: 10px;
   margin: 5px;
   width: 300px;
@@ -298,7 +397,7 @@ p {
 }
 
 .contact-card {
-  background: white;
+  background: var(--contact-card-background);
   border-radius: 10px;
   padding: 20px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
@@ -317,7 +416,7 @@ p {
 
 .contact-card a {
   text-decoration: none;
-  color: #333;
+  color: var(--contact-card-text-color);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -328,35 +427,70 @@ p {
 .contact-card i {
   font-size: 2.5em;
   margin-bottom: 5px;
+  color: var(--contact-card-icon-color);
 }
 
 .contact-card h3 {
   margin: 0;
-  color: #2c3e50;
+  color: var(--contact-card-icon-color); /* Assuming icons and titles should match, or define a new variable */
   font-size: 1.5em;
 }
 
 .contact-card p {
   margin: 0;
-  color: #666;
+  color: var(--tag-text-color); /* Using tag text color for consistency, or define a new variable */
   font-size: 1.1em;
 }
 
 .contact-card.email {
-  border-top: 4px solid #e74c3c;
+  border-top: 4px solid var(--contact-card-border-top-email);
 }
 .contact-card.linkedin {
-  border-top: 4px solid #0077b5;
+  border-top: 4px solid var(--contact-card-border-top-linkedin);
 }
 .contact-card.github {
-  border-top: 4px solid #333;
+  border-top: 4px solid var(--contact-card-border-top-github);
 }
 .contact-card.behance {
-  border-top: 4px solid #1769ff;
+  border-top: 4px solid var(--contact-card-border-top-behance);
 }
 .contact-card.ideogram {
-  border-top: 4px solid #6c5ce7;
+  border-top: 4px solid var(--contact-card-border-top-ideogram);
 }
+
+/* Project Tag Styles */
+.tag {
+  background-color: var(--tag-background-color);
+  color: var(--tag-text-color);
+  padding: 3px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+}
+.tag.web {
+  background-color: var(--tag-web-background-color);
+  color: var(--tag-web-text-color);
+}
+.tag.mobile {
+  background-color: var(--tag-mobile-background-color);
+  color: var(--tag-mobile-text-color);
+}
+.tag.vision {
+  background-color: var(--tag-vision-background-color);
+  color: var(--tag-vision-text-color);
+}
+.tag.ai {
+  background-color: var(--tag-ai-background-color);
+  color: var(--tag-ai-text-color);
+}
+.tag.networking {
+  background-color: var(--tag-networking-background-color);
+  color: var(--tag-networking-text-color);
+}
+.tag.desktop {
+  background-color: var(--tag-desktop-background-color);
+  color: var(--tag-desktop-text-color);
+}
+
 
 /* Responsive Design */
 @media screen and (max-width: 768px) {
@@ -368,4 +502,45 @@ p {
   .main {
     flex-direction: column;
   }
+}
+
+/* Theme Toggle Switch Styles */
+#theme-toggle-button {
+  background-color: var(--theme-switch-bg-light);
+  border: 1px solid var(--theme-switch-border-light);
+  border-radius: 30px; /* Rounded edges for the switch */
+  cursor: pointer;
+  display: inline-flex; /* Use flex to align items inside */
+  align-items: center;
+  justify-content: space-between; /* Push content to sides */
+  padding: 4px;
+  /* position: relative; */ /* Changed for absolute positioning */
+  width: 60px; /* Fixed width for the switch */
+  height: 30px; /* Fixed height */
+  outline: none;
+  position: absolute; /* Positioned relative to .header */
+  top: 20px;    /* Adjust as needed for vertical alignment */
+  right: 20px;  /* Adjust as needed for horizontal alignment */
+  text-indent: -9999px; /* Hide the text "Toggle Theme" */
+  -webkit-tap-highlight-color: transparent; /* Remove tap highlight on mobile */
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+#theme-toggle-button::after {
+  content: "";
+  background-color: var(--theme-switch-knob-light); /* Knob color */
+  border-radius: 50%; /* Make it a circle */
+  position: absolute;
+  top: 2px; /* Adjust positioning */
+  left: 2px; /* Adjust positioning */
+  width: 24px; /* Size of the knob */
+  height: 24px; /* Size of the knob */
+  transition: transform 0.3s ease, background-color 0.3s ease;
+}
+
+/* Dark theme specific styles for the switch */
+/* When .dark-theme is on body, the button's ::after pseudo-element is transformed */
+.dark-theme #theme-toggle-button::after {
+  /* background-color will use the remapped --theme-switch-knob-light which is --theme-switch-knob-dark */
+  transform: translateX(30px); /* Move the knob to the right */
 }
