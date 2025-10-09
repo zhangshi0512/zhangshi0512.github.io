@@ -572,8 +572,6 @@ p {
 
 /* Theme Toggle Icon Styles */
 .theme-toggle-icon {
-  margin-left: auto;
-  padding-right: 20px;
   cursor: pointer;
 }
 
