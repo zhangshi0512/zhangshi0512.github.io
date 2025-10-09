@@ -570,43 +570,19 @@ p {
   }
 }
 
-/* Theme Toggle Switch Styles */
-#theme-toggle-button {
-  background-color: var(--theme-switch-bg-light);
-  border: 1px solid var(--theme-switch-border-light);
-  border-radius: 30px; /* Rounded edges for the switch */
+/* Theme Toggle Icon Styles */
+.theme-toggle-icon {
+  margin-left: auto;
+  padding-right: 20px;
   cursor: pointer;
-  display: inline-flex; /* Use flex to align items inside */
-  align-items: center;
-  justify-content: space-between; /* Push content to sides */
-  padding: 4px;
-  /* position: relative; */ /* Changed for absolute positioning */
-  width: 60px; /* Fixed width for the switch */
-  height: 30px; /* Fixed height */
-  outline: none;
-  position: absolute; /* Positioned relative to .header */
-  top: 20px;    /* Adjust as needed for vertical alignment */
-  right: 20px;  /* Adjust as needed for horizontal alignment */
-  text-indent: -9999px; /* Hide the text "Toggle Theme" */
-  -webkit-tap-highlight-color: transparent; /* Remove tap highlight on mobile */
-  transition: background-color 0.3s ease, border-color 0.3s ease;
 }
 
-#theme-toggle-button::after {
-  content: "";
-  background-color: var(--theme-switch-knob-light); /* Knob color */
-  border-radius: 50%; /* Make it a circle */
-  position: absolute;
-  top: 2px; /* Adjust positioning */
-  left: 2px; /* Adjust positioning */
-  width: 24px; /* Size of the knob */
-  height: 24px; /* Size of the knob */
-  transition: transform 0.3s ease, background-color 0.3s ease;
+.theme-toggle-icon::before {
+  content: '☀️'; /* Sun icon for light theme */
+  font-size: 24px;
+  color: var(--navbar-text-color);
 }
 
-/* Dark theme specific styles for the switch */
-/* When .dark-theme is on body, the button's ::after pseudo-element is transformed */
-.dark-theme #theme-toggle-button::after {
-  /* background-color will use the remapped --theme-switch-knob-light which is --theme-switch-knob-dark */
-  transform: translateX(30px); /* Move the knob to the right */
+.dark-theme .theme-toggle-icon::before {
+  content: '🌙'; /* Moon icon for dark theme */
 }
