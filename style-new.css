@@ -1,5 +1,5 @@
 :root {
-  --background-gradient: linear-gradient(to right, #ff7e5f, #feb47b);
+  --background-gradient: linear-gradient(to right, #a1c4fd, #c2e9fb);
   --background-color: rgba(255, 255, 255, 0.1);
   --text-color: #333;
   --header-background-color: rgba(255, 255, 255, 0.5);
@@ -8,8 +8,8 @@
   --navbar-text-color: #000;
   --navbar-hover-background-color: rgba(255, 255, 255, 0.5);
   --navbar-hover-text-color: #000;
-  --link-color: #0057b8;
-  --link-hover-color: #003cba;
+  --link-color: #004c99;
+  --link-hover-color: #003366;
   --footer-background-color: rgba(255, 255, 255, 0.5);
   --footer-text-color: #000;
   --card-background-color: rgba(255, 255, 255, 0.65);
@@ -20,11 +20,11 @@
   --contact-card-background: rgba(255, 255, 255, 0.65);
   --contact-card-text-color: #333;
   --contact-card-icon-color: #2c3e50; /* Example, adjust as needed */
-  --contact-card-border-top-email: #e74c3c;
-  --contact-card-border-top-linkedin: #0077b5;
-  --contact-card-border-top-github: #333;
-  --contact-card-border-top-behance: #1769ff;
-  --contact-card-border-top-ideogram: #6c5ce7;
+  --contact-card-border-top-email: #adb5bd;
+  --contact-card-border-top-linkedin: #5c94c9;
+  --contact-card-border-top-github: #6c757d;
+  --contact-card-border-top-behance: #6c95e0;
+  --contact-card-border-top-ideogram: #a092e6;
   --tag-background-color: rgba(255, 255, 255, 0.5);
   --tag-text-color: #333;
   --tag-web-background-color: #e3f2fd;
