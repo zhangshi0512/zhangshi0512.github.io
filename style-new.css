@@ -1,22 +1,23 @@
 :root {
-  --background-color: #ffffff;
-  --text-color: #333333;
-  --header-background-color: #333333;
-  --header-text-color: white;
-  --navbar-background-color: #e0e0e0;
-  --navbar-text-color: #333333;
-  --navbar-hover-background-color: #bdbdbd;
-  --navbar-hover-text-color: #333333;
+  --background-gradient: linear-gradient(to right, #ff7e5f, #feb47b);
+  --background-color: rgba(255, 255, 255, 0.1);
+  --text-color: #333;
+  --header-background-color: rgba(255, 255, 255, 0.5);
+  --header-text-color: #000;
+  --navbar-background-color: rgba(255, 255, 255, 0.3);
+  --navbar-text-color: #000;
+  --navbar-hover-background-color: rgba(255, 255, 255, 0.5);
+  --navbar-hover-text-color: #000;
   --link-color: #0057b8;
   --link-hover-color: #003cba;
-  --footer-background-color: #333;
-  --footer-text-color: white;
-  --card-background-color: white;
-  --card-border-color: #e0e0e0;
+  --footer-background-color: rgba(255, 255, 255, 0.5);
+  --footer-text-color: #000;
+  --card-background-color: rgba(255, 255, 255, 0.65);
+  --card-border-color: rgba(255, 255, 255, 0.3);
   --button-background-color: #05001c;
   --button-text-color: white;
-  --donut-canvas-background-color: #ffffff;
-  --contact-card-background: white;
+  --donut-canvas-background-color: rgba(255, 255, 255, 0.65);
+  --contact-card-background: rgba(255, 255, 255, 0.65);
   --contact-card-text-color: #333;
   --contact-card-icon-color: #2c3e50; /* Example, adjust as needed */
   --contact-card-border-top-email: #e74c3c;
@@ -24,8 +25,8 @@
   --contact-card-border-top-github: #333;
   --contact-card-border-top-behance: #1769ff;
   --contact-card-border-top-ideogram: #6c5ce7;
-  --tag-background-color: #f0f0f0;
-  --tag-text-color: #666;
+  --tag-background-color: rgba(255, 255, 255, 0.5);
+  --tag-text-color: #333;
   --tag-web-background-color: #e3f2fd;
   --tag-web-text-color: #1976d2;
   --tag-mobile-background-color: #e8f5e9;
@@ -49,33 +50,34 @@
 }
 
 .dark-theme {
-  --background-color: #121212;
-  --text-color: #e0e0e0;
-  --header-background-color: #1e1e1e;
-  --header-text-color: #e0e0e0;
-  --navbar-background-color: #2c2c2c;
-  --navbar-text-color: #e0e0e0;
-  --navbar-hover-background-color: #4f4f4f;
-  --navbar-hover-text-color: #e0e0e0;
+  --background-gradient: linear-gradient(to right, #0f2027, #203a43, #2c5364);
+  --background-color: rgba(0, 0, 0, 0.1);
+  --text-color: #f5f5f5;
+  --header-background-color: rgba(255, 255, 255, 0.1);
+  --header-text-color: #f5f5f5;
+  --navbar-background-color: rgba(255, 255, 255, 0.1);
+  --navbar-text-color: #f5f5f5;
+  --navbar-hover-background-color: rgba(255, 255, 255, 0.2);
+  --navbar-hover-text-color: #fff;
   --link-color: #bb86fc;
   --link-hover-color: #9e66fc;
-  --footer-background-color: #1e1e1e;
-  --footer-text-color: #e0e0e0;
-  --card-background-color: #1e1e1e;
-  --card-border-color: #424242;
+  --footer-background-color: rgba(255, 255, 255, 0.1);
+  --footer-text-color: #f5f5f5;
+  --card-background-color: rgba(255, 255, 255, 0.15);
+  --card-border-color: rgba(255, 255, 255, 0.2);
   --button-background-color: #bb86fc; /* Example dark theme button */
   --button-text-color: #121212;
-  --donut-canvas-background-color: #121212; /* Or a slightly different dark shade */
-  --contact-card-background: #1e1e1e;
-  --contact-card-text-color: #e0e0e0;
+  --donut-canvas-background-color: rgba(0, 0, 0, 0.2); /* Or a slightly different dark shade */
+  --contact-card-background: rgba(255, 255, 255, 0.15);
+  --contact-card-text-color: #f5f5f5;
   --contact-card-icon-color: #bb86fc; /* Example, adjust as needed */
   --contact-card-border-top-email: #cf6679; /* Dark theme accent */
   --contact-card-border-top-linkedin: #bb86fc; /* Dark theme accent */
   --contact-card-border-top-github: #e0e0e0; /* Dark theme accent */
   --contact-card-border-top-behance: #03dac6; /* Dark theme accent */
   --contact-card-border-top-ideogram: #6200ee; /* Dark theme accent */
-  --tag-background-color: #2c2c2c;
-  --tag-text-color: #bdbdbd;
+  --tag-background-color: rgba(255, 255, 255, 0.2);
+  --tag-text-color: #f5f5f5;
   --tag-web-background-color: #3a506b;
   --tag-web-text-color: #a7d8f0;
   --tag-mobile-background-color: #3b523f;
@@ -97,10 +99,11 @@
 
 /* General Styles */
 body {
-  font-family: "Helvetica Neue", Arial, sans-serif; /* Clean, modern font */
-  margin: 0; /* Remove default margin */
-  background-color: var(--background-color); /* Crisp white background */
-  color: var(--text-color); /* Readable, dark text */
+  font-family: -apple-system, BlinkMacSystemFont, "San Francisco", "Helvetica Neue", sans-serif;
+  margin: 0;
+  background: var(--background-gradient);
+  color: var(--text-color);
+  transition: background 0.3s ease, color 0.3s ease;
 }
 
 a {
@@ -114,18 +117,24 @@ a:hover {
 
 /* Header Styles */
 .header {
-  background-color: var(--header-background-color); /* Dark background for the header for contrast */
-  color: var(--header-text-color); /* White text for legibility */
-  padding: 20px; /* Spacing inside the header */
-  text-align: center; /* Center the text within the header */
-  position: relative; /* This is crucial for absolute positioning of children */
+  background-color: var(--header-background-color);
+  color: var(--header-text-color);
+  padding: 20px;
+  text-align: center;
+  position: relative;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 /* Navbar Styles */
 .navbar {
-  display: flex; /* Align navbar items in a row */
-  justify-content: center; /* Center navbar items */
-  background-color: var(--navbar-background-color); /* Light grey background for navbar */
+  display: flex;
+  justify-content: center;
+  background-color: var(--navbar-background-color);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .navbar a {
@@ -177,13 +186,16 @@ p {
 
 /* Footer Styles */
 .footer {
-  background-color: var(--footer-background-color); /* Dark background for footer */
-  color: var(--footer-text-color); /* White text in footer */
-  text-align: center; /* Center-align footer text */
-  padding: 10px; /* Padding inside the footer */
-  position: relative; /* Positioning for potential absolute child elements */
-  bottom: 0; /* Stick to the bottom */
-  width: 100%; /* Full width */
+  background-color: var(--footer-background-color);
+  color: var(--footer-text-color);
+  text-align: center;
+  padding: 10px;
+  position: relative;
+  bottom: 0;
+  width: 100%;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 /* Bibliography Page Styles */
@@ -323,9 +335,9 @@ p {
 }
 
 .card {
-  border: 1px solid var(--card-border-color); /* Light grey border for subtlety */
+  border: 1px solid var(--card-border-color);
   background-color: var(--card-background-color);
-  border-radius: 10px;
+  border-radius: 16px;
   margin: 5px;
   width: 300px;
   display: flex;
@@ -333,6 +345,9 @@ p {
   overflow: hidden;
   height: 445px; /* Adjust height as necessary */
   transition: transform 0.3s ease, box-shadow 0.3s ease;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .card:hover {
@@ -398,15 +413,18 @@ p {
 
 .contact-card {
   background: var(--contact-card-background);
-  border-radius: 10px;
+  border-radius: 16px;
   padding: 20px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   text-align: center;
   display: flex;
   flex-direction: column;
   justify-content: center;
   min-height: 200px;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid var(--card-border-color);
 }
 
 .contact-card:hover {
