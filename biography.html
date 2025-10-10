@@ -6,22 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="icon" type="image/png" href="favicon.png" />
     <link rel="stylesheet" href="style-new.css" />
-    <script src="https://unpkg.com/mermaid/dist/mermaid.min.js"></script>
-    <script>
-      mermaid.initialize({
-        startOnLoad: true,
-        theme: "base", // Use the base theme as a starting point
-        themeVariables: {
-          primaryColor: "#333", // Dark grey for lines and text
-          lineColor: "#333", // Line color
-          textColor: "#333", // Text color
-          mainBkg: "#f0f0f0", // Light background color for nodes
-          edgeLabelBackground: "#f0f0f0", // Background color for edge labels
-          // You can add more variables to customize fonts, node styles, etc.
-        },
-        securityLevel: "loose", // Allow HTML in node descriptions for more styling options
-      });
-    </script>
 
     <!-- Head content (similar to index.html) -->
   </head>
@@ -44,7 +28,6 @@
     <div class="header">
       <h1>Shi Zhang's Biography</h1>
       <p>A showcase of my professional projects and accomplishments.</p>
-      <button id="theme-toggle-button">Toggle Theme</button>
     </div>
 
     <!-- Navigation Bar -->
@@ -54,6 +37,7 @@
       <a href="resume.html">Resume</a>
       <a href="projects.html">Projects</a>
       <a href="contact.html">Contact</a>
+      <a href="#" id="theme-toggle-link" class="theme-toggle-icon"></a>
     </div>
 
     <!-- Biography Content -->
@@ -126,5 +110,47 @@
       <p>© 2024 by Shi Zhang. All rights reserved.</p>
     </div>
     <script src="theme-toggle.js"></script>
+    <script src="https://unpkg.com/mermaid/dist/mermaid.min.js"></script>
+    <script>
+      function renderMermaid() {
+        const isDark = document.body.classList.contains('dark-theme');
+        mermaid.initialize({
+          startOnLoad: false, // We will call init manually
+          theme: isDark ? 'dark' : 'base',
+          securityLevel: 'loose',
+          themeVariables: {
+            primaryColor: isDark ? '#bb86fc' : '#333',
+            lineColor: isDark ? '#e0e0e0' : '#333',
+            textColor: isDark ? '#f5f5f5' : '#333',
+            mainBkg: isDark ? 'rgba(255, 255, 255, 0.2)' : 'rgba(255, 255, 255, 0.75)',
+            edgeLabelBackground: isDark ? 'rgba(255, 255, 255, 0.2)' : 'rgba(255, 255, 255, 0.75)',
+          }
+        });
+        const mermaidElements = document.querySelectorAll('.mermaid');
+        mermaidElements.forEach(el => {
+            // Store original definition, clear the element, then re-add definition
+            if (!el.getAttribute('data-definition')) {
+                el.setAttribute('data-definition', el.innerHTML);
+            }
+            el.innerHTML = el.getAttribute('data-definition');
+            el.removeAttribute('data-processed');
+        });
+        mermaid.init(undefined, mermaidElements);
+      }
+
+      document.addEventListener('DOMContentLoaded', () => {
+        renderMermaid();
+
+        const observer = new MutationObserver((mutationsList) => {
+          for(const mutation of mutationsList) {
+            if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+              renderMermaid();
+            }
+          }
+        });
+
+        observer.observe(document.body, { attributes: true });
+      });
+    </script>
   </body>
 </html>
