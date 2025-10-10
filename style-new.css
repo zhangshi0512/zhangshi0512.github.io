@@ -38,6 +38,8 @@
   --tag-networking-text-color: #00838f;
   --tag-desktop-background-color: #fce4ec;
   --tag-desktop-text-color: #c2185b;
+  --option-background-color: rgba(255, 255, 255, 0.8);
+  --option-text-color: #333;
   /* Theme Toggle Switch Variables */
   --theme-switch-bg-light: #e0e0e0; /* Light grey, similar to navbar */
   --theme-switch-border-light: #333333; /* Dark border */
@@ -88,6 +90,8 @@
   --tag-networking-text-color: #a0d8e0;
   --tag-desktop-background-color: #5a3a4b;
   --tag-desktop-text-color: #f0a8c0;
+  --option-background-color: #2c5364;
+  --option-text-color: #f5f5f5;
 
   /* Update switch variables for dark theme (using the specific dark theme values) */
   --theme-switch-bg-light: var(--theme-switch-bg-dark);
@@ -333,8 +337,8 @@ p {
 }
 
 .filter-select option {
-    background: var(--card-background-color);
-    color: var(--text-color);
+    background: var(--option-background-color);
+    color: var(--option-text-color);
     padding: 10px;
 }
 
