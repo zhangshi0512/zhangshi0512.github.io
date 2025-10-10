@@ -129,6 +129,7 @@ a:hover {
 .navbar {
   display: flex;
   justify-content: center;
+  align-items: center;
   background-color: var(--navbar-background-color);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
@@ -332,8 +333,9 @@ p {
 }
 
 .filter-select option {
-    background: var(--background-color);
+    background: var(--card-background-color);
     color: var(--text-color);
+    padding: 10px;
 }
 
 
@@ -573,14 +575,29 @@ p {
 /* Theme Toggle Icon Styles */
 .theme-toggle-icon {
   cursor: pointer;
+  position: relative;
+  width: 24px;
+  height: 24px;
+  margin-left: 10px;
 }
 
 .theme-toggle-icon::before {
-  content: '☀️'; /* Sun icon for light theme */
-  font-size: 24px;
-  color: var(--navbar-text-color);
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--navbar-text-color);
+  transition: all 0.3s ease;
 }
 
 .dark-theme .theme-toggle-icon::before {
-  content: '🌙'; /* Moon icon for dark theme */
+  background: transparent;
+  width: 12px;
+  height: 12px;
+  box-shadow: -2px 2px 0 2px var(--navbar-text-color);
+  transform: translate(-50%, -50%) rotate(-45deg);
 }
