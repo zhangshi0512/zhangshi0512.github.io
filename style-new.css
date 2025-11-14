@@ -1,4 +1,41 @@
 :root {
+  --background-color: #0a0a0a;
+  --text-color: #e0e0e0;
+  --header-background-color: #1a1a1a;
+  --header-text-color: #e0e0e0;
+  --navbar-background-color: #1a1a1a;
+  --navbar-text-color: #e0e0e0;
+  --navbar-hover-background-color: #2a2a2a;
+  --navbar-hover-text-color: #ffffff;
+  --link-color: #00ffff;
+  --link-hover-color: #00cccc;
+  --footer-background-color: #1a1a1a;
+  --footer-text-color: #e0e0e0;
+  --card-background-color: #1a1a1a;
+  --card-border-color: #333333;
+  --button-background-color: #00ffff;
+  --button-text-color: #0a0a0a;
+  --contact-card-background: #1a1a1a;
+  --contact-card-text-color: #e0e0e0;
+  --contact-card-icon-color: #00ffff;
+  --contact-card-border-top-email: #00ffff;
+  --contact-card-border-top-linkedin: #00ffff;
+  --contact-card-border-top-github: #00ffff;
+  --contact-card-border-top-behance: #00ffff;
+  --contact-card-border-top-ideogram: #00ffff;
+  --tag-background-color: #333333;
+  --tag-text-color: #e0e0e0;
+  --option-background-color: #333333;
+  --option-text-color: #e0e0e0;
+  --theme-switch-bg-light: #333333;
+  --theme-switch-border-light: #e0e0e0;
+  --theme-switch-knob-light: #e0e0e0;
+  --theme-switch-bg-dark: #e0e0e0;
+  --theme-switch-border-dark: #333333;
+  --theme-switch-knob-dark: #333333;
+}
+
+.light-theme {
   --background-gradient: linear-gradient(to right, #a1c4fd, #c2e9fb);
   --background-color: rgba(255, 255, 255, 0.1);
   --text-color: #333;
@@ -18,7 +55,7 @@
   --button-text-color: white;
   --contact-card-background: rgba(255, 255, 255, 0.65);
   --contact-card-text-color: #333;
-  --contact-card-icon-color: #2c3e50; /* Example, adjust as needed */
+  --contact-card-icon-color: #2c3e50;
   --contact-card-border-top-email: #adb5bd;
   --contact-card-border-top-linkedin: #5c94c9;
   --contact-card-border-top-github: #6c757d;
@@ -40,81 +77,30 @@
   --tag-desktop-text-color: #c2185b;
   --option-background-color: rgba(255, 255, 255, 0.8);
   --option-text-color: #333;
-  /* Theme Toggle Switch Variables */
-  --theme-switch-bg-light: #e0e0e0; /* Light grey, similar to navbar */
-  --theme-switch-border-light: #333333; /* Dark border */
-  --theme-switch-knob-light: #333333; /* Dark knob */
-  --theme-switch-bg-dark: #0057b8; /* Blue, similar to link color for 'on' state */
-  --theme-switch-border-dark: #0057b8; /* Matching blue border */
-  --theme-switch-knob-dark: #ffffff; /* White knob for dark theme */
-
-}
-
-.dark-theme {
-  --background-gradient: linear-gradient(to right, #0f2027, #203a43, #2c5364);
-  --background-color: rgba(0, 0, 0, 0.1);
-  --text-color: #f5f5f5;
-  --header-background-color: rgba(255, 255, 255, 0.1);
-  --header-text-color: #f5f5f5;
-  --navbar-background-color: rgba(255, 255, 255, 0.1);
-  --navbar-text-color: #f5f5f5;
-  --navbar-hover-background-color: rgba(255, 255, 255, 0.2);
-  --navbar-hover-text-color: #fff;
-  --link-color: #bb86fc;
-  --link-hover-color: #9e66fc;
-  --footer-background-color: rgba(255, 255, 255, 0.1);
-  --footer-text-color: #f5f5f5;
-  --card-background-color: rgba(255, 255, 255, 0.15);
-  --card-border-color: rgba(255, 255, 255, 0.2);
-  --button-background-color: #bb86fc; /* Example dark theme button */
-  --button-text-color: #121212;
-  --contact-card-background: rgba(255, 255, 255, 0.15);
-  --contact-card-text-color: #f5f5f5;
-  --contact-card-icon-color: #bb86fc; /* Example, adjust as needed */
-  --contact-card-border-top-email: #cf6679; /* Dark theme accent */
-  --contact-card-border-top-linkedin: #bb86fc; /* Dark theme accent */
-  --contact-card-border-top-github: #e0e0e0; /* Dark theme accent */
-  --contact-card-border-top-behance: #03dac6; /* Dark theme accent */
-  --contact-card-border-top-ideogram: #6200ee; /* Dark theme accent */
-  --tag-background-color: rgba(255, 255, 255, 0.2);
-  --tag-text-color: #f5f5f5;
-  --tag-web-background-color: #3a506b;
-  --tag-web-text-color: #a7d8f0;
-  --tag-mobile-background-color: #3b523f;
-  --tag-mobile-text-color: #a6d9a0;
-  --tag-vision-background-color: #5a4e3e;
-  --tag-vision-text-color: #f0d1a0;
-  --tag-ai-background-color: #533a5b;
-  --tag-ai-text-color: #d5a8e0;
-  --tag-networking-background-color: #3a5a60;
-  --tag-networking-text-color: #a0d8e0;
-  --tag-desktop-background-color: #5a3a4b;
-  --tag-desktop-text-color: #f0a8c0;
-  --option-background-color: #2c5364;
-  --option-text-color: #f5f5f5;
-
-  /* Update switch variables for dark theme (using the specific dark theme values) */
-  --theme-switch-bg-light: var(--theme-switch-bg-dark);
-  --theme-switch-border-light: var(--theme-switch-border-dark);
-  --theme-switch-knob-light: var(--theme-switch-knob-dark);
+  --theme-switch-bg-light: #e0e0e0;
+  --theme-switch-border-light: #333333;
+  --theme-switch-knob-light: #333333;
+  --theme-switch-bg-dark: #0057b8;
+  --theme-switch-border-dark: #0057b8;
+  --theme-switch-knob-dark: #ffffff;
 }
 
 /* General Styles */
 body {
-  font-family: -apple-system, BlinkMacSystemFont, "San Francisco", "Helvetica Neue", sans-serif;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
   margin: 0;
-  background: var(--background-gradient);
+  background: var(--background-color);
   color: var(--text-color);
   transition: background 0.3s ease, color 0.3s ease;
 }
 
 a {
-  color: var(--link-color); /* Highlight links with a brand color */
-  text-decoration: none; /* Cleaner look without underlines */
+  color: var(--link-color);
+  text-decoration: none;
 }
 
 a:hover {
-  color: var(--link-hover-color); /* Slightly darker blue for link hover effect */
+  color: var(--link-hover-color);
 }
 
 /* Header Styles */
@@ -124,9 +110,7 @@ a:hover {
   padding: 20px;
   text-align: center;
   position: relative;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  border-bottom: 1px solid var(--card-border-color);
 }
 
 /* Navbar Styles */
@@ -135,59 +119,50 @@ a:hover {
   justify-content: center;
   align-items: center;
   background-color: var(--navbar-background-color);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  border-bottom: 1px solid var(--card-border-color);
 }
 
 .navbar a {
-  color: var(--navbar-text-color); /* Dark text for navbar items */
-  padding: 14px 20px; /* Spacing around navbar links */
-  text-align: center; /* Center text in navbar links */
+  color: var(--navbar-text-color);
+  padding: 14px 20px;
+  text-align: center;
 }
 
 .navbar a:hover {
-  background-color: var(--navbar-hover-background-color); /* Darker grey background for navbar items on hover */
-  color: var(--navbar-hover-text-color); /* Keep text color the same on hover */
+  background-color: var(--navbar-hover-background-color);
+  color: var(--navbar-hover-text-color);
 }
 
 /* Main Content Styles */
 .main {
-  display: flex; /* Use flexbox for main content layout */
-  flex-wrap: wrap; /* Allow wrapping of items */
-  margin: 20px; /* Space around the main content area */
+  display: flex;
+  flex-wrap: wrap;
+  margin: 20px;
 }
-
-/* Content Styles */
 
 .content h2,
 p {
-  margin-top: 20px; /* Spacing above the section header */
-  margin-bottom: 10px; /* Spacing below the section header */
-  text-align: center; /* Center-align section headers */
+  margin-top: 20px;
+  margin-bottom: 10px;
+  text-align: center;
 }
 
 .content {
   background: var(--card-background-color);
-  border-radius: 16px;
+  border-radius: 8px;
   padding: 20px;
   max-width: 800px;
   margin: 20px auto;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
   border: 1px solid var(--card-border-color);
   text-align: center;
 }
 
-/* Donut Styles */
 #donutCanvas {
   background-color: transparent;
   display: block;
   margin: 20px auto;
 }
 
-/* Footer Styles */
 .footer {
   background-color: var(--footer-background-color);
   color: var(--footer-text-color);
@@ -196,12 +171,9 @@ p {
   position: relative;
   bottom: 0;
   width: 100%;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  border-top: 1px solid var(--card-border-color);
 }
 
-/* Bibliography Page Styles */
 .clearfix::after {
   content: "";
   clear: both;
@@ -209,10 +181,10 @@ p {
 }
 
 .mermaid-container {
-  width: 80%; /* Control width based on your layout needs */
-  padding-top: 45%; /* Padding-top for 16:9 aspect ratio */
+  width: 80%;
+  padding-top: 45%;
   position: relative;
-  margin: 0 auto; /* Center the diagram */
+  margin: 0 auto;
 }
 
 .mermaid {
@@ -222,88 +194,73 @@ p {
   bottom: 0;
 }
 
-/* Resume Page Specific Styles */
 .resume-content {
-  text-align: left; /* Default text alignment to the left */
-  display: block; /* Display as a block for standard flow layout */
+  text-align: left;
+  display: block;
 }
 
-/* Adjusting heading styles to fix spacing issues */
 .resume-content h2 {
-  margin-top: 20px; /* Spacing above the section header */
-  margin-bottom: 10px; /* Spacing below the section header */
-  text-align: center; /* Center-align section headers */
+  margin-top: 20px;
+  margin-bottom: 10px;
+  text-align: center;
 }
 
-/* Adjusting the top margin for entries that are not the first child to ensure consistent spacing */
 .resume-entry:not(:first-child) {
-  margin-top: 15px; /* Consistent space between resume entries */
+  margin-top: 15px;
 }
 
-/* Ensuring the bullet points in lists are positioned correctly and have no default padding */
 .resume-content ul {
-  list-style-position: inside; /* Bullet points inside list area */
-  padding-left: 0; /* No padding to the left of bullet points */
+  list-style-position: inside;
+  padding-left: 0;
 }
 
-/* List item styles for spacing and text alignment */
 .resume-content li {
-  margin-bottom: 10px; /* Space below list items */
-  text-align: left; /* Text aligned to the left */
+  margin-bottom: 10px;
+  text-align: left;
 }
 
-/* Paragraph and list indenting for alignment and better text block appearance */
 .resume-content p,
 .resume-content ul {
-  padding-left: 20px; /* Space to the left for indenting */
-  padding-right: 20px; /* Space to the right for a balanced look */
+  padding-left: 20px;
+  padding-right: 20px;
 }
 
-
-/* Resume entry styles for a two-column layout with dates right-aligned */
 .resume-entry {
-  display: flex; /* Flexbox for layout */
-  justify-content: space-between; /* Space between the main content and dates */
-  align-items: baseline; /* Align items on their baseline for a neat appearance */
-  margin-bottom: 10px; /* Space below each entry */
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 10px;
 }
 
-/* Main content within a resume entry alignment */
 .resume-main {
-  text-align: left; /* Text aligned to the left */
-  flex-grow: 1; /* Allow it to grow to fill space as needed */
+  text-align: left;
+  flex-grow: 1;
 }
 
-/* Degree information styling, ensuring it's on its own line */
 .degree {
-  display: block; /* New line for the degree */
-  font-weight: normal; /* Standard font weight */
-  margin-top: 5px; /* Space between the institution and degree */
+  display: block;
+  font-weight: normal;
+  margin-top: 5px;
 }
 
-/* Date alignment within resume entries */
 .resume-date {
-  text-align: right; /* Dates aligned to the right */
-  white-space: nowrap; /* Prevent dates from wrapping */
+  text-align: right;
+  white-space: nowrap;
 }
 
-/* For list items within professional experience and projects */
 .resume-content ul {
-  padding: 0; /* No padding for lists */
+  padding: 0;
 }
 
-/* Smaller bottom margin for list items within resume content for a compact look */
 .resume-content ul li {
   margin-bottom: 5px;
 }
 
-/* Alignment for paragraphs and list items within resume content */
 .resume-content p,
 .resume-content li {
-  text-align: left; /* Text aligned to the left */
+  text-align: left;
 }
 
-/* Search and Filter Styles */
 .search-container {
   margin: 20px auto;
   max-width: 800px;
@@ -316,14 +273,10 @@ p {
 .filter-select {
   flex: 1;
   padding: 12px;
-  border-radius: 16px;
+  border-radius: 8px;
   border: 1px solid var(--card-border-color);
   background-color: var(--card-background-color);
   color: var(--text-color);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease;
 }
 
 .search-input::placeholder {
@@ -342,9 +295,6 @@ p {
     padding: 10px;
 }
 
-
-/* Project Card Styles */
-
 .projects {
   display: flex;
   flex-wrap: wrap;
@@ -356,7 +306,7 @@ p {
 }
 
 .expand-btn {
-  align-self: center; /* Center the button */
+  align-self: center;
   background-color: var(--button-background-color);
   color: var(--button-text-color);
   padding: 5px 5px;
@@ -373,37 +323,34 @@ p {
 .card {
   border: 1px solid var(--card-border-color);
   background-color: var(--card-background-color);
-  border-radius: 16px;
+  border-radius: 8px;
   margin: 5px;
   width: 300px;
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  height: 445px; /* Adjust height as necessary */
+  height: 445px;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .card:hover {
-  transform: scale(1.03); /* Slight scale on hover for interaction feedback */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Softer shadow for a subtle lift effect */
+  transform: scale(1.03);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .card-image {
-  display: flex; /* Use flexbox for alignment */
-  justify-content: center; /* Center horizontally */
-  align-items: center; /* Center vertically */
-  height: 200px; /* Set a fixed height for the image container */
-  overflow: hidden; /* Hide overflow */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+  overflow: hidden;
 }
 
 .card-image img {
-  max-width: 90%; /* Maximum width of image */
-  max-height: 90%; /* Maximum height of image */
-  display: block; /* Ensures no extra space below the image */
-  object-fit: cover; /* Cover the area without distorting the image */
+  max-width: 90%;
+  max-height: 90%;
+  display: block;
+  object-fit: cover;
 }
 
 .card-content {
@@ -411,8 +358,8 @@ p {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  overflow-y: auto; /* Allow vertical scrolling */
-  flex-grow: 1; /* Allow the content to grow */
+  overflow-y: auto;
+  flex-grow: 1;
 }
 
 .card-content h3 {
@@ -425,7 +372,6 @@ p {
   text-overflow: ellipsis;
 }
 
-/* Contact Card Styles */
 .contact-cards {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -449,17 +395,14 @@ p {
 
 .contact-card {
   background: var(--contact-card-background);
-  border-radius: 16px;
+  border-radius: 8px;
   padding: 20px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   text-align: center;
   display: flex;
   flex-direction: column;
   justify-content: center;
   min-height: 200px;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
   border: 1px solid var(--card-border-color);
 }
 
@@ -486,13 +429,13 @@ p {
 
 .contact-card h3 {
   margin: 0;
-  color: var(--contact-card-icon-color); /* Assuming icons and titles should match, or define a new variable */
+  color: var(--contact-card-icon-color);
   font-size: 1.5em;
 }
 
 .contact-card p {
   margin: 0;
-  color: var(--tag-text-color); /* Using tag text color for consistency, or define a new variable */
+  color: var(--tag-text-color);
   font-size: 1.1em;
 }
 
@@ -512,7 +455,6 @@ p {
   border-top: 4px solid var(--contact-card-border-top-ideogram);
 }
 
-/* Project Tag Styles */
 .tag {
   background-color: var(--tag-background-color);
   color: var(--tag-text-color);
@@ -543,28 +485,8 @@ p {
 .tag.desktop {
   background-color: var(--tag-desktop-background-color);
   color: var(--tag-desktop-text-color);
-
-}
-.tag.vision {
-  background-color: var(--tag-vision-background-color);
-  color: var(--tag-vision-text-color);
-}
-.tag.ai {
-  background-color: var(--tag-ai-background-color);
-  color: var(--tag-ai-text-color);
-}
-.tag.networking {
-  background-color: var(--tag-networking-background-color);
-  color: var(--tag-networking-text-color);
-}
-.tag.desktop {
-  background-color: var(--tag-desktop-background-color);
-  color: var(--tag-desktop-text-color);
 }
 
-
-
-/* Responsive Design */
 @media screen and (max-width: 768px) {
   .navbar a {
     display: block;
@@ -576,7 +498,6 @@ p {
   }
 }
 
-/* Theme Toggle Icon Styles */
 .theme-toggle-icon {
   cursor: pointer;
   position: relative;
@@ -598,7 +519,7 @@ p {
   transition: all 0.3s ease;
 }
 
-.dark-theme .theme-toggle-icon::before {
+.light-theme .theme-toggle-icon::before {
   background: transparent;
   width: 12px;
   height: 12px;
