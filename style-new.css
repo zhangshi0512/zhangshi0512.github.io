@@ -1,607 +1,564 @@
 :root {
-  --background-gradient: linear-gradient(to right, #a1c4fd, #c2e9fb);
-  --background-color: rgba(255, 255, 255, 0.1);
-  --text-color: #333;
-  --header-background-color: rgba(255, 255, 255, 0.5);
-  --header-text-color: #000;
-  --navbar-background-color: rgba(255, 255, 255, 0.3);
-  --navbar-text-color: #000;
-  --navbar-hover-background-color: rgba(255, 255, 255, 0.5);
-  --navbar-hover-text-color: #000;
-  --link-color: #004c99;
-  --link-hover-color: #003366;
-  --footer-background-color: rgba(255, 255, 255, 0.5);
-  --footer-text-color: #000;
-  --card-background-color: rgba(255, 255, 255, 0.65);
-  --card-border-color: rgba(255, 255, 255, 0.3);
-  --button-background-color: #05001c;
-  --button-text-color: white;
-  --contact-card-background: rgba(255, 255, 255, 0.65);
-  --contact-card-text-color: #333;
-  --contact-card-icon-color: #2c3e50; /* Example, adjust as needed */
-  --contact-card-border-top-email: #adb5bd;
-  --contact-card-border-top-linkedin: #5c94c9;
-  --contact-card-border-top-github: #6c757d;
-  --contact-card-border-top-behance: #6c95e0;
-  --contact-card-border-top-ideogram: #a092e6;
-  --tag-background-color: rgba(255, 255, 255, 0.5);
-  --tag-text-color: #333;
-  --tag-web-background-color: #e3f2fd;
-  --tag-web-text-color: #1976d2;
-  --tag-mobile-background-color: #e8f5e9;
-  --tag-mobile-text-color: #2e7d32;
-  --tag-vision-background-color: #fff3e0;
-  --tag-vision-text-color: #f57c00;
-  --tag-ai-background-color: #f3e5f5;
-  --tag-ai-text-color: #7b1fa2;
-  --tag-networking-background-color: #e0f7fa;
-  --tag-networking-text-color: #00838f;
-  --tag-desktop-background-color: #fce4ec;
-  --tag-desktop-text-color: #c2185b;
-  --option-background-color: rgba(255, 255, 255, 0.8);
-  --option-text-color: #333;
-  /* Theme Toggle Switch Variables */
-  --theme-switch-bg-light: #e0e0e0; /* Light grey, similar to navbar */
-  --theme-switch-border-light: #333333; /* Dark border */
-  --theme-switch-knob-light: #333333; /* Dark knob */
-  --theme-switch-bg-dark: #0057b8; /* Blue, similar to link color for 'on' state */
-  --theme-switch-border-dark: #0057b8; /* Matching blue border */
-  --theme-switch-knob-dark: #ffffff; /* White knob for dark theme */
-
+  --primary-dark: #0a0a0a;
+  --primary-light: #ffffff;
+  --text-primary: #e0e0e0;
+  --text-secondary: #a0a0a0;
+  --accent-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #f5576c 75%, #ffc857 100%);
+  --border-color: #333333;
+  --max-width: 1200px;
+  --background-color: #0a0a0a;
 }
 
-.dark-theme {
-  --background-gradient: linear-gradient(to right, #0f2027, #203a43, #2c5364);
-  --background-color: rgba(0, 0, 0, 0.1);
-  --text-color: #f5f5f5;
-  --header-background-color: rgba(255, 255, 255, 0.1);
-  --header-text-color: #f5f5f5;
-  --navbar-background-color: rgba(255, 255, 255, 0.1);
-  --navbar-text-color: #f5f5f5;
-  --navbar-hover-background-color: rgba(255, 255, 255, 0.2);
-  --navbar-hover-text-color: #fff;
-  --link-color: #bb86fc;
-  --link-hover-color: #9e66fc;
-  --footer-background-color: rgba(255, 255, 255, 0.1);
-  --footer-text-color: #f5f5f5;
-  --card-background-color: rgba(255, 255, 255, 0.15);
-  --card-border-color: rgba(255, 255, 255, 0.2);
-  --button-background-color: #bb86fc; /* Example dark theme button */
-  --button-text-color: #121212;
-  --contact-card-background: rgba(255, 255, 255, 0.15);
-  --contact-card-text-color: #f5f5f5;
-  --contact-card-icon-color: #bb86fc; /* Example, adjust as needed */
-  --contact-card-border-top-email: #cf6679; /* Dark theme accent */
-  --contact-card-border-top-linkedin: #bb86fc; /* Dark theme accent */
-  --contact-card-border-top-github: #e0e0e0; /* Dark theme accent */
-  --contact-card-border-top-behance: #03dac6; /* Dark theme accent */
-  --contact-card-border-top-ideogram: #6200ee; /* Dark theme accent */
-  --tag-background-color: rgba(255, 255, 255, 0.2);
-  --tag-text-color: #f5f5f5;
-  --tag-web-background-color: #3a506b;
-  --tag-web-text-color: #a7d8f0;
-  --tag-mobile-background-color: #3b523f;
-  --tag-mobile-text-color: #a6d9a0;
-  --tag-vision-background-color: #5a4e3e;
-  --tag-vision-text-color: #f0d1a0;
-  --tag-ai-background-color: #533a5b;
-  --tag-ai-text-color: #d5a8e0;
-  --tag-networking-background-color: #3a5a60;
-  --tag-networking-text-color: #a0d8e0;
-  --tag-desktop-background-color: #5a3a4b;
-  --tag-desktop-text-color: #f0a8c0;
-  --option-background-color: #2c5364;
-  --option-text-color: #f5f5f5;
-
-  /* Update switch variables for dark theme (using the specific dark theme values) */
-  --theme-switch-bg-light: var(--theme-switch-bg-dark);
-  --theme-switch-border-light: var(--theme-switch-border-dark);
-  --theme-switch-knob-light: var(--theme-switch-knob-dark);
-}
-
-/* General Styles */
 body {
-  font-family: -apple-system, BlinkMacSystemFont, "San Francisco", "Helvetica Neue", sans-serif;
-  margin: 0;
-  background: var(--background-gradient);
-  color: var(--text-color);
-  transition: background 0.3s ease, color 0.3s ease;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  line-height: 1.6;
+  color: var(--text-primary);
+  background: var(--background-color);
+  overflow-x: hidden;
 }
 
-a {
-  color: var(--link-color); /* Highlight links with a brand color */
-  text-decoration: none; /* Cleaner look without underlines */
-}
-
-a:hover {
-  color: var(--link-hover-color); /* Slightly darker blue for link hover effect */
-}
-
-/* Header Styles */
-.header {
-  background-color: var(--header-background-color);
-  color: var(--header-text-color);
-  padding: 20px;
-  text-align: center;
-  position: relative;
+/* Navigation */
+nav {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  background: rgba(10, 10, 10, 0.8);
   backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  z-index: 1000;
+  padding: 1.5rem 0;
+  border-bottom: 1px solid var(--border-color);
 }
 
-/* Navbar Styles */
-.navbar {
+.nav-container {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 0 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  text-decoration: none;
+}
+
+.nav-links {
+  display: flex;
+  gap: 2rem;
+  list-style: none;
+}
+
+.nav-links a {
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-size: 0.95rem;
+  transition: color 0.3s ease;
+}
+
+.nav-links a:hover {
+  color: var(--text-primary);
+}
+
+/* Hero Section */
+.hero {
+  margin-top: 80px;
+  padding: 6rem 2rem;
+  max-width: var(--max-width);
+  margin-left: auto;
+  margin-right: auto;
+  position: relative;
+}
+
+.hero-mask {
+  width: 100%;
+  height: 300px;
+  background: var(--accent-gradient);
+  opacity: 0.1;
+  border-radius: 50%;
+  filter: blur(100px);
+  position: absolute;
+  top: 50px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: -1;
+}
+
+.hero h1 {
+  font-size: clamp(2.5rem, 7vw, 4.5rem);
+  line-height: 1.1;
+  margin-bottom: 2rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.hero .subtitle {
+  font-size: clamp(1.25rem, 3vw, 1.75rem);
+  color: var(--text-secondary);
+  max-width: 800px;
+  line-height: 1.4;
+  margin-bottom: 3rem;
+}
+
+/* Canvas Container */
+.canvas-container {
   display: flex;
   justify-content: center;
-  align-items: center;
-  background-color: var(--navbar-background-color);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  margin: 3rem 0;
 }
 
-.navbar a {
-  color: var(--navbar-text-color); /* Dark text for navbar items */
-  padding: 14px 20px; /* Spacing around navbar links */
-  text-align: center; /* Center text in navbar links */
+/* About Section */
+.about {
+  padding: 6rem 2rem;
+  background: #1a1a1a;
 }
 
-.navbar a:hover {
-  background-color: var(--navbar-hover-background-color); /* Darker grey background for navbar items on hover */
-  color: var(--navbar-hover-text-color); /* Keep text color the same on hover */
-}
-
-/* Main Content Styles */
-.main {
-  display: flex; /* Use flexbox for main content layout */
-  flex-wrap: wrap; /* Allow wrapping of items */
-  margin: 20px; /* Space around the main content area */
-}
-
-/* Content Styles */
-
-.content h2,
-p {
-  margin-top: 20px; /* Spacing above the section header */
-  margin-bottom: 10px; /* Spacing below the section header */
-  text-align: center; /* Center-align section headers */
-}
-
-.content {
-  background: var(--card-background-color);
-  border-radius: 16px;
-  padding: 20px;
-  max-width: 800px;
-  margin: 20px auto;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 1px solid var(--card-border-color);
-  text-align: center;
-}
-
-/* Donut Styles */
-#donutCanvas {
-  background-color: transparent;
-  display: block;
-  margin: 20px auto;
-}
-
-/* Footer Styles */
-.footer {
-  background-color: var(--footer-background-color);
-  color: var(--footer-text-color);
-  text-align: center;
-  padding: 10px;
-  position: relative;
-  bottom: 0;
-  width: 100%;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border-top: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-/* Bibliography Page Styles */
-.clearfix::after {
-  content: "";
-  clear: both;
-  display: table;
-}
-
-.mermaid-container {
-  width: 80%; /* Control width based on your layout needs */
-  padding-top: 45%; /* Padding-top for 16:9 aspect ratio */
-  position: relative;
-  margin: 0 auto; /* Center the diagram */
-}
-
-.mermaid {
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-}
-
-/* Resume Page Specific Styles */
-.resume-content {
-  text-align: left; /* Default text alignment to the left */
-  display: block; /* Display as a block for standard flow layout */
-}
-
-/* Adjusting heading styles to fix spacing issues */
-.resume-content h2 {
-  margin-top: 20px; /* Spacing above the section header */
-  margin-bottom: 10px; /* Spacing below the section header */
-  text-align: center; /* Center-align section headers */
-}
-
-/* Adjusting the top margin for entries that are not the first child to ensure consistent spacing */
-.resume-entry:not(:first-child) {
-  margin-top: 15px; /* Consistent space between resume entries */
-}
-
-/* Ensuring the bullet points in lists are positioned correctly and have no default padding */
-.resume-content ul {
-  list-style-position: inside; /* Bullet points inside list area */
-  padding-left: 0; /* No padding to the left of bullet points */
-}
-
-/* List item styles for spacing and text alignment */
-.resume-content li {
-  margin-bottom: 10px; /* Space below list items */
-  text-align: left; /* Text aligned to the left */
-}
-
-/* Paragraph and list indenting for alignment and better text block appearance */
-.resume-content p,
-.resume-content ul {
-  padding-left: 20px; /* Space to the left for indenting */
-  padding-right: 20px; /* Space to the right for a balanced look */
-}
-
-
-/* Resume entry styles for a two-column layout with dates right-aligned */
-.resume-entry {
-  display: flex; /* Flexbox for layout */
-  justify-content: space-between; /* Space between the main content and dates */
-  align-items: baseline; /* Align items on their baseline for a neat appearance */
-  margin-bottom: 10px; /* Space below each entry */
-}
-
-/* Main content within a resume entry alignment */
-.resume-main {
-  text-align: left; /* Text aligned to the left */
-  flex-grow: 1; /* Allow it to grow to fill space as needed */
-}
-
-/* Degree information styling, ensuring it's on its own line */
-.degree {
-  display: block; /* New line for the degree */
-  font-weight: normal; /* Standard font weight */
-  margin-top: 5px; /* Space between the institution and degree */
-}
-
-/* Date alignment within resume entries */
-.resume-date {
-  text-align: right; /* Dates aligned to the right */
-  white-space: nowrap; /* Prevent dates from wrapping */
-}
-
-/* For list items within professional experience and projects */
-.resume-content ul {
-  padding: 0; /* No padding for lists */
-}
-
-/* Smaller bottom margin for list items within resume content for a compact look */
-.resume-content ul li {
-  margin-bottom: 5px;
-}
-
-/* Alignment for paragraphs and list items within resume content */
-.resume-content p,
-.resume-content li {
-  text-align: left; /* Text aligned to the left */
-}
-
-/* Search and Filter Styles */
-.search-container {
-  margin: 20px auto;
-  max-width: 800px;
-  display: flex;
-  gap: 10px;
-  padding: 0 20px;
-}
-
-.search-input,
-.filter-select {
-  flex: 1;
-  padding: 12px;
-  border-radius: 16px;
-  border: 1px solid var(--card-border-color);
-  background-color: var(--card-background-color);
-  color: var(--text-color);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease;
-}
-
-.search-input::placeholder {
-  color: var(--text-color);
-  opacity: 0.7;
-}
-
-.filter-select {
-  min-width: 180px;
-  flex-grow: 0;
-}
-
-.filter-select option {
-    background: var(--option-background-color);
-    color: var(--option-text-color);
-    padding: 10px;
-}
-
-
-/* Project Card Styles */
-
-.projects {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-around;
-}
-
-.project-details {
-  display: none;
-}
-
-.expand-btn {
-  align-self: center; /* Center the button */
-  background-color: var(--button-background-color);
-  color: var(--button-text-color);
-  padding: 5px 5px;
-  margin: 5px 0;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-.expand-btn:focus {
-  outline: none;
-}
-
-.card {
-  border: 1px solid var(--card-border-color);
-  background-color: var(--card-background-color);
-  border-radius: 16px;
-  margin: 5px;
-  width: 300px;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  height: 445px; /* Adjust height as necessary */
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-.card:hover {
-  transform: scale(1.03); /* Slight scale on hover for interaction feedback */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Softer shadow for a subtle lift effect */
-}
-
-.card-image {
-  display: flex; /* Use flexbox for alignment */
-  justify-content: center; /* Center horizontally */
-  align-items: center; /* Center vertically */
-  height: 200px; /* Set a fixed height for the image container */
-  overflow: hidden; /* Hide overflow */
-}
-
-.card-image img {
-  max-width: 90%; /* Maximum width of image */
-  max-height: 90%; /* Maximum height of image */
-  display: block; /* Ensures no extra space below the image */
-  object-fit: cover; /* Cover the area without distorting the image */
-}
-
-.card-content {
-  padding: 15px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  overflow-y: auto; /* Allow vertical scrolling */
-  flex-grow: 1; /* Allow the content to grow */
-}
-
-.card-content h3 {
-  margin-top: 0;
-}
-
-.card-content p {
-  margin-top: 3px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-/* Contact Card Styles */
-.contact-cards {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
-  padding: 20px;
-  max-width: 1200px;
+.about-container {
+  max-width: var(--max-width);
   margin: 0 auto;
 }
 
-@media (max-width: 992px) {
-  .contact-cards {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media (max-width: 576px) {
-  .contact-cards {
-    grid-template-columns: 1fr;
-  }
-}
-
-.contact-card {
-  background: var(--contact-card-background);
-  border-radius: 16px;
-  padding: 20px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+.about h2 {
+  font-size: 2.5rem;
+  margin-bottom: 3rem;
   text-align: center;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  min-height: 200px;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 1px solid var(--card-border-color);
 }
 
-.contact-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+.about-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 3rem;
+  margin-top: 3rem;
 }
 
-.contact-card a {
-  text-decoration: none;
-  color: var(--contact-card-text-color);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 15px;
-  height: 100%;
-}
-
-.contact-card i {
-  font-size: 2.5em;
-  margin-bottom: 5px;
-  color: var(--contact-card-icon-color);
-}
-
-.contact-card h3 {
-  margin: 0;
-  color: var(--contact-card-icon-color); /* Assuming icons and titles should match, or define a new variable */
-  font-size: 1.5em;
-}
-
-.contact-card p {
-  margin: 0;
-  color: var(--tag-text-color); /* Using tag text color for consistency, or define a new variable */
-  font-size: 1.1em;
-}
-
-.contact-card.email {
-  border-top: 4px solid var(--contact-card-border-top-email);
-}
-.contact-card.linkedin {
-  border-top: 4px solid var(--contact-card-border-top-linkedin);
-}
-.contact-card.github {
-  border-top: 4px solid var(--contact-card-border-top-github);
-}
-.contact-card.behance {
-  border-top: 4px solid var(--contact-card-border-top-behance);
-}
-.contact-card.ideogram {
-  border-top: 4px solid var(--contact-card-border-top-ideogram);
-}
-
-/* Project Tag Styles */
-.tag {
-  background-color: var(--tag-background-color);
-  color: var(--tag-text-color);
-  padding: 3px 8px;
+.about-card {
+  background: #0a0a0a;
+  padding: 2rem;
   border-radius: 12px;
-  font-size: 12px;
-}
-.tag.web {
-  background-color: var(--tag-web-background-color);
-  color: var(--tag-web-text-color);
-}
-.tag.mobile {
-  background-color: var(--tag-mobile-background-color);
-  color: var(--tag-mobile-text-color);
-}
-.tag.vision {
-  background-color: var(--tag-vision-background-color);
-  color: var(--tag-vision-text-color);
-}
-.tag.ai {
-  background-color: var(--tag-ai-background-color);
-  color: var(--tag-ai-text-color);
-}
-.tag.networking {
-  background-color: var(--tag-networking-background-color);
-  color: var(--tag-networking-text-color);
-}
-.tag.desktop {
-  background-color: var(--tag-desktop-background-color);
-  color: var(--tag-desktop-text-color);
-
-}
-.tag.vision {
-  background-color: var(--tag-vision-background-color);
-  color: var(--tag-vision-text-color);
-}
-.tag.ai {
-  background-color: var(--tag-ai-background-color);
-  color: var(--tag-ai-text-color);
-}
-.tag.networking {
-  background-color: var(--tag-networking-background-color);
-  color: var(--tag-networking-text-color);
-}
-.tag.desktop {
-  background-color: var(--tag-desktop-background-color);
-  color: var(--tag-desktop-text-color);
+  border: 1px solid var(--border-color);
 }
 
-
-
-/* Responsive Design */
-@media screen and (max-width: 768px) {
-  .navbar a {
-    display: block;
-    width: 100%;
-  }
-
-  .main {
-    flex-direction: column;
-  }
+.about-card h3 {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  color: var(--text-primary);
 }
 
-/* Theme Toggle Icon Styles */
-.theme-toggle-icon {
-  cursor: pointer;
+.about-card p {
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+/* Experience Timeline */
+.experience {
+  padding: 6rem 2rem;
+}
+
+.experience-container {
+  max-width: var(--max-width);
+  margin: 0 auto;
+}
+
+.experience h2 {
+  font-size: 2.5rem;
+  margin-bottom: 3rem;
+  text-align: center;
+}
+
+.timeline {
   position: relative;
-  width: 24px;
-  height: 24px;
-  margin-left: 10px;
+  max-width: 900px;
+  margin: 0 auto;
 }
 
-.theme-toggle-icon::before {
+.timeline::before {
   content: '';
   position: absolute;
-  top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%);
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: var(--border-color);
+}
+
+.timeline-item {
+  position: relative;
+  padding: 2rem;
+  margin-bottom: 2rem;
+}
+
+.timeline-item:nth-child(odd) {
+  padding-right: 50%;
+  text-align: right;
+}
+
+.timeline-item:nth-child(even) {
+  padding-left: 50%;
+}
+
+.timeline-dot {
+  position: absolute;
+  top: 2rem;
+  left: 50%;
   width: 16px;
   height: 16px;
+  background: #0a0a0a;
+  border: 3px solid var(--text-primary);
   border-radius: 50%;
-  background: var(--navbar-text-color);
+  transform: translateX(-50%);
+}
+
+.timeline-content {
+  background: #1a1a1a;
+  padding: 1.5rem;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+}
+
+.timeline-date {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+}
+
+.timeline-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.timeline-company {
+  color: var(--text-secondary);
+  margin-bottom: 1rem;
+}
+
+/* Projects Section */
+.projects {
+  padding: 6rem 2rem;
+  background: #1a1a1a;
+}
+
+.projects-container {
+  max-width: var(--max-width);
+  margin: 0 auto;
+}
+
+.projects h2 {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.projects-subtitle {
+  text-align: center;
+  color: var(--text-secondary);
+  margin-bottom: 4rem;
+  font-size: 1.125rem;
+}
+
+.project-filters {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 3rem;
+  flex-wrap: wrap;
+}
+
+.filter-btn {
+  padding: 0.5rem 1.5rem;
+  background: #0a0a0a;
+  border: 1px solid var(--border-color);
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+.filter-btn:hover,
+.filter-btn.active {
+  background: var(--text-primary);
+  color: #0a0a0a;
+}
+
+.project-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 2rem;
+}
+
+.project-card {
+  background: #0a0a0a;
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  overflow: hidden;
+  transition: transform 0.3s ease;
+}
+
+.project-card:hover {
+  transform: scale(1.02);
+}
+
+.project-visual {
+  height: 200px;
+  position: relative;
+  overflow: hidden;
+  background: #1a1a1a;
+}
+
+.project-visual img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.project-card:hover .project-visual img {
+  transform: scale(1.05);
+}
+
+.project-content {
+  padding: 2rem;
+}
+
+.project-tags {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.project-tag {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  background: #333333;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+.project-card h3 {
+  font-size: 1.5rem;
+  margin-bottom: 0.75rem;
+  color: var(--text-primary);
+}
+
+.project-card p {
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+}
+
+.project-link {
+  color: var(--text-primary);
+  text-decoration: none;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: gap 0.3s ease;
+}
+
+.project-link:hover {
+  gap: 1rem;
+}
+
+/* Skills Section */
+.skills {
+  padding: 6rem 2rem;
+}
+
+.skills-container {
+  max-width: var(--max-width);
+  margin: 0 auto;
+}
+
+.skills h2 {
+  font-size: 2.5rem;
+  margin-bottom: 3rem;
+  text-align: center;
+}
+
+.skills-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+}
+
+.skill-category {
+  background: #1a1a1a;
+  padding: 2rem;
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
+}
+
+.skill-category h3 {
+  font-size: 1.25rem;
+  margin-bottom: 1.5rem;
+  color: var(--text-primary);
+}
+
+.skill-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.skill-tag {
+  padding: 0.5rem 1rem;
+  background: #333333;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
   transition: all 0.3s ease;
 }
 
-.dark-theme .theme-toggle-icon::before {
-  background: transparent;
-  width: 12px;
-  height: 12px;
-  box-shadow: -2px 2px 0 2px var(--navbar-text-color);
-  transform: translate(-50%, -50%) rotate(-45deg);
+.skill-tag:hover {
+  background: var(--text-primary);
+  color: #0a0a0a;
+}
+
+/* Contact Section */
+.contact {
+  padding: 6rem 2rem;
+  background: #1a1a1a;
+  text-align: center;
+}
+
+.contact-container {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.contact h2 {
+  font-size: 2.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.contact p {
+  font-size: 1.125rem;
+  color: var(--text-secondary);
+  margin-bottom: 3rem;
+}
+
+.contact-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 3rem;
+}
+
+.contact-link {
+  padding: 1.5rem;
+  background: #0a0a0a;
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.contact-link:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+.contact-icon {
+  font-size: 2rem;
+}
+
+.contact-label {
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+.cta-buttons {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.btn {
+  padding: 0.875rem 2rem;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  display: inline-block;
+}
+
+.btn-primary {
+  background: var(--text-primary);
+  color: #0a0a0a;
+}
+
+.btn-primary:hover {
+  background: #cccccc;
+  transform: translateY(-2px);
+}
+
+.btn-secondary {
+  background: #0a0a0a;
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+}
+
+.btn-secondary:hover {
+  background: #1a1a1a;
+}
+
+/* Footer */
+footer {
+  padding: 3rem 2rem;
+  border-top: 1px solid var(--border-color);
+  text-align: center;
+}
+
+.footer-container {
+  max-width: var(--max-width);
+  margin: 0 auto;
+}
+
+.footer-copyright {
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .nav-links {
+    display: none;
+  }
+
+  .hero {
+    padding: 4rem 1.5rem;
+  }
+
+  .timeline::before {
+    left: 30px;
+  }
+
+  .timeline-item {
+    padding-left: 60px !important;
+    padding-right: 20px !important;
+    text-align: left !important;
+  }
+
+  .timeline-dot {
+    left: 30px;
+  }
+
+  .project-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .contact-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
