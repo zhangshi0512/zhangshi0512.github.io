@@ -34,6 +34,12 @@
                 <li><a href="biography.html">Biography</a></li>
                 <li><a href="resume.html">Resume</a></li>
                 <li><a href="contact.html">Contact</a></li>
+                <li>
+                    <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+                        <span class="theme-toggle-icon">☀️</span>
+                        <span class="theme-toggle-text">Light</span>
+                    </button>
+                </li>
             </ul>
         </div>
     </nav>
@@ -116,18 +122,66 @@
 
     <script src="https://unpkg.com/mermaid/dist/mermaid.min.js"></script>
     <script>
-      // Initialize Mermaid.js
-      mermaid.initialize({
-        startOnLoad: true,
-        theme: 'dark', // Always use the dark theme
-        securityLevel: 'loose',
-        themeVariables: {
-            primaryColor: '#bb86fc',
-            lineColor: '#e0e0e0',
-            textColor: '#f5f5f5',
-            mainBkg: 'rgba(26, 26, 26, 0.8)', // Match the site's background
-            edgeLabelBackground: 'rgba(26, 26, 26, 0.8)',
+      // Theme Toggle Functionality
+      const themeToggle = document.getElementById("themeToggle");
+      const themeIcon = document.querySelector(".theme-toggle-icon");
+      const themeText = document.querySelector(".theme-toggle-text");
+
+      // Check for saved theme preference or default to light theme
+      const currentTheme = localStorage.getItem("theme") || "light";
+
+      // Apply light theme by default
+      document.body.classList.add("light-theme");
+
+      // If user previously selected dark theme, switch to it
+      if (currentTheme === "dark") {
+        document.body.classList.remove("light-theme");
+        themeIcon.textContent = "🌙";
+        themeText.textContent = "Dark";
+      }
+
+      // Initialize Mermaid.js with dynamic theme
+      function initMermaid() {
+        const isDark = !document.body.classList.contains("light-theme");
+        mermaid.initialize({
+          startOnLoad: true,
+          theme: isDark ? 'dark' : 'default',
+          securityLevel: 'loose',
+          themeVariables: isDark ? {
+              primaryColor: '#bb86fc',
+              lineColor: '#e0e0e0',
+              textColor: '#f5f5f5',
+              mainBkg: 'rgba(26, 26, 26, 0.8)',
+              edgeLabelBackground: 'rgba(26, 26, 26, 0.8)',
+          } : {
+              primaryColor: '#667eea',
+              lineColor: '#333333',
+              textColor: '#1a1a1a',
+              mainBkg: 'rgba(245, 245, 245, 0.8)',
+              edgeLabelBackground: 'rgba(245, 245, 245, 0.8)',
+          }
+        });
+      }
+
+      initMermaid();
+
+      // Theme toggle click handler
+      themeToggle.addEventListener("click", () => {
+        document.body.classList.toggle("light-theme");
+
+        if (document.body.classList.contains("light-theme")) {
+          themeIcon.textContent = "☀️";
+          themeText.textContent = "Light";
+          localStorage.setItem("theme", "light");
+        } else {
+          themeIcon.textContent = "🌙";
+          themeText.textContent = "Dark";
+          localStorage.setItem("theme", "dark");
         }
+
+        // Reinitialize Mermaid with new theme
+        initMermaid();
+        location.reload(); // Reload to apply Mermaid theme changes
       });
     </script>
   </body>
