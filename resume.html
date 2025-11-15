@@ -22,291 +22,142 @@
     gtag("config", "G-BMHC9VDGPY");
   </script>
   <body>
-    <!-- Header -->
-    <div class="header">
-      <h1>Shi Zhang's Resume</h1>
-      <p>My professional qualifications and experiences.</p>
-    </div>
-
-    <!-- Navigation Bar -->
-    <div class="navbar">
-      <a href="index.html">Home</a>
-      <a href="biography.html">Biography</a>
-      <a href="resume.html" class="active">Resume</a>
-      <a href="projects.html">Projects</a>
-      <a href="contact.html">Contact</a>
-      <a href="#" id="theme-toggle-link" class="theme-toggle-icon"></a>
-    </div>
-
-    <!-- Resume Content -->
-    <div class="content resume-content">
-      <!-- Added class 'resume-content' -->
-      <h2>Education</h2>
-      <div class="resume-entry">
-        <div class="resume-main">
-          <strong>Northeastern University, Seattle WA</strong>
-          <span class="degree">Master of Science in Computer Science</span>
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-container">
+            <a href="index.html" class="logo">Shi Zhang</a>
+            <ul class="nav-links">
+                <li><a href="index.html#about">About</a></li>
+                <li><a href="index.html#experience">Experience</a></li>
+                <li><a href="index.html#projects">Projects</a></li>
+                <li><a href="index.html#skills">Skills</a></li>
+                <li><a href="biography.html">Biography</a></li>
+                <li><a href="resume.html">Resume</a></li>
+                <li><a href="contact.html">Contact</a></li>
+                <li>
+                    <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+                        <span class="theme-toggle-icon">☀️</span>
+                        <span class="theme-toggle-text">Light</span>
+                    </button>
+                </li>
+            </ul>
         </div>
-        <div class="resume-date">
-          <strong class="date">May 2025</strong>
+    </nav>
+
+    <!-- Page Content -->
+    <main style="padding-top: 80px;">
+      <section class="experience" id="resume-content">
+        <div class="experience-container">
+          <h2 style="margin-bottom: 3rem;">Resume</h2>
+
+          <div class="cta-buttons" style="margin-bottom: 3rem; justify-content: center;">
+              <a href="Shi_Zhang_Resume.pdf" class="btn btn-primary" download>Download Resume</a>
+          </div>
+
+          <div class="timeline">
+            <div class="timeline-item">
+              <div class="timeline-dot"></div>
+              <div class="timeline-content">
+                <h3 class="timeline-title">Education</h3>
+                <p><strong>Northeastern University, Seattle WA</strong><br>Master of Science in Computer Science<br><em>Graduated: May 2025</em></p>
+                <p><strong>Northeastern University (Online)</strong><br>Master of Science in Data Analytics and Engineering<br><em>In Progress: Fall 2025 - Summer 2026 (Expected)</em></p>
+                <p><strong>University of Pennsylvania, Philadelphia PA</strong><br>Master of Science in Design<br><em>Dec 2019</em></p>
+                <p><strong>Rensselaer Polytechnic Institute, Troy NY</strong><br>Bachelor of Architecture<br><em>May 2018</em></p>
+              </div>
+            </div>
+
+            <div class="timeline-item">
+              <div class="timeline-dot"></div>
+              <div class="timeline-content">
+                <h3 class="timeline-title">Professional Experience</h3>
+
+                <div class="timeline-date">Nov 2024 - Present</div>
+                <div class="timeline-company">IDitor Inc, San Francisco CA - Founding Software Engineer</div>
+                <ul>
+                  <li>Building innovative AI-powered social applications as a founding member of a San Francisco-based startup.</li>
+                  <li>Leading full-stack development with React.js, Next.js, TypeScript, and Node.js for scalable web applications.</li>
+                  <li>Architecting backend systems and integrating cutting-edge AI/ML technologies including LLMs and recommendation engines.</li>
+                  <li>Driving product development from concept to deployment, ensuring high performance and user engagement.</li>
+                </ul>
+
+                <div class="timeline-date">Sep 2024 - Dec 2024</div>
+                <div class="timeline-company">IDitor Inc, Hillsborough CA - Software Development Intern</div>
+                <ul>
+                  <li>Created a user-matching service using TypeScript and Supabase, utilizing cosine similarity for improved recommendation accuracy by 20%.</li>
+                  <li>Designed and implemented a chat-simulation API leveraging the OpenAI API for dynamic, AI-driven conversations, enhancing user engagement.</li>
+                  <li>Optimized backend architecture for scalability, reducing response times by 30%.</li>
+                </ul>
+
+                <div class="timeline-date">May 2024 - Aug 2024</div>
+                <div class="timeline-company">GraphAcademy, Cupertino CA - Software Development Intern</div>
+                <ul>
+                  <li>Developed user-friendly AI-driven dating app using Next.js and TypeScript, achieving a 30% improvement in user engagement metrics.</li>
+                  <li>Integrated advanced large language models (LLMs) and utilized cloud services like Supabase for backend support.</li>
+                </ul>
+
+                <div class="timeline-date">Apr 2024 - Jun 2024</div>
+                <div class="timeline-company">Green Light-Year (NPO), Shanghai - Backend Development Intern</div>
+                <ul>
+                  <li>Conceptualized and built a comprehensive web application aimed at promoting sustainable practices within communities.</li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="timeline-item">
+              <div class="timeline-dot"></div>
+              <div class="timeline-content">
+                <h3 class="timeline-title">Technical Skills</h3>
+                <p><strong>Languages:</strong> Java, Python, Kotlin, C++, JavaScript, TypeScript, SQL</p>
+                <p><strong>Tools:</strong> Docker, Linux, AWS, Git, Open CV, MySQL, MongoDB, PostgreSQL</p>
+                <p><strong>Frameworks:</strong> Node.js, Next.js, React.js, Vue.js, Java Spring Boot, Restful API</p>
+              </div>
+            </div>
+
+          </div>
         </div>
-      </div>
-      <div class="resume-entry">
-        <div class="resume-main">
-          <strong>University of Pennsylvania, Philadelphia PA</strong>
-          <span class="degree">Master of Science in Design</span>
-        </div>
-        <div class="resume-date">
-          <strong class="date">Dec 2019</strong>
-        </div>
-      </div>
-      <div class="resume-entry">
-        <div class="resume-main">
-          <strong>Rensselaer Polytechnic Institute, Troy NY</strong>
-          <span class="degree">Bachelor of Architecture</span>
-        </div>
-        <div class="resume-date">
-          <strong class="date">May 2018</strong>
-        </div>
-      </div>
-
-      <h2>Professional Experience</h2>
-      <div class="resume-entry">
-        <strong
-          >IDitor Inc, Hillsborough CA - Software Development Intern</strong
-        >
-        <strong class="date">Sep 2024 - Dec 2024</strong>
-      </div>
-      <span>
-        Contribution to the RESTful APIs for a Social App using TypeScript and
-        Next.js
-      </span>
-      <ul>
-        <li>
-          Created a user-matching service using TypeScript and Supabase,
-          utilizing cosine similarity for improved recommendation accuracy by
-          20%.
-        </li>
-        <li>
-          Designed and implemented a chat-simulation API leveraging the OpenAI
-          API for dynamic, AI-driven conversations, enhancing user engagement.
-        </li>
-        <li>
-          Optimized backend architecture for scalability, reducing response
-          times by 30% and ensuring seamless integration with front-end
-          services.
-        </li>
-      </ul>
-
-      <div class="resume-entry">
-        <strong
-          >GraphAcademy, Cupertino CA - Software Development Intern</strong
-        >
-        <strong class="date">May 2024 - Aug 2024</strong>
-      </div>
-      <span>
-        Contribution to an AI-Driven Dating App using TypeScript and Node.js
-      </span>
-      <ul>
-        <li>
-          Developed user-friendly AI-driven dating app using Next.js and
-          TypeScript, achieving a 30% improvement in user engagement metrics.
-        </li>
-        <li>
-          Integrated advanced large language models (LLMs) and utilized cloud
-          services like Supabase for backend support, reducing backend
-          processing time by 25%.
-        </li>
-        <li>
-          Implemented AI technologies such as Hume voice API and image
-          background removal API for users' digital profile.
-        </li>
-        <li>
-          Collaborated with design and product team, work through the full
-          software development lifecycle, and connected all the page routing
-          strictly following the user flow behaviors.
-        </li>
-      </ul>
-
-      <div class="resume-entry">
-        <strong
-          >Green Light-Year (NPO), Shanghai - Backend Development Intern</strong
-        >
-        <strong class="date">Apr 2024 - Jun 2024</strong>
-      </div>
-      <span>
-        Contribution to an ESG Data Visualization Website using Vue.js and
-        PostgreSQL
-      </span>
-      <ul>
-        <li>
-          Conceptualized a comprehensive web application aimed at promoting
-          sustainable practices within communities, and built a dynamic Vue.js
-          frontend using state management and reusable components for an
-          interactive user experience.
-        </li>
-        <li>
-          Developed a Flask backend with PostgreSQL integration for user
-          authentication, data management, and API endpoints, ensuring secure
-          and efficient operations.
-        </li>
-      </ul>
-
-      <div class="resume-entry">
-        <strong
-          >Northeastern University, Seattle WA - Research Assistant</strong
-        >
-        <strong class="date">Sep 2023 - Dec 2023</strong>
-      </div>
-      <span> Contribution on Open Source Cloud Database using Java & SQL </span>
-      <ul>
-        <li>
-          Analyzed performance trade-offs between NoSQL and Distributed SQL
-          databases in cloud environments.
-        </li>
-        <li>
-          Adapted YCSB+T for benchmarking across multiple database systems,
-          enabling direct workload comparisons.
-        </li>
-        <li>
-          Achieved key milestones in benchmarking, adapting YCSB+T for various
-          databases, and initiating an open-source platform and educational
-          resource development.
-        </li>
-      </ul>
-
-      <span>
-        Contribution on Resume Match System using Python & Transformer
-      </span>
-      <ul>
-        <li>
-          Conducted NLP and Machine Learning research to semantically match
-          resumes to specific job descriptions or queries, aiding recruiters in
-          finding the most suitable candidates.
-        </li>
-        <li>
-          Applied visualization techniques to output embedding correlations,
-          enhancing semantic analysis clarity.
-        </li>
-        <li>
-          Boosted recruitment efficiency by 25% with a tool that semantically
-          matches resumes to job queries.
-        </li>
-      </ul>
-
-      <div class="resume-entry">
-        <strong>Ballinger, Philadelphia PA - Architectural BIM Designer</strong>
-        <strong class="date">Feb 2020 - Nov 2022</strong>
-      </div>
-      <ul>
-        <li>
-          Managed project documentation across entire design life cycle for a
-          1.6 million sq. ft. hospital project.
-        </li>
-        <li>
-          Delivered monthly progress presentations to the entire office and
-          provided weekly internal updates.
-        </li>
-        <li>
-          Streamlined data workflow by optimizing the framework between Excel
-          and Revit.
-        </li>
-        <li>
-          Collaborated with Mechanical, Electrical, and Plumbing teams for
-          monthly value engineering initiatives.
-        </li>
-      </ul>
-
-      <h2>Relevant Projects</h2>
-      <div class="resume-entry">
-        <strong
-          >Camera Calibration & Augmented Reality Computer Vision App</strong
-        >
-        <strong>Nov 2023</strong>
-      </div>
-      <ul>
-        <li>
-          Engineered a C++ application integrating OpenCV for camera calibration
-          and enabling real-time 3D object projection.
-        </li>
-        <li>
-          Implemented robust camera calibration using chessboard patterns,
-          storing parameters in local database.
-        </li>
-        <li>
-          Developed features for dynamic interaction with the augmented
-          environment, including virtual object manipulation, feature detection,
-          and real-time rendering adjustments based on user input.
-        </li>
-      </ul>
-
-      <div class="resume-entry">
-        <strong>StayStocked Android Mobile App</strong>
-        <strong>Apr 2023</strong>
-      </div>
-      <ul>
-        <li>
-          Recognized a need for a user-friendly mobile app to track and manage
-          grocery inventory effectively.
-        </li>
-        <li>
-          Developed core functionalities using Kotlin, incorporating features
-          like product listings, search filters, and user interactions with
-          tooltips and alerts.
-        </li>
-        <li>
-          Successfully launched the StayStocked app, receiving positive feedback
-          from 140+ audience members.
-        </li>
-      </ul>
-
-      <div class="resume-entry">
-        <strong>Fun Facts Share Website Full-Stack Web App</strong>
-        <strong>Feb 2023</strong>
-      </div>
-      <ul>
-        <li>
-          Architected interactive social web app with community engagement;
-          built React frontend implementing hooks and state management for
-          dynamic UX.
-        </li>
-        <li>
-          Developed backend database integrations and reusable
-          container/presentational components enabling CRUD operations, image
-          uploads and user authentication.
-        </li>
-        <li>
-          Demonstrated full-stack proficiency utilising React, Supabase, Git;
-          engineered features like voting, categorization and commenting to
-          facilitate community contribution.
-        </li>
-      </ul>
-
-      <h2>Technical Skills</h2>
-      <div class="resume-entry single-column">
-        <span
-          >Languages: Java, Python, Kotlin, C++, JavaScript, TypeScript,
-          SQL</span
-        >
-      </div>
-      <div class="resume-entry single-column">
-        <span
-          >Tools: Docker, Linux, AWS, Git, Open CV, MySQL, MongoDB,
-          PostgreSQL</span
-        >
-      </div>
-      <div class="resume-entry single-column">
-        <span>
-          Frameworks: Node.js, Next.js, React.js, Vue.js, Java Spring Boot,
-          Restful API
-        </span>
-      </div>
-    </div>
+      </section>
+    </main>
 
     <!-- Footer -->
-    <div class="footer">
-      <p>© 2024 by Shi Zhang. All rights reserved.</p>
-    </div>
-    <script src="theme-toggle.js"></script>
+    <footer>
+        <div class="footer-container">
+            <p class="footer-copyright">© 2024 by Shi Zhang. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+      // Theme Toggle Functionality
+      const themeToggle = document.getElementById("themeToggle");
+      const themeIcon = document.querySelector(".theme-toggle-icon");
+      const themeText = document.querySelector(".theme-toggle-text");
+
+      // Check for saved theme preference or default to light theme
+      const currentTheme = localStorage.getItem("theme") || "light";
+
+      // Apply light theme by default
+      document.body.classList.add("light-theme");
+
+      // If user previously selected dark theme, switch to it
+      if (currentTheme === "dark") {
+        document.body.classList.remove("light-theme");
+        themeIcon.textContent = "🌙";
+        themeText.textContent = "Dark";
+      }
+
+      // Theme toggle click handler
+      themeToggle.addEventListener("click", () => {
+        document.body.classList.toggle("light-theme");
+
+        if (document.body.classList.contains("light-theme")) {
+          themeIcon.textContent = "☀️";
+          themeText.textContent = "Light";
+          localStorage.setItem("theme", "light");
+        } else {
+          themeIcon.textContent = "🌙";
+          themeText.textContent = "Dark";
+          localStorage.setItem("theme", "dark");
+        }
+      });
+    </script>
   </body>
 </html>

@@ -26,529 +26,114 @@
     gtag("config", "G-BMHC9VDGPY");
   </script>
   <body>
-    <!-- Header -->
-    <div class="header">
-      <h1>Shi Zhang's Projects</h1>
-      <p>A showcase of my professional projects and accomplishments.</p>
-    </div>
-
-    <!-- Navigation Bar -->
-    <div class="navbar">
-      <a href="index.html">Home</a>
-      <a href="biography.html">Biography</a>
-      <a href="resume.html">Resume</a>
-      <a href="projects.html">Projects</a>
-      <a href="contact.html">Contact</a>
-      <a href="#" id="theme-toggle-link" class="theme-toggle-icon"></a>
-    </div>
-
-    <!-- Search and Filter -->
-    <div class="search-container">
-      <input
-        type="text"
-        class="search-input"
-        placeholder="Search projects..."
-        id="searchInput"
-      />
-      <select class="filter-select" id="categoryFilter">
-        <option value="">All Categories</option>
-        <option value="web">Web Applications</option>
-        <option value="mobile">Mobile Applications</option>
-        <option value="vision">Computer Vision</option>
-        <option value="ai">AI/ML</option>
-        <option value="networking">Networking</option>
-        <option value="desktop">Desktop Applications</option>
-      </select>
-    </div>
-
-    <!-- Projects Content -->
-    <div class="projects">
-      <!-- Project 1 -->
-      <div class="card" data-categories="web">
-        <div class="card-image">
-          <img src="https://i.imgur.com/rCsq16M.gif" alt="Project 1 Preview" />
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-container">
+            <a href="index.html" class="logo">Shi Zhang</a>
+            <ul class="nav-links">
+                <li><a href="index.html#about">About</a></li>
+                <li><a href="index.html#experience">Experience</a></li>
+                <li><a href="index.html#projects">Projects</a></li>
+                <li><a href="index.html#skills">Skills</a></li>
+                <li><a href="biography.html">Biography</a></li>
+                <li><a href="resume.html">Resume</a></li>
+                <li><a href="contact.html">Contact</a></li>
+            </ul>
         </div>
-        <div class="card-content">
-          <a href="https://factup.netlify.app/" target="_blank"
-            ><h3>FactHub | Full-stack Web Application</h3></a
-          >
-          <div class="project-tags">
-            <span class="tag web">Web</span>
-            <span class="tag ai">AI</span>
+    </nav>
+
+    <!-- Page Content -->
+    <main style="padding-top: 80px;">
+      <section class="projects" id="all-projects">
+        <div class="projects-container">
+          <h2 style="margin-bottom: 1rem;">All Projects</h2>
+          <p class="projects-subtitle" style="margin-bottom: 4rem;">A comprehensive list of my work.</p>
+
+          <div class="project-filters">
+            <button class="filter-btn active" data-filter="all">All</button>
+            <button class="filter-btn" data-filter="web">Web</button>
+            <button class="filter-btn" data-filter="mobile">Mobile</button>
+            <button class="filter-btn" data-filter="vision">Computer Vision</button>
+            <button class="filter-btn" data-filter="ai">AI/ML</button>
+            <button class="filter-btn" data-filter="desktop">Desktop</button>
           </div>
-          <p>
-            Full-stack web application for sharing fun facts. User can apply
-            sort, search, create, vote and comment functions.
-          </p>
-          <button class="expand-btn">Expand Details</button>
-          <ul class="project-details">
-            <li>
-              Architected interactive social web app with community engagement;
-              built React frontend implementing hooks and state management for
-              dynamic UX.
-            </li>
-            <li>
-              Developed backend database integrations and reusable
-              container/presentational components enabling CRUD operations,
-              image uploads and user authentication.
-            </li>
-            <li>
-              Demonstrated full-stack proficiency utilising React, Supabase,
-              Git; engineered features like voting, categorization and
-              commenting to facilitate community contribution.
-            </li>
-          </ul>
-        </div>
-      </div>
 
-      <!-- Project 2 -->
-      <div class="card" data-categories="web">
-        <div class="card-image">
-          <img src="https://i.imgur.com/3tbi6PI.gif" alt="Project 2 Preview" />
-        </div>
-        <div class="card-content">
-          <a
-            href="https://github.com/zhangshi0512/data-dashboard/tree/part2"
-            target="_blank"
-            ><h3>Weather Data Dashboard | Front-end Web Application</h3></a
-          >
-          <div class="project-tags">
-            <span class="tag web">Web</span>
-          </div>
-          <p>
-            A font-end application provide user with filter, search, and
-            visualize functions for weather data.
-          </p>
-          <button class="expand-btn">Expand Details</button>
-          <ul class="project-details">
-            <li>
-              Engineered an web application that fetched data using an API call,
-              and updated information using useEffect React Hook and async/await
-              syntax.
-            </li>
-            <li>
-              Optimized the filter functions to allow multiple inputs being
-              applied at the same time.
-            </li>
-            <li>
-              Visualized the weather data with attractive graphs, embedded a
-              detail page for each entry.
-            </li>
-          </ul>
-        </div>
-      </div>
+          <div class="project-grid">
 
-      <!-- Project 3 -->
-      <div class="card" data-categories="desktop">
-        <div class="card-image">
-          <img src="https://i.imgur.com/dIJ3f6u.gif" alt="Project 3 Preview" />
-        </div>
-        <div class="card-content">
-          <h3>Expense Tracking Visualizer | Desktop Application</h3>
-          <div class="project-tags">
-            <span class="tag desktop">Desktop</span>
-          </div>
-          <p>
-            JavaFX application to visualize expense and tax in various graphs
-            from csv file.
-          </p>
-          <button class="expand-btn">Expand Details</button>
-          <ul class="project-details">
-            <li>
-              Designed the TaxCalculatorApp class to load, manage, and save
-              shopping items from/to a CSV file and to perform tax calculations
-              based on different categories.
-            </li>
-            <li>
-              Utilized the Model-View-Controller (MVC) architecture, with JavaFX
-              for the view layer, enabling a user-friendly graphical interface.
-            </li>
-            <li>
-              Defined tax classifications for different categories (like
-              Alcohol, Tobacco, Prepared Food) and implemented tax calculation
-              logic.
-            </li>
-            <li>
-              Established a main entry point (Main.java) for the JavaFX
-              application, which loads the initial user interface from an FXML
-              file.
-            </li>
-          </ul>
-        </div>
-      </div>
+            <div class="project-card" data-category="web ai">
+              <div class="project-visual"><img src="https://i.imgur.com/rCsq16M.gif" alt="FactHub Preview" /></div>
+              <div class="project-content">
+                <div class="project-tags"><span class="project-tag">Web</span><span class="project-tag">AI</span></div>
+                <h3>FactHub</h3>
+                <p>Full-stack social web application with React frontend and Supabase backend. Features voting, categorization, and commenting systems.</p>
+                <a href="https://factup.netlify.app/" target="_blank" class="project-link">View project →</a>
+              </div>
+            </div>
 
-      <!-- Project 4 -->
-      <div class="card" data-categories="mobile">
-        <div class="card-image">
-          <img src="https://i.imgur.com/XmdpSKn.gif" alt="Project 4 Preview" />
-        </div>
-        <div class="card-content">
-          <a href="https://vimeo.com/822187167" target="_blank"
-            ><h3>StayStocked | Android Mobile App</h3></a
-          >
-          <div class="project-tags">
-            <span class="tag mobile">Mobile</span>
-          </div>
-          <p>
-            Android Mobile application to track and manage grocery inventory
-            effectively.
-          </p>
-          <button class="expand-btn">Expand Details</button>
-          <ul class="project-details">
-            <li>
-              Developed core functionalities using Kotlin, incorporating
-              features like product listings, search filters, and user
-              interactions with tooltips and alerts.
-            </li>
-            <li>
-              Successfully launched the StayStocked app, receiving positive
-              feedback from 140+ audience members.
-            </li>
-          </ul>
-        </div>
-      </div>
+            <div class="project-card" data-category="web ai">
+              <div class="project-visual"><img src="https://i.imgur.com/DfjM2Mr.gif" alt="AI Chat Preview" /></div>
+              <div class="project-content">
+                <div class="project-tags"><span class="project-tag">Web</span><span class="project-tag">AI</span></div>
+                <h3>AI Chat with Document Context</h3>
+                <p>AI-powered chat application using React and Next.js that processes documents to provide contextual responses.</p>
+                <a href="https://rag-chatbot-lac.vercel.app/" target="_blank" class="project-link">View project →</a>
+              </div>
+            </div>
 
-      <!-- Project 5 -->
-      <div class="card" data-categories="mobile">
-        <div class="card-image">
-          <img src="https://i.imgur.com/5sEY1Qa.gif" alt="Project 5 Preview" />
-        </div>
-        <div class="card-content">
-          <a
-            href="https://github.com/zhangshi0512/Movie_Catalog_RecyclerView_Beautified"
-            target="_blank"
-            ><h3>Movie Catalog | Android Mobile Application</h3></a
-          >
-          <div class="project-tags">
-            <span class="tag mobile">Mobile</span>
-          </div>
-          <p>Android mobile application to access the latest movie posters.</p>
-          <button class="expand-btn">Expand Details</button>
-          <ul class="project-details">
-            <li>
-              Created an android application fetching movie data using API call.
-            </li>
-            <li>Utilized RecyclerView to display a list of scrollable data.</li>
-            <li>
-              Modified the theme of the application for both light and dark
-              mode.
-            </li>
-          </ul>
-        </div>
-      </div>
+            <div class="project-card" data-category="vision ai">
+              <div class="project-visual"><img src="https://i.imgur.com/hMdR1NU.gif" alt="AR System Preview" /></div>
+              <div class="project-content">
+                <div class="project-tags"><span class="project-tag">Computer Vision</span><span class="project-tag">AI</span></div>
+                <h3>Real-Time AR System</h3>
+                <p>C++ application with OpenCV for camera calibration and real-time 3D object projection.</p>
+                <a href="https://github.com/zhangshi0512/cs5330_project04_calibration-AugmentedReality" target="_blank" class="project-link">View code →</a>
+              </div>
+            </div>
 
-      <!-- Project 6 -->
-      <div class="card" data-categories="vision">
-        <div class="card-image">
-          <img src="https://i.imgur.com/vt2yI3t.gif" alt="Project 6 Preview" />
-        </div>
-        <div class="card-content">
-          <a
-            href="https://github.com/zhangshi0512/cs5330_project03_realTime2DObjectRecognition"
-            target="_blank"
-            ><h3>Real Time Object Classifier | Computer Vision Project</h3></a
-          >
-          <div class="project-tags">
-            <span class="tag vision">Computer Vision</span>
-            <span class="tag ai">AI</span>
-          </div>
-          <p>
-            A real-time object recognition system for video streams using C++
-            and OpenCV.
-          </p>
-          <button class="expand-btn">Expand Details</button>
-          <ul class="project-details">
-            <li>
-              Designed an image database for feature vector storage, object
-              matching, and automated labeling.
-            </li>
-            <li>
-              Implemented feature extraction algorithms, and introduced
-              K-Nearest Neighbor (KNN) matching and Hausdorff distance-based
-              contour recognition for accurate object classification.
-            </li>
-            <li>
-              Successfully classified multiple object types with enhanced
-              accuracy and evaluated system performance using a confusion
-              matrix, demonstrating the system's robustness and efficiency.
-            </li>
-          </ul>
-        </div>
-      </div>
+            <div class="project-card" data-category="mobile">
+              <div class="project-visual"><img src="https://i.imgur.com/XmdpSKn.gif" alt="StayStocked Preview" /></div>
+              <div class="project-content">
+                <div class="project-tags"><span class="project-tag">Mobile</span></div>
+                <h3>StayStocked</h3>
+                <p>Android app built with Kotlin for grocery inventory management. Features product listings, search filters, and user interactions.</p>
+                <a href="https://vimeo.com/822187167" target="_blank" class="project-link">View demo →</a>
+              </div>
+            </div>
 
-      <!-- Project 7 -->
-      <div class="card" data-categories="vision">
-        <div class="card-image">
-          <img src="https://i.imgur.com/hMdR1NU.gif" alt="Project 7 Preview" />
-        </div>
-        <div class="card-content">
-          <a
-            href="https://github.com/zhangshi0512/cs5330_project04_calibration-AugmentedReality"
-            target="_blank"
-            ><h3>Real Time Augmented Reality | Computer Vision Project</h3></a
-          >
-          <div class="project-tags">
-            <span class="tag vision">Computer Vision</span>
-            <span class="tag ai">AI</span>
           </div>
-          <p>
-            A real-time augmented reality application for video streams using
-            C++ and OpenCV.
-          </p>
-          <button class="expand-btn">Expand Details</button>
-          <ul class="project-details">
-            <li>
-              Engineered a C++ application integrating OpenCV for camera
-              calibration and enabling real-time 3D object projection.
-            </li>
-            <li>
-              Implemented robust camera calibration using chessboard patterns,
-              storing parameters in local database.
-            </li>
-            <li>
-              Developed features for dynamic interaction with the augmented
-              environment, including virtual object manipulation, feature
-              detection, and real-time rendering adjustments based on user
-              input.
-            </li>
-          </ul>
         </div>
-      </div>
-
-      <!-- Project 8 -->
-      <div class="card" data-categories="web">
-        <div class="card-image">
-          <img src="https://i.imgur.com/rRgH39f.gif" alt="Project 8 Preview" />
-        </div>
-        <div class="card-content">
-          <a
-            href="https://sea-monster-crowdfunding.netlify.app/"
-            target="_blank"
-            ><h3>Sea Monster Crowdfunding Website | Web & UX Design</h3></a
-          >
-          <div class="project-tags">
-            <span class="tag web">Web</span>
-          </div>
-          <p>
-            A user-friendly interface for "Sea Monster Crowdfunding" to showcase
-            funded and unfunded games.
-          </p>
-          <button class="expand-btn">Expand Details</button>
-          <ul class="project-details">
-            <li>
-              Incorporated interactive features, including buttons to filter
-              games by funding status.
-            </li>
-            <li>
-              Used DOM manipulation to dynamically display game cards, company
-              statistics, and top-funded games.
-            </li>
-            <li>
-              Stylistically enhanced the website using CSS for a cohesive visual
-              experience.
-            </li>
-          </ul>
-        </div>
-      </div>
-
-      <!-- Project 9 -->
-      <div class="card" data-categories="networking">
-        <div class="card-image">
-          <img src="https://i.imgur.com/2gey5U4.gif" alt="Project 9 Preview" />
-        </div>
-        <div class="card-content">
-          <h3>Chat Room | Computer Networking Application</h3>
-          <div class="project-tags">
-            <span class="tag networking">Networking</span>
-            <span class="tag web">Web</span>
-          </div>
-          <p>
-            A dynamic, real-time chat application using Flask and
-            Flask-SocketIO, enabling the creation and management of multiple
-            chat rooms.
-          </p>
-          <button class="expand-btn">Expand Details</button>
-          <ul class="project-details">
-            <li>
-              Developed a web-based chat application allowing users to join and
-              create chat rooms with unique codes.
-            </li>
-            <li>
-              Utilized Flask for backend server setup and Flask-SocketIO for
-              real-time bidirectional communication between clients and server.
-            </li>
-            <li>
-              Implemented a responsive user interface using HTML, CSS, and
-              JavaScript with dynamic content insertion and real-time chat
-              functionality.
-            </li>
-            <li>
-              Implemented room management and message handling logic in Python,
-              ensuring efficient and responsive user interactions.
-            </li>
-          </ul>
-        </div>
-      </div>
-
-      <!-- Project 10 -->
-      <div class="card" data-categories="web">
-        <div class="card-image">
-          <img src="https://i.imgur.com/c59RyBH.gif" alt="Project 10 Preview" />
-        </div>
-        <div class="card-content">
-          <a href="https://quiz-app-online.netlify.app/" target="_blank"
-            ><h3>Quick Quiz | Front-end Web Application</h3></a
-          >
-          <div class="project-tags">
-            <span class="tag web">Web</span>
-          </div>
-          <p>
-            A simple quiz application for user to test their IT/CS related
-            knowledge.
-          </p>
-          <button class="expand-btn">Expand Details</button>
-          <ul class="project-details">
-            <li>
-              Assembled a quiz app allows user answers questions and stores top
-              5 scores.
-            </li>
-            <li>
-              Created basic CSS, JavaScript, and HTML skeleton without
-              assistance of libraries or frameworks.
-            </li>
-            <li>
-              Fetched trivia questions from Open Trivia DB API, and saved high
-              scores in Local Storage.
-            </li>
-          </ul>
-        </div>
-      </div>
-
-      <!-- Project 11 -->
-      <div class="card" data-categories="web ai">
-        <div class="card-image">
-          <img src="https://i.imgur.com/DfjM2Mr.gif" alt="Project 11 Preview" />
-        </div>
-        <div class="card-content">
-          <a href="https://rag-chatbot-lac.vercel.app/" target="_blank"
-            ><h3>
-              AI Chat with Document Context | Full-stack Web Application
-            </h3></a
-          >
-          <div class="project-tags">
-            <span class="tag web">Web</span>
-            <span class="tag ai">AI</span>
-          </div>
-          <p>
-            An AI-powered chat application that processes and integrates
-            document context to enhance user interactions.
-          </p>
-          <button class="expand-btn">Expand Details</button>
-          <ul class="project-details">
-            <li>
-              Integrated local AI models and external AI services to provide
-              contextual responses based on uploaded documents.
-            </li>
-            <li>
-              Developed the frontend using React, Next.js, and Material-UI, with
-              a clean and responsive design.
-            </li>
-            <li>
-              Implemented server-side logic to handle file uploads, document
-              processing, and API requests to external services.
-            </li>
-            <li>
-              Deployed the application on Vercel, enabling seamless usage both
-              locally and in a production environment.
-            </li>
-          </ul>
-        </div>
-      </div>
-
-      <!-- Project 12 -->
-      <div class="card" data-categories="web">
-        <div class="card-image">
-          <img
-            src="https://i.imgur.com/3CFcMBC.gif"
-            alt="Creatorverse Preview"
-          />
-        </div>
-        <div class="card-content">
-          <a href="https://creatorverse-theta.vercel.app/" target="_blank"
-            ><h3>Creatorverse | Full-stack Web Application</h3></a
-          >
-          <div class="project-tags">
-            <span class="tag web">Web</span>
-          </div>
-          <p>
-            A content creator management platform that allows users to browse,
-            add, edit, and delete creator profiles with ease.
-          </p>
-          <button class="expand-btn">Expand Details</button>
-          <ul class="project-details">
-            <li>
-              Built with React and Supabase, offering a responsive UI for
-              managing creator profiles.
-            </li>
-            <li>
-              Implemented core CRUD functionalities, allowing users to create,
-              read, update, and delete creator details.
-            </li>
-            <li>
-              Designed with a card-based interface, featuring image overlays and
-              hover effects for an enhanced user experience.
-            </li>
-            <li>
-              Utilized Vite for fast development and optimized performance, with
-              live previews and hot module replacement.
-            </li>
-          </ul>
-        </div>
-      </div>
-    </div>
+      </section>
+    </main>
 
     <!-- Footer -->
-    <div class="footer">
-      <p>© 2024 by Shi Zhang. All rights reserved.</p>
-    </div>
+    <footer>
+        <div class="footer-container">
+            <p class="footer-copyright">© 2024 by Shi Zhang. All rights reserved.</p>
+        </div>
+    </footer>
 
-    <!-- Scripting to Control Expand and Collapse for project details-->
     <script>
-      document.querySelectorAll(".expand-btn").forEach((button) => {
-        button.addEventListener("click", () => {
-          const projectDetails = button.nextElementSibling;
-          projectDetails.style.display =
-            projectDetails.style.display === "none" ? "block" : "none";
-        });
+      // Project filter functionality
+      const filterBtns = document.querySelectorAll('.filter-btn');
+      const projectCards = document.querySelectorAll('.project-card');
+
+      filterBtns.forEach(btn => {
+          btn.addEventListener('click', () => {
+              filterBtns.forEach(b => b.classList.remove('active'));
+              btn.classList.add('active');
+
+              const filter = btn.getAttribute('data-filter');
+
+              projectCards.forEach(card => {
+                  const categories = card.getAttribute('data-category');
+                  if (filter === 'all' || (categories && categories.includes(filter))) {
+                      card.style.display = 'block';
+                  } else {
+                      card.style.display = 'none';
+                  }
+              });
+          });
       });
-
-      // Search and Filter functionality
-      const searchInput = document.getElementById("searchInput");
-      const categoryFilter = document.getElementById("categoryFilter");
-      const cards = document.querySelectorAll(".card");
-
-      function filterProjects() {
-        const searchTerm = searchInput.value.toLowerCase();
-        const selectedCategory = categoryFilter.value;
-
-        cards.forEach((card) => {
-          const title = card.querySelector("h3").textContent.toLowerCase();
-          const description = card.querySelector("p").textContent.toLowerCase();
-          const categories = card.getAttribute("data-categories");
-
-          const matchesSearch =
-            title.includes(searchTerm) || description.includes(searchTerm);
-          const matchesCategory =
-            !selectedCategory || categories.includes(selectedCategory);
-
-          card.style.display =
-            matchesSearch && matchesCategory ? "block" : "none";
-        });
-      }
-
-      searchInput.addEventListener("input", filterProjects);
-      categoryFilter.addEventListener("change", filterProjects);
     </script>
-    <script src="theme-toggle.js"></script>
   </body>
 </html>

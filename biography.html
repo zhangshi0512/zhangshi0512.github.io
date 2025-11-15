@@ -6,8 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="icon" type="image/png" href="favicon.png" />
     <link rel="stylesheet" href="style-new.css" />
-
-    <!-- Head content (similar to index.html) -->
   </head>
   <!-- Google tag (gtag.js) -->
   <script
@@ -24,132 +22,164 @@
     gtag("config", "G-BMHC9VDGPY");
   </script>
   <body>
-    <!-- Header -->
-    <div class="header">
-      <h1>Shi Zhang's Biography</h1>
-      <p>A showcase of my professional projects and accomplishments.</p>
-    </div>
-
-    <!-- Navigation Bar -->
-    <div class="navbar">
-      <a href="index.html">Home</a>
-      <a href="biography.html">Biography</a>
-      <a href="resume.html">Resume</a>
-      <a href="projects.html">Projects</a>
-      <a href="contact.html">Contact</a>
-      <a href="#" id="theme-toggle-link" class="theme-toggle-icon"></a>
-    </div>
-
-    <!-- Biography Content -->
-    <div class="content">
-      <div class="section">
-        <h2>About Me</h2>
-        <p>
-          As a former architectural designer turned computer scientist, I am
-          currently enrolled in the Align Master program of Computer Science at
-          Northeastern University, Seattle Campus. My journey in the tech
-          industry is fueled by a passion for innovation and solving complex
-          problems in software development. Bringing a unique perspective to my
-          next role, I aim to blend my diverse experiences in architecture and
-          computer science.
-        </p>
-        <div class="mermaid">
-          graph LR; A[Architectural Design] -->|Transition| B[Computer Science];
-          B --> C[Passion for Innovation]; C -->|Aims| D[Blend Diverse
-          Experiences]; D --> E[Solve Complex Problems]
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-container">
+            <a href="index.html" class="logo">Shi Zhang</a>
+            <ul class="nav-links">
+                <li><a href="index.html#about">About</a></li>
+                <li><a href="index.html#experience">Experience</a></li>
+                <li><a href="index.html#projects">Projects</a></li>
+                <li><a href="index.html#skills">Skills</a></li>
+                <li><a href="biography.html">Biography</a></li>
+                <li><a href="resume.html">Resume</a></li>
+                <li><a href="contact.html">Contact</a></li>
+                <li>
+                    <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+                        <span class="theme-toggle-icon">☀️</span>
+                        <span class="theme-toggle-text">Light</span>
+                    </button>
+                </li>
+            </ul>
         </div>
-      </div>
-      <div class="clearfix"></div>
+    </nav>
 
-      <div class="section">
-        <h2>Professional Background</h2>
-        <p>
-          My professional journey began with a Bachelor of Architecture from
-          Rensselaer Polytechnic Institute, followed by a Master of Science in
-          Design from the University of Pennsylvania. Currently, I am pursuing a
-          Master of Science in Computer Science at Northeastern University,
-          where I engage in research and practical projects that allow me to
-          apply my technical skills in real-world scenarios.
-        </p>
-        <p>
-          My technical expertise spans a wide range of programming languages and
-          frameworks, including Java, Python, Kotlin, C++, JavaScript, React.js,
-          and Node.js. My experience in architectural design has honed my
-          abilities in project management and creative problem-solving.
-        </p>
-        <div class="mermaid">
-          graph LR; E[Academic Research & Practical Projects]; E -->
-          F[Real-world Application]; F --> G[Programming Languages &
-          Frameworks]; G --> H[Java, Python, Kotlin, C++, JavaScript, React.js,
-          Node.js]; G --> I[Docker, Linux, AWS, Azure, Git, OpenCV, MySQL]
-        </div>
-      </div>
-      <div class="clearfix"></div>
+    <!-- Page Content -->
+    <main style="padding-top: 80px;">
+      <section class="about" id="biography-content">
+        <div class="about-container">
+          <h2 style="margin-bottom: 3rem;">Biography</h2>
 
-      <div class="section">
-        <h2>Interests and Achievements</h2>
-        <p>
-          In addition to my academic pursuits, I have been recognized for my
-          contributions to architectural competitions and have a keen interest
-          in augmented reality and mobile application development. My projects,
-          such as the Fun Facts Share Website and the StayStocked Android Mobile
-          App, showcase my capability to innovate and deliver user-centric
-          solutions.
-        </p>
-        <div class="mermaid">
-          graph TD; A[Interests & Achievements] --> B[Web App Development]; A
-          --> C[Mobile App Development]; A --> D[Computer Vision]; A -->
-          E[Artificial Intelligence]; A --> F[Databases];
+          <div class="about-card" style="margin-bottom: 2rem;">
+            <h3>About Me</h3>
+            <p>
+              As a former architectural designer turned software engineer, I graduated with my Master of Science in Computer Science from Northeastern University in May 2025. Currently, I serve as a founding software engineer at IDitor Inc, a San Francisco-based startup building innovative AI-powered social applications. My journey in the tech industry is fueled by a passion for innovation and solving complex problems in software development. While advancing my career, I'm expanding my expertise through Northeastern's Master of Science in Data Analytics and Engineering program (2025-2026), bringing together my diverse experiences in architecture, computer science, and data science to create impactful solutions.
+            </p>
+            <div class="mermaid">
+              graph LR
+              A[Architectural Design] -->|Career Transition| B[MSCS Graduate 2025]
+              B --> C[Founding Engineer @ IDitor Inc]
+              C --> D[AI Social Applications]
+              B -.->|Pursuing| E[MSDAE 2025-2026]
+              E -.-> F[Data Analytics & Engineering]
+            </div>
+          </div>
+
+          <div class="about-card" style="margin-bottom: 2rem;">
+            <h3>Professional Background</h3>
+            <p>
+              My professional journey began with a Bachelor of Architecture from
+              Rensselaer Polytechnic Institute, followed by a Master of Science in
+              Design from the University of Pennsylvania. In May 2025, I completed my Master of Science in Computer Science at Northeastern University, where I engaged in research and practical projects that allowed me to apply my technical skills in real-world scenarios.
+            </p>
+            <p>
+              Now, as a founding software engineer at IDitor Inc, I'm building cutting-edge AI social applications that connect people in meaningful ways. My technical expertise spans a wide range of programming languages and frameworks, including Java, Python, TypeScript, JavaScript, Kotlin, C++, React.js, Next.js, and Node.js. My experience in architectural design has honed my abilities in project management, systems thinking, and creative problem-solving—skills that prove invaluable in startup environments where versatility and innovation are essential.
+            </p>
+            <div class="mermaid">
+              graph TD
+              A[Education Path] --> B[B.Arch - RPI]
+              A --> C[MS Design - UPenn]
+              A --> D[MSCS - Northeastern 2025]
+              D --> E[Founding Engineer @ IDitor Inc]
+              E --> F[Full-Stack Development]
+              E --> G[AI/ML Integration]
+              E --> H[System Architecture]
+              D -.->|Continuing Education| I[MSDAE 2025-2026]
+            </div>
+          </div>
+
+          <div class="about-card">
+            <h3>Interests and Achievements</h3>
+            <p>
+              Beyond my professional work, I have been recognized for my contributions to architectural competitions and maintain a strong interest in artificial intelligence, computer vision, full-stack development, and data analytics. My projects, ranging from AI-powered chat applications to real-time AR systems and mobile apps like StayStocked, showcase my capability to innovate and deliver user-centric solutions across diverse technology domains. Currently pursuing a Master's in Data Analytics and Engineering, I'm committed to staying at the forefront of technology, continuously learning and applying new skills to solve complex challenges at the intersection of AI, data science, and software engineering.
+            </p>
+            <div class="mermaid">
+              graph TD
+              A[Technical Expertise] --> B[AI/ML Applications]
+              A --> C[Full-Stack Development]
+              A --> D[Computer Vision]
+              A --> E[Data Analytics]
+              B --> F[LLM Integration]
+              C --> G[React/Next.js]
+              C --> H[TypeScript/Node.js]
+              D --> I[OpenCV/AR Systems]
+              E --> J[MSDAE Program]
+            </div>
+          </div>
+
         </div>
-      </div>
-      <div class="clearfix"></div>
-    </div>
+      </section>
+    </main>
 
     <!-- Footer -->
-    <div class="footer">
-      <p>© 2024 by Shi Zhang. All rights reserved.</p>
-    </div>
-    <script src="theme-toggle.js"></script>
+    <footer>
+        <div class="footer-container">
+            <p class="footer-copyright">© 2024 by Shi Zhang. All rights reserved.</p>
+        </div>
+    </footer>
+
     <script src="https://unpkg.com/mermaid/dist/mermaid.min.js"></script>
     <script>
-      function renderMermaid() {
-        const isDark = document.body.classList.contains('dark-theme');
-        mermaid.initialize({
-          startOnLoad: false, // We will call init manually
-          theme: isDark ? 'dark' : 'base',
-          securityLevel: 'loose',
-          themeVariables: {
-            primaryColor: isDark ? '#bb86fc' : '#333',
-            lineColor: isDark ? '#e0e0e0' : '#333',
-            textColor: isDark ? '#f5f5f5' : '#333',
-            mainBkg: isDark ? 'rgba(255, 255, 255, 0.2)' : 'rgba(255, 255, 255, 0.75)',
-            edgeLabelBackground: isDark ? 'rgba(255, 255, 255, 0.2)' : 'rgba(255, 255, 255, 0.75)',
-          }
-        });
-        const mermaidElements = document.querySelectorAll('.mermaid');
-        mermaidElements.forEach(el => {
-            // Store original definition, clear the element, then re-add definition
-            if (!el.getAttribute('data-definition')) {
-                el.setAttribute('data-definition', el.innerHTML);
-            }
-            el.innerHTML = el.getAttribute('data-definition');
-            el.removeAttribute('data-processed');
-        });
-        mermaid.init(undefined, mermaidElements);
+      // Theme Toggle Functionality
+      const themeToggle = document.getElementById("themeToggle");
+      const themeIcon = document.querySelector(".theme-toggle-icon");
+      const themeText = document.querySelector(".theme-toggle-text");
+
+      // Check for saved theme preference or default to light theme
+      const currentTheme = localStorage.getItem("theme") || "light";
+
+      // Apply light theme by default
+      document.body.classList.add("light-theme");
+
+      // If user previously selected dark theme, switch to it
+      if (currentTheme === "dark") {
+        document.body.classList.remove("light-theme");
+        themeIcon.textContent = "🌙";
+        themeText.textContent = "Dark";
       }
 
-      document.addEventListener('DOMContentLoaded', () => {
-        renderMermaid();
-
-        const observer = new MutationObserver((mutationsList) => {
-          for(const mutation of mutationsList) {
-            if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
-              renderMermaid();
-            }
+      // Initialize Mermaid.js with dynamic theme
+      function initMermaid() {
+        const isDark = !document.body.classList.contains("light-theme");
+        mermaid.initialize({
+          startOnLoad: true,
+          theme: isDark ? 'dark' : 'default',
+          securityLevel: 'loose',
+          themeVariables: isDark ? {
+              primaryColor: '#bb86fc',
+              lineColor: '#e0e0e0',
+              textColor: '#f5f5f5',
+              mainBkg: 'rgba(26, 26, 26, 0.8)',
+              edgeLabelBackground: 'rgba(26, 26, 26, 0.8)',
+          } : {
+              primaryColor: '#667eea',
+              lineColor: '#333333',
+              textColor: '#1a1a1a',
+              mainBkg: 'rgba(245, 245, 245, 0.8)',
+              edgeLabelBackground: 'rgba(245, 245, 245, 0.8)',
           }
         });
+      }
 
-        observer.observe(document.body, { attributes: true });
+      initMermaid();
+
+      // Theme toggle click handler
+      themeToggle.addEventListener("click", () => {
+        document.body.classList.toggle("light-theme");
+
+        if (document.body.classList.contains("light-theme")) {
+          themeIcon.textContent = "☀️";
+          themeText.textContent = "Light";
+          localStorage.setItem("theme", "light");
+        } else {
+          themeIcon.textContent = "🌙";
+          themeText.textContent = "Dark";
+          localStorage.setItem("theme", "dark");
+        }
+
+        // Reinitialize Mermaid with new theme
+        initMermaid();
+        location.reload(); // Reload to apply Mermaid theme changes
       });
     </script>
   </body>
