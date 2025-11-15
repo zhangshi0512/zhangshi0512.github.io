@@ -19,6 +19,12 @@
                 <li><a href="biography.html">Biography</a></li>
                 <li><a href="resume.html">Resume</a></li>
                 <li><a href="contact.html">Contact</a></li>
+                <li>
+                    <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+                        <span class="theme-toggle-icon">🌙</span>
+                        <span class="theme-toggle-text">Dark</span>
+                    </button>
+                </li>
             </ul>
         </div>
     </nav>
@@ -325,6 +331,34 @@
     </footer>
 
     <script>
+        // Theme Toggle Functionality
+        const themeToggle = document.getElementById('themeToggle');
+        const themeIcon = document.querySelector('.theme-toggle-icon');
+        const themeText = document.querySelector('.theme-toggle-text');
+
+        // Check for saved theme preference or default to dark theme
+        const currentTheme = localStorage.getItem('theme') || 'dark';
+        if (currentTheme === 'light') {
+            document.body.classList.add('light-theme');
+            themeIcon.textContent = '☀️';
+            themeText.textContent = 'Light';
+        }
+
+        // Theme toggle click handler
+        themeToggle.addEventListener('click', () => {
+            document.body.classList.toggle('light-theme');
+
+            if (document.body.classList.contains('light-theme')) {
+                themeIcon.textContent = '☀️';
+                themeText.textContent = 'Light';
+                localStorage.setItem('theme', 'light');
+            } else {
+                themeIcon.textContent = '🌙';
+                themeText.textContent = 'Dark';
+                localStorage.setItem('theme', 'dark');
+            }
+        });
+
         // Smooth scrolling for anchor links
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
@@ -394,7 +428,8 @@
                 }
             }
 
-            ctx.fillStyle = '#e0e0e0';
+            const fillColor = getComputedStyle(document.body).getPropertyValue('--canvas-fill').trim();
+            ctx.fillStyle = fillColor;
             ctx.font = "10px monospace";
 
             for (let k = 0; k < canvas.width * canvas.height; k++) {
