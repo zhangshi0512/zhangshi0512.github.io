@@ -6,11 +6,26 @@
     <title>Shi Zhang | Computer Science & Design</title>
     <link rel="stylesheet" href="style-new.css" />
   </head>
+  <!-- Google tag (gtag.js) -->
+  <script
+    async
+    src="https://www.googletagmanager.com/gtag/js?id=G-BMHC9VDGPY"
+  ></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() {
+      dataLayer.push(arguments);
+    }
+    gtag("js", new Date());
+
+    gtag("config", "G-BMHC9VDGPY");
+  </script>
   <body>
     <!-- Navigation -->
     <nav>
       <div class="nav-container">
         <a href="index.html" class="logo">Shi Zhang</a>
+        <button class="mobile-menu-toggle" aria-label="Toggle mobile menu" aria-expanded="false">☰</button>
         <ul class="nav-links">
           <li><a href="#about">About</a></li>
           <li><a href="#experience">Experience</a></li>
@@ -504,40 +519,13 @@
       </div>
     </footer>
 
+    <!-- Shared Theme Toggle Script -->
+    <script src="theme.js"></script>
+
+    <!-- Mobile Menu Script -->
+    <script src="mobile-menu.js"></script>
+
     <script>
-      // Theme Toggle Functionality
-      const themeToggle = document.getElementById("themeToggle");
-      const themeIcon = document.querySelector(".theme-toggle-icon");
-      const themeText = document.querySelector(".theme-toggle-text");
-
-      // Check for saved theme preference or default to light theme
-      const currentTheme = localStorage.getItem("theme") || "light";
-
-      // Apply light theme by default
-      document.body.classList.add("light-theme");
-
-      // If user previously selected dark theme, switch to it
-      if (currentTheme === "dark") {
-        document.body.classList.remove("light-theme");
-        themeIcon.textContent = "🌙";
-        themeText.textContent = "Dark";
-      }
-
-      // Theme toggle click handler
-      themeToggle.addEventListener("click", () => {
-        document.body.classList.toggle("light-theme");
-
-        if (document.body.classList.contains("light-theme")) {
-          themeIcon.textContent = "☀️";
-          themeText.textContent = "Light";
-          localStorage.setItem("theme", "light");
-        } else {
-          themeIcon.textContent = "🌙";
-          themeText.textContent = "Dark";
-          localStorage.setItem("theme", "dark");
-        }
-      });
-
       // Smooth scrolling for anchor links
       document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
         anchor.addEventListener("click", function (e) {
@@ -643,32 +631,9 @@
       }
 
       setInterval(render, 80);
-
-      // Project filter functionality
-      const filterBtns = document.querySelectorAll(".filter-btn");
-      const projectCards = document.querySelectorAll(".project-card");
-
-      filterBtns.forEach((btn) => {
-        btn.addEventListener("click", () => {
-          filterBtns.forEach((b) => b.classList.remove("active"));
-          btn.classList.add("active");
-
-          const filter = btn.getAttribute("data-filter");
-
-          projectCards.forEach((card) => {
-            if (filter === "all") {
-              card.style.display = "block";
-            } else {
-              const categories = card.getAttribute("data-category");
-              if (categories && categories.includes(filter)) {
-                card.style.display = "block";
-              } else {
-                card.style.display = "none";
-              }
-            }
-          });
-        });
-      });
     </script>
+
+    <!-- Shared Project Filter Script -->
+    <script src="project-filter.js"></script>
   </body>
 </html>
