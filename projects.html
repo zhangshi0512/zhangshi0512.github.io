@@ -30,6 +30,7 @@
     <nav>
         <div class="nav-container">
             <a href="index.html" class="logo">Shi Zhang</a>
+            <button class="mobile-menu-toggle" aria-label="Toggle mobile menu" aria-expanded="false">☰</button>
             <ul class="nav-links">
                 <li><a href="index.html#about">About</a></li>
                 <li><a href="index.html#experience">Experience</a></li>
@@ -38,6 +39,12 @@
                 <li><a href="biography.html">Biography</a></li>
                 <li><a href="resume.html">Resume</a></li>
                 <li><a href="contact.html">Contact</a></li>
+                <li>
+                    <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+                        <span class="theme-toggle-icon">☀️</span>
+                        <span class="theme-toggle-text">Light</span>
+                    </button>
+                </li>
             </ul>
         </div>
     </nav>
@@ -112,28 +119,13 @@
         </div>
     </footer>
 
-    <script>
-      // Project filter functionality
-      const filterBtns = document.querySelectorAll('.filter-btn');
-      const projectCards = document.querySelectorAll('.project-card');
+    <!-- Shared Theme Toggle Script -->
+    <script src="theme.js"></script>
 
-      filterBtns.forEach(btn => {
-          btn.addEventListener('click', () => {
-              filterBtns.forEach(b => b.classList.remove('active'));
-              btn.classList.add('active');
+    <!-- Mobile Menu Script -->
+    <script src="mobile-menu.js"></script>
 
-              const filter = btn.getAttribute('data-filter');
-
-              projectCards.forEach(card => {
-                  const categories = card.getAttribute('data-category');
-                  if (filter === 'all' || (categories && categories.includes(filter))) {
-                      card.style.display = 'block';
-                  } else {
-                      card.style.display = 'none';
-                  }
-              });
-          });
-      });
-    </script>
+    <!-- Shared Project Filter Script -->
+    <script src="project-filter.js"></script>
   </body>
 </html>
