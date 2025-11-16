@@ -127,6 +127,13 @@
 
     <script src="https://unpkg.com/mermaid/dist/mermaid.min.js"></script>
     <script>
+      // Store original Mermaid diagram definitions before processing
+      const mermaidDivs = document.querySelectorAll('.mermaid');
+      const originalDiagrams = [];
+      mermaidDivs.forEach((element) => {
+        originalDiagrams.push(element.textContent.trim());
+      });
+
       // Initialize Mermaid.js with dynamic theme
       function initMermaid() {
         const isDark = !document.body.classList.contains("light-theme");
@@ -176,10 +183,11 @@
           }
         });
 
-        // Re-render all Mermaid diagrams
+        // Re-render all Mermaid diagrams using stored original definitions
         const mermaidDivs = document.querySelectorAll('.mermaid');
         mermaidDivs.forEach((element, index) => {
-          const graphDefinition = element.textContent;
+          // Use the stored original diagram definition
+          const graphDefinition = originalDiagrams[index];
           const id = `mermaid-${index}`;
           element.removeAttribute('data-processed');
           element.innerHTML = graphDefinition;
