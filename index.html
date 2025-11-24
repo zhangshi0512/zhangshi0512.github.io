@@ -55,20 +55,23 @@
     </nav>
 
     <!-- Hero Section -->
+    <!-- Hero Section -->
     <section class="hero">
       <div class="hero-mask"></div>
-      <h1>
-        Design meets Computer Science.<br />Innovation through intelligence.
-      </h1>
-      <p class="subtitle">
-        I'm Shi Zhang (Simon), a founding software engineer at IDitor Inc—a San
-        Francisco-based AI social app startup. With a Master's in Computer
-        Science from Northeastern University and a background in architectural
-        design, I bring a unique perspective to software development—blending
-        creative problem-solving with technical expertise. I'm currently
-        expanding my expertise through Northeastern's Master of Science in Data
-        Analytics and Engineering program.
-      </p>
+      <div class="hero-content">
+        <h1>
+          Design meets Computer Science.<br />Innovation through intelligence.
+        </h1>
+        <p class="subtitle">
+          I'm Shi Zhang (Simon), a founding software engineer at IDitor Inc—a San
+          Francisco-based AI social app startup. With a Master's in Computer
+          Science from Northeastern University and a background in architectural
+          design, I bring a unique perspective to software development—blending
+          creative problem-solving with technical expertise. I'm currently
+          expanding my expertise through Northeastern's Master of Science in Data
+          Analytics and Engineering program.
+        </p>
+      </div>
 
       <!-- Infinity Ring Canvas from original site -->
       <div class="canvas-container">
@@ -560,48 +563,304 @@
         }
       });
 
-      // Infinity Ring Animation from original site
+      // Infinity Ring Animation & Hero Morphing System
       const canvas = document.getElementById("donutCanvas");
       const ctx = canvas.getContext("2d");
+      const heroH1 = document.querySelector(".hero h1");
+      const heroSubtitle = document.querySelector(".hero .subtitle");
+      const canvasContainer = document.querySelector(".canvas-container");
+      
       canvas.width = 400;
       canvas.height = 300;
 
-      let A = 0,
-        B = 0;
+      // --- Configuration ---
+      const CONFIG = {
+        initialDelay: 3000,      // Time before first morph (ms)
+        shapeDuration: 3000,     // Time to stay on each shape (ms)
+        restoreDelay: 1000,      // Time to wait before restoring text after cycle (ms)
+        morphSpeed: 0.05,        // Speed of shape interpolation
+        scatterSpeed: 0.03,      // Speed of particle scatter/gather
+        baseSpeedA: 0.07,
+        baseSpeedB: 0.03
+      };
+
+      // --- State Management ---
+      const STATE = {
+        TEXT_VIEW: 0,        // Text visible, Canvas hidden
+        TRANSITION_IN: 1,    // Text fading out, Canvas particles gathering
+        SHAPE_CYCLE: 2,      // Cycling through 3D shapes
+        TRANSITION_OUT: 3    // Canvas particles scattering, Text fading in
+      };
+
+      let currentState = STATE.TEXT_VIEW;
+      let stateTimer = null;
+      
+      // --- Animation Variables ---
+      let A = 0, B = 0;
+      let currentSpeedA = CONFIG.baseSpeedA;
+      let currentSpeedB = CONFIG.baseSpeedB;
+      let currentScale = 1.0;
+      
+      // Morphing
+      let morphProgress = 0; 
+      let targetMorphIndex = 0;
+      const numShapes = 3; // Mobius, Sphere, Torus
+      
+      // Scattering (0 = Formed Shape, 1 = Scattered Cloud)
+      let scatterProgress = 1.0; 
+      let targetScatter = 1.0;
+
       const R = 0.85;
       const K2 = 5;
       const K1 = ((canvas.width * K2 * 3) / (8 * R)) * 0.6;
 
       const shadingChars = ".,-~:;=!*#$@";
 
+      // --- Lifecycle Logic ---
+
+      function startLifecycle() {
+        // Start in TEXT_VIEW
+        currentState = STATE.TEXT_VIEW;
+        targetScatter = 1.0; // Canvas starts scattered/hidden
+        scatterProgress = 1.0;
+        
+        // Wait 3s then morph
+        stateTimer = setTimeout(triggerMorphToCanvas, CONFIG.initialDelay);
+      }
+
+      function triggerMorphToCanvas() {
+        currentState = STATE.TRANSITION_IN;
+        
+        // Visuals
+        heroH1.classList.add("disassemble");
+        canvasContainer.classList.add("visible");
+        
+        // Logic
+        targetScatter = 0.0; // Gather particles
+        targetMorphIndex = 0; // Start at Mobius
+        
+        // Wait for gather to finish, then start cycling
+        stateTimer = setTimeout(() => {
+          currentState = STATE.SHAPE_CYCLE;
+          cycleShapes();
+        }, 1500);
+      }
+
+      function cycleShapes() {
+        if (currentState !== STATE.SHAPE_CYCLE) return;
+
+        // Auto-advance shapes
+        stateTimer = setTimeout(() => {
+          if (currentState !== STATE.SHAPE_CYCLE) return;
+          
+          targetMorphIndex++;
+          
+          // Check if we completed a full cycle (3 shapes: 0, 1, 2)
+          // We want to show 0 -> 1 -> 2 -> then Restore
+          if (targetMorphIndex >= numShapes) {
+             // End of cycle, restore text
+             triggerMorphToText();
+          } else {
+             // Next shape
+             cycleShapes();
+          }
+        }, CONFIG.shapeDuration);
+      }
+
+      function triggerMorphToText() {
+        currentState = STATE.TRANSITION_OUT;
+        
+        // Logic
+        targetScatter = 1.0; // Scatter particles
+        
+        // Visuals
+        // Wait a bit for scatter to start before hiding canvas/showing text
+        setTimeout(() => {
+            heroH1.classList.remove("disassemble");
+            canvasContainer.classList.remove("visible");
+        }, 500);
+
+        // Reset State (No Auto-Restart)
+        stateTimer = setTimeout(() => {
+            // Reset morph index for next time
+            targetMorphIndex = 0;
+            morphProgress = 0;
+            
+            // Go back to TEXT_VIEW state so clicks can trigger it again
+            currentState = STATE.TEXT_VIEW;
+        }, CONFIG.restoreDelay + 1500);
+      }
+
+      // --- Interaction ---
+      
+      // Click on Canvas (or Hero Section?)
+      // Let's make the whole hero interactive or just the canvas?
+      // User said "If user click on it [motion effect]"
+      canvas.addEventListener("click", (e) => {
+        e.stopPropagation(); // Prevent bubbling if needed
+        handleInteraction();
+      });
+      
+      // Also allow clicking the text to trigger the start early
+      heroH1.addEventListener("click", () => {
+         if (currentState === STATE.TEXT_VIEW) {
+             handleInteraction();
+         }
+      });
+
+      function handleInteraction() {
+        // Clear any pending auto-timers
+        clearTimeout(stateTimer);
+
+        if (currentState === STATE.TEXT_VIEW) {
+            // Immediate start
+            triggerMorphToCanvas();
+        } 
+        else if (currentState === STATE.TRANSITION_IN) {
+            // Rush to shape cycle
+            currentState = STATE.SHAPE_CYCLE;
+            targetScatter = 0.0;
+            scatterProgress = 0.0; // Snap
+            cycleShapes();
+        }
+        else if (currentState === STATE.SHAPE_CYCLE) {
+            // Speed up / Next Shape
+            // Add "Spin Jump" effect
+            currentSpeedA = 0.8;
+            currentSpeedB = 0.4;
+            currentScale = 1.3;
+            
+            targetMorphIndex++;
+            
+            // If we go past the last shape in interactive mode, 
+            // do we loop or restore? 
+            // "morph to next type... speedup version"
+            // Let's loop indefinitely if user is interacting, or restore?
+            // "restore back" was for non-user interaction.
+            // Let's assume interactive mode keeps it alive or cycles faster.
+            // Let's Loop:
+            if (targetMorphIndex >= numShapes) {
+                targetMorphIndex = 0; // Loop back to start
+                // Adjust morphProgress to avoid "rewind" visual artifact
+                // We can't easily fix the rewind without modular arithmetic in render
+                // For now, let's just let it morph.
+            }
+            
+            // Restart the auto-timer to continue cycling or eventually restore
+            // if user stops clicking
+            cycleShapes(); 
+        }
+        else if (currentState === STATE.TRANSITION_OUT) {
+            // Bring it back!
+            currentState = STATE.TRANSITION_IN;
+            triggerMorphToCanvas();
+        }
+      }
+
+      // --- Render Loop ---
+
       function render() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         const z = new Array(canvas.width * canvas.height).fill(0);
         const b = new Array(canvas.width * canvas.height).fill(" ");
 
-        A += 0.07;
-        B += 0.03;
-        const cosA = Math.cos(A),
-          sinA = Math.sin(A);
-        const cosB = Math.cos(B),
-          sinB = Math.sin(B);
+        // Physics & Transitions
+        currentSpeedA = currentSpeedA * 0.95 + CONFIG.baseSpeedA * 0.05;
+        currentSpeedB = currentSpeedB * 0.95 + CONFIG.baseSpeedB * 0.05;
+        currentScale = currentScale * 0.9 + 1.0 * 0.1;
+        
+        // Morph Interpolation
+        // If looping (interactive), we might need to handle wrap-around, 
+        // but for simple 0->1->2, simple lerp is fine.
+        // If target < progress (rewind), snap or fast lerp?
+        if (targetMorphIndex < morphProgress && Math.abs(targetMorphIndex - morphProgress) > 1.5) {
+            // We wrapped around (2 -> 0)
+            morphProgress = -0.1; // Snap to before 0
+        }
+        morphProgress = morphProgress * (1 - CONFIG.morphSpeed) + targetMorphIndex * CONFIG.morphSpeed;
+        
+        // Scatter Interpolation
+        scatterProgress = scatterProgress * (1 - CONFIG.scatterSpeed) + targetScatter * CONFIG.scatterSpeed;
+
+        A += currentSpeedA;
+        B += currentSpeedB;
+
+        const cosA = Math.cos(A), sinA = Math.sin(A);
+        const cosB = Math.cos(B), sinB = Math.sin(B);
+
+        // Apply scale
+        const effectiveK1 = K1 * currentScale;
+        
+        // Determine shape blending
+        // We clamp indices to handle the transition logic safely
+        let idx1 = Math.floor(morphProgress);
+        let idx2 = idx1 + 1;
+        let t = morphProgress - idx1;
+        
+        // Clamp for safety
+        if (idx1 < 0) idx1 = 0;
+        
+        // Helper for shapes
+        function getShapeCoords(typeIdx, u, v) {
+            // Modulo to handle wrapping
+            const type = ((typeIdx % numShapes) + numShapes) % numShapes;
+            let x, y, z;
+            
+            if (type === 0) { // Mobius
+                x = (R + v * Math.cos(u / 2)) * Math.cos(u);
+                y = (R + v * Math.cos(u / 2)) * Math.sin(u);
+                z = v * Math.sin(u / 2);
+            } else if (type === 1) { // Sphere
+                const lat = v * Math.PI;
+                x = R * Math.cos(lat) * Math.cos(u);
+                y = R * Math.cos(lat) * Math.sin(u);
+                z = R * Math.sin(lat);
+            } else { // Torus
+                const tubeRadius = 0.35;
+                const tubeAngle = v * 2 * Math.PI;
+                x = (R + tubeRadius * Math.cos(tubeAngle)) * Math.cos(u);
+                y = (R + tubeRadius * Math.cos(tubeAngle)) * Math.sin(u);
+                z = tubeRadius * Math.sin(tubeAngle);
+            }
+            return {x, y, z};
+        }
 
         for (let u = 0; u < 6.28; u += 0.1) {
-          const cosU = Math.cos(u),
-            sinU = Math.sin(u);
           for (let v = -0.5; v <= 0.5; v += 0.1) {
-            const x = (R + v * Math.cos(u / 2)) * Math.cos(u);
-            const y = (R + v * Math.cos(u / 2)) * Math.sin(u);
-            const z0 = v * Math.sin(u / 2);
+            
+            // 1. Get Formed Shape Position
+            const p1 = getShapeCoords(idx1, u, v);
+            const p2 = getShapeCoords(idx2, u, v);
+            
+            let x = p1.x * (1 - t) + p2.x * t;
+            let y = p1.y * (1 - t) + p2.y * t;
+            let z0 = p1.z * (1 - t) + p2.z * t;
+            
+            // 2. Apply Scatter Effect
+            // Scatter source: Let's say particles come from the Left (-2.0, 0, 0)
+            // creating a "wind" or "assembly" effect
+            if (scatterProgress > 0.01) {
+                const scatterX = -3.0 + Math.random() * 2.0; // Left side cloud
+                const scatterY = (Math.random() - 0.5) * 4.0;
+                const scatterZ = (Math.random() - 0.5) * 4.0;
+                
+                // Noise factor based on u,v to make it deterministic but chaotic
+                const noise = Math.sin(u * 10 + v * 20);
+                
+                x = x * (1 - scatterProgress) + (scatterX + noise) * scatterProgress;
+                y = y * (1 - scatterProgress) + (scatterY + noise) * scatterProgress;
+                z0 = z0 * (1 - scatterProgress) + (scatterZ + noise) * scatterProgress;
+            }
 
+            // 3. Projection
             const D = 1 / (z0 * sinA + y * cosA + K2);
             const t1 = z0 * cosA - y * sinA;
 
             const x1 = Math.floor(
-              canvas.width / 2 + K1 * D * (x * cosB - t1 * sinB)
+              canvas.width / 2 + effectiveK1 * D * (x * cosB - t1 * sinB)
             );
             const y1 = Math.floor(
-              canvas.height / 2 + K1 * D * (x * sinB + t1 * cosB)
+              canvas.height / 2 + effectiveK1 * D * (x * sinB + t1 * cosB)
             );
             const o = x1 + canvas.width * y1;
             const L = Math.floor(
@@ -641,6 +900,9 @@
       }
 
       setInterval(render, 80);
+      
+      // Initialize
+      startLifecycle();
     </script>
 
     <!-- Shared Project Filter Script -->
