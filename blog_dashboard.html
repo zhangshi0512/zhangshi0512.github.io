@@ -270,10 +270,7 @@
         const homeView = document.getElementById('home-view');
         const detailView = document.getElementById('detail-view');
 
-        function openDetail(title, category) {
-            // Note: Content loading is handled by dashboard.js calling this
-            document.getElementById('detail-title').innerText = title || "New Post"; 
-            
+        function openDetail() {
             homeView.classList.add('hidden-view');
             detailView.classList.remove('hidden-view');
             
@@ -292,7 +289,10 @@
         }
 
         function createNewPost() {
-            // Reset Editor
+            // Reset Dashboard State
+            if(window.resetEditorState) window.resetEditorState();
+
+            // Reset Editor UI
             document.getElementById('editor-title').value = new Date().toISOString().split('T')[0] + '-new-post.md';
             document.getElementById('editor-content').value = "---\ntitle: New Post\ndate: " + new Date().toISOString().split('T')[0] + "\n---\n\n# New Post";
             
@@ -306,7 +306,7 @@
             // We should reload the window or handle this better. 
             
             // Hack for now: We just open the view. The save logic will see the filename doesn't match old path and treat as new.
-            openDetail('New Post', 'Draft');
+            openDetail();
             
             // Dispatch input event to trigger preview
             document.getElementById('editor-content').dispatchEvent(new Event('input'));
