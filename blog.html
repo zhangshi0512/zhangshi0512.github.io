@@ -6,17 +6,27 @@
     <title>Blog | Shi Zhang</title>
     <link rel="stylesheet" href="style-new.css" />
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script>
+        // Critical: Apply theme class IMMEDIATELY to prevent FOUC/Conflict
+        (function() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            if (savedTheme === 'light') {
+                document.documentElement.classList.add('light-theme');
+                // Also add to body once it exists
+                document.addEventListener('DOMContentLoaded', () => document.body.classList.add('light-theme'));
+            }
+        })();
+    </script>
     <style>
         :root {
-            /* Dark Theme Overrides (Default for the moody look) */
-            --blog-bg: #0a0a0a;
-            --blog-text: rgba(255, 255, 255, 0.85);
-            --blog-title: #ffffff;
-            --blog-card-bg: rgba(255, 255, 255, 0.05);
-            --blog-card-hover: rgba(255, 255, 255, 0.08);
-            --blog-border: rgba(255, 255, 255, 0.1);
-            --blog-date: rgba(255, 255, 255, 0.4);
-            --blog-quote-bg: rgba(255, 255, 255, 0.03);
+            /* Standard Site Variables Sync */
+            --background-color: #0a0a0a;
+            --text-primary: #ffffff;
+            --text-secondary: rgba(255, 255, 255, 0.7);
+            --card-background: rgba(255, 255, 255, 0.05);
+            --border-color: rgba(255, 255, 255, 0.1);
+
+            /* Blog Specific Gradients */
             --blog-gradient-1: hsla(253,16%,7%,1);
             --blog-gradient-2: hsla(225,39%,30%,1);
             --blog-gradient-3: hsla(339,49%,30%,1);
@@ -24,25 +34,23 @@
             --blog-gradient-5: hsla(240,40%,20%,1);
         }
 
-        body.light-theme {
-            --blog-bg: #f8f9fa;
-            --blog-text: #333333;
-            --blog-title: #000000;
-            --blog-card-bg: rgba(255, 255, 255, 0.7);
-            --blog-card-hover: rgba(255, 255, 255, 0.9);
-            --blog-border: rgba(0, 0, 0, 0.08);
-            --blog-date: #666666;
-            --blog-quote-bg: rgba(0, 0, 0, 0.03);
+        .light-theme, body.light-theme {
+            --background-color: #f8f9fa;
+            --text-primary: #1a1a1a;
+            --text-secondary: #555555;
+            --card-background: rgba(255, 255, 255, 0.7);
+            --border-color: rgba(0, 0, 0, 0.08);
+
             --blog-gradient-1: hsla(253,100%,98%,1);
-            --blog-gradient-2: hsla(225,100%,95%,1);
-            --blog-gradient-3: hsla(339,100%,95%,1);
-            --blog-gradient-4: hsla(30,100%,95%,1);
-            --blog-gradient-5: hsla(240,100%,95%,1);
+            --blog-gradient-2: hsla(225,100%,96%,1);
+            --blog-gradient-3: hsla(339,100%,96%,1);
+            --blog-gradient-4: hsla(30,100%,96%,1);
+            --blog-gradient-5: hsla(240,100%,96%,1);
         }
 
         body {
             font-family: 'Inter', sans-serif;
-            background-color: var(--blog-bg);
+            background-color: var(--background-color);
             background-image: 
                 radial-gradient(at 0% 0%, var(--blog-gradient-1) 0, transparent 50%), 
                 radial-gradient(at 50% 0%, var(--blog-gradient-2) 0, transparent 50%), 
@@ -51,7 +59,7 @@
                 radial-gradient(at 0% 100%, var(--blog-gradient-5) 0, transparent 50%);
             background-size: cover;
             background-attachment: fixed;
-            color: var(--blog-text);
+            color: var(--text-primary);
             transition: background-color 0.4s ease, color 0.4s ease;
         }
 
@@ -71,10 +79,10 @@
 
         /* Glassmorphism Cards */
         .post-card {
-            background: var(--blog-card-bg);
+            background: var(--card-background);
             backdrop-filter: blur(15px);
             -webkit-backdrop-filter: blur(15px);
-            border: 1px solid var(--blog-border);
+            border: 1px solid var(--border-color);
             border-radius: 20px;
             padding: 2.5rem;
             margin-bottom: 2.5rem;
@@ -99,10 +107,11 @@
 
         .post-card:hover {
             transform: translateY(-5px);
-            background: var(--blog-card-hover);
+            background: rgba(255,255,255,0.05);
             border-color: rgba(102, 126, 234, 0.3);
             box-shadow: 0 20px 40px rgba(0,0,0,0.1);
         }
+        body.light-theme .post-card:hover { background: #fff; }
 
         .post-card:hover::before {
             opacity: 1;
@@ -110,7 +119,7 @@
 
         .post-date {
             font-family: 'Space Mono', monospace;
-            color: var(--blog-date);
+            color: var(--text-secondary);
             font-size: 0.85rem;
             margin-bottom: 1rem;
             display: block;
@@ -121,7 +130,7 @@
             font-size: 1.75rem;
             font-weight: 600;
             margin-bottom: 0.5rem;
-            color: var(--blog-title);
+            color: var(--text-primary);
             letter-spacing: -0.02em;
             line-height: 1.3;
         }
@@ -130,7 +139,7 @@
         .markdown-body {
             line-height: 1.8;
             font-size: 1.15rem;
-            color: var(--blog-text);
+            color: var(--text-primary);
             font-weight: 300;
         }
 
@@ -138,7 +147,7 @@
             font-size: clamp(2.5rem, 5vw, 3.5rem);
             margin-bottom: 3rem; 
             font-weight: 700; 
-            color: var(--blog-title); 
+            color: var(--text-primary); 
             line-height: 1.1;
             letter-spacing: -0.04em;
         }
@@ -148,7 +157,7 @@
             margin-top: 4.5rem; 
             margin-bottom: 1.75rem; 
             font-weight: 600; 
-            color: var(--blog-title);
+            color: var(--text-primary);
             letter-spacing: -0.02em;
         }
 
@@ -157,7 +166,7 @@
             margin-top: 3rem;
             margin-bottom: 1.25rem;
             font-weight: 600;
-            color: var(--blog-text);
+            color: var(--text-primary);
         }
 
         .markdown-body p { 
@@ -168,7 +177,7 @@
         .markdown-body ul, .markdown-body ol {
             margin-bottom: 2rem;
             margin-left: 1.5rem;
-            color: var(--blog-text);
+            color: var(--text-primary);
             opacity: 0.9;
         }
 
@@ -177,17 +186,17 @@
         }
 
         .markdown-body code {
-            background: var(--blog-quote-bg);
+            background: rgba(0,0,0,0.03);
             padding: 0.2rem 0.4rem;
             border-radius: 6px;
             font-family: 'Space Mono', monospace;
             font-size: 0.9em;
-            border: 1px solid var(--blog-border);
+            border: 1px solid var(--border-color);
         }
 
         .markdown-body pre {
             background: rgba(0,0,0,0.05);
-            border: 1px solid var(--blog-border);
+            border: 1px solid var(--border-color);
             padding: 1.5rem;
             border-radius: 16px;
             margin: 2.5rem 0;
@@ -201,10 +210,10 @@
             border-left: 4px solid #667eea;
             padding: 1.5rem 2rem;
             margin: 3rem 0;
-            background: var(--blog-quote-bg);
+            background: rgba(0,0,0,0.03);
             border-radius: 0 16px 16px 0;
             font-style: italic;
-            color: var(--blog-text);
+            color: var(--text-primary);
             opacity: 0.8;
             font-size: 1.2rem;
         }
@@ -223,7 +232,7 @@
         .markdown-body hr {
             border: none;
             height: 1px;
-            background: linear-gradient(90deg, transparent, var(--blog-border), transparent);
+            background: linear-gradient(90deg, transparent, var(--border-color), transparent);
             margin: 4rem 0;
         }
 
@@ -231,7 +240,7 @@
             width: 100%;
             border-collapse: collapse;
             margin: 2.5rem 0;
-            background: var(--blog-quote-bg);
+            background: rgba(0,0,0,0.02);
             border-radius: 12px;
             overflow: hidden;
         }
@@ -245,24 +254,24 @@
 
         .markdown-body td {
             padding: 1rem;
-            border-top: 1px solid var(--blog-border);
+            border-top: 1px solid var(--border-color);
         }
 
         .back-btn {
             display: inline-flex;
             align-items: center;
             gap: 0.6rem;
-            color: var(--blog-date);
+            color: var(--text-secondary);
             text-decoration: none;
             margin-bottom: 4rem;
             font-size: 0.95rem;
             transition: color 0.2s;
         }
-        .back-btn:hover { color: var(--blog-title); }
+        .back-btn:hover { color: var(--text-primary); }
 
         .loader {
             text-align: center;
-            color: var(--blog-date);
+            color: var(--text-secondary);
             padding: 6rem;
             font-weight: 300;
         }
