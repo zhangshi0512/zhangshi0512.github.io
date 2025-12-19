@@ -6,6 +6,14 @@
     <title>Blog | Shi Zhang</title>
     <link rel="stylesheet" href="style-new.css" />
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({ 
+            startOnLoad: false,
+            theme: localStorage.getItem('theme') === 'light' ? 'default' : 'dark',
+            securityLevel: 'loose',
+        });
+    </script>
     <script>
         // Critical: Apply theme class IMMEDIATELY to prevent FOUC/Conflict
         (function() {
@@ -365,6 +373,36 @@
         const urlParams = new URLSearchParams(window.location.search);
         const postName = urlParams.get('post');
 
+        // Configure marked to handle mermaid code blocks
+        const renderer = new marked.Renderer();
+        const originalCode = renderer.code.bind(renderer);
+        renderer.code = function(code, language, escaped) {
+            if (language === 'mermaid') {
+                return `<div class="mermaid" data-source="${encodeURIComponent(code)}" style="display: flex; justify-content: center; margin: 2rem 0; background: transparent; overflow-x: auto; max-width: 100%;">${code}</div>`;
+            }
+            return originalCode(code, language, escaped);
+        };
+        marked.setOptions({ renderer });
+
+        // Listen for theme changes to update Mermaid
+        document.addEventListener('themeChanged', (e) => {
+            if (window.mermaid) {
+                mermaid.initialize({ 
+                    theme: e.detail.isDark ? 'dark' : 'default' 
+                });
+                // If we are currently viewing a post, re-render it
+                const mermaidDivs = document.querySelectorAll('.mermaid');
+                if (mermaidDivs.length > 0) {
+                    mermaidDivs.forEach(div => {
+                        const source = decodeURIComponent(div.getAttribute('data-source'));
+                        div.removeAttribute('data-processed');
+                        div.innerHTML = source;
+                    });
+                    mermaid.run();
+                }
+            }
+        });
+
         if (postName) {
             loadPost(postName);
         } else {
@@ -502,6 +540,11 @@
                         </article>
                     </div>
                 `;
+
+                // Render Mermaid diagrams if they exist
+                if (window.mermaid) {
+                    await mermaid.run();
+                }
             } catch (error) {
                 console.error(error);
                 mainContent.innerHTML = `
