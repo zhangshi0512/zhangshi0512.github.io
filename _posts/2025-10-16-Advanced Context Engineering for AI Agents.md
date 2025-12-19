@@ -17,14 +17,14 @@ Manis treats context reduction as a controlled workflow. It triggers early—*be
 
 ```mermaid
 flowchart TD
-  A[Agent runs: tool calls accumulate] --> B{Context length near<br/>pre-degradation threshold?}
+  A["Agent runs: tool calls accumulate"] --> B{"Context length near<br/>pre-degradation threshold?"}
   B -- No --> A
-  B -- Yes --> C[Step 1: Reversible Compaction<br/>Externalize recoverable info<br/>(e.g., keep file path, drop file content)]
-  C --> D{Freed enough space?}
-  D -- Yes --> E[Continue task<br/>Keep most recent tool calls intact<br/>as few-shot examples]
-  D -- No --> F[Step 2: Offload raw history<br/>to logs/files for backup]
-  F --> G[Lossy Summarization<br/>Prefer schema-based summaries]
-  G --> H[Resume task<br/>Preserve last N interactions verbatim<br/>to avoid behavior/voice shift]
+  B -- Yes --> C["Step 1: Reversible Compaction<br/>Externalize recoverable info<br/>(e.g., keep file path, drop file content)"]
+  C --> D{"Freed enough space?"}
+  D -- Yes --> E["Continue task<br/>Keep most recent tool calls intact<br/>as few-shot examples"]
+  D -- No --> F["Step 2: Offload raw history<br/>to logs/files for backup"]
+  F --> G["Lossy Summarization<br/>Prefer schema-based summaries"]
+  G --> H["Resume task<br/>Preserve last N interactions verbatim<br/>to avoid behavior/voice shift"]
 ```
 
 ---
@@ -45,15 +45,15 @@ Multi-agent systems raise a core question: do we keep contexts isolated and exch
 
 ```mermaid
 flowchart LR
-  M[Main Agent] -->|Delegates task| S1[Sub-agent (isolated context)]
+  M["Main Agent"] -->|Delegates task| S1["Sub-agent (isolated context)"]
   S1 -->|Returns only final result| M
 
-  M -->|Shares full history context| S2[Sub-agent (shared context<br/>own system prompt & tools)]
+  M -->|Shares full history context| S2["Sub-agent (shared context<br/>own system prompt & tools)"]
   S2 -->|Findings, notes, failures matter| M
 
-  M --> C[Define Output Schema<br/>(contract)]
-  C --> R[Sub-agents compute in parallel]
-  R -->|submit_result with constraint decoding| A[Aggregator in Main Agent]
+  M --> C["Define Output Schema<br/>(contract)"]
+  C --> R["Sub-agents compute in parallel"]
+  R -->|submit_result with constraint decoding| A["Aggregator in Main Agent"]
   A --> M
 ```
 
@@ -73,22 +73,22 @@ As toolsets grow, agents risk context confusion—calling the wrong tool, misusi
 
 ```mermaid
 flowchart TB
-  subgraph L1[Layer 1: Stable Atomic Core (10–20 tools)]
-    F[file: read/write]
-    SH[shell]
-    SE[search]
-    BR[browser]
+  subgraph L1["Layer 1: Stable Atomic Core (10–20 tools)"]
+    F["file: read/write"]
+    SH["shell"]
+    SE["search"]
+    BR["browser"]
   end
 
-  subgraph L2[Layer 2: Sandbox CLI Tooling]
-    CLI[format converters / ASR / MCP CLI / etc.]
-    OUT[large outputs → files]
+  subgraph L2["Layer 2: Sandbox CLI Tooling"]
+    CLI["format converters / ASR / MCP CLI / etc."]
+    OUT["large outputs → files"]
   end
 
-  subgraph L3[Layer 3: Code & APIs]
-    PY[write Python scripts]
-    API[authorized packages/APIs]
-    SUM[return only summaries / conclusions]
+  subgraph L3["Layer 3: Code & APIs"]
+    PY["write Python scripts"]
+    API["authorized packages/APIs"]
+    SUM["return only summaries / conclusions"]
   end
 
   SH --> CLI
@@ -100,7 +100,7 @@ flowchart TB
   OUT --> F
   SUM --> F
 
-  note1((Unified interface:<br/>model mostly uses L1 tools<br/>(shell + file) to reach L2/L3))
+  note1(("Unified interface:<br/>model mostly uses L1 tools<br/>(shell + file) to reach L2/L3"))
   L1 --- note1
 ```
 
