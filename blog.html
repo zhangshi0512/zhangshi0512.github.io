@@ -129,10 +129,39 @@
         .post-title {
             font-size: 1.75rem;
             font-weight: 600;
-            margin-bottom: 0.5rem;
+            margin-bottom: 1rem;
             color: var(--text-primary);
             letter-spacing: -0.02em;
             line-height: 1.3;
+        }
+
+        .post-excerpt {
+            font-size: 1.05rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-bottom: 2rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            font-weight: 300;
+        }
+
+        .post-meta {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            opacity: 0.7;
+            font-family: 'Space Mono', monospace;
+        }
+
+        .post-meta span {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
         }
 
         /* Markdown Styles & Typography */
@@ -348,36 +377,74 @@
                 if (!response.ok) throw new Error('Failed to load posts');
                 const files = await response.json();
                 
-                const posts = files
+                const postFiles = files
                     .filter(f => f.name.endsWith('.md'))
                     .sort((a,b) => b.name.localeCompare(a.name));
 
-                mainContent.innerHTML = `<h1 class="fade-in" style="font-size: 3.5rem; margin-bottom: 5rem; text-align: center; font-weight: 600; letter-spacing: -0.04em;">Thoughts</h1>`;
+                mainContent.innerHTML = `<h1 class="fade-in" style="font-size: 1.5rem; margin-bottom: 4rem; opacity: 0.5; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase;">Thoughts</h1>`;
                 
-                if (posts.length === 0) {
-                    mainContent.innerHTML += `<div style="text-align:center; color: rgba(255,255,255,0.4);">No entries found.</div>`;
+                if (postFiles.length === 0) {
+                    mainContent.innerHTML += `<div style="text-align:center; color: var(--text-secondary);">No entries found.</div>`;
                     return;
                 }
 
-                posts.forEach((file, index) => {
-                    // Clean up filename for display in list
-                    const date = file.name.substring(0, 10);
-                    const cleanTitle = file.name.substring(11)
-                        .replace(/-/g, ' ')
-                        .replace('.md', '');
-                    
+                // Create container for cards to maintain layout while loading
+                const listContainer = document.createElement('div');
+                mainContent.appendChild(listContainer);
+
+                // Parallel fetch for previews
+                const postsData = await Promise.all(postFiles.map(async (file) => {
+                    try {
+                        const res = await fetch(`https://raw.githubusercontent.com/${CONFIG.owner}/${CONFIG.repo}/main/${CONFIG.path}/${file.name}`);
+                        const text = await res.text();
+                        
+                        let content = text;
+                        let title = file.name.substring(11).replace(/-/g, ' ').replace('.md', '');
+                        let date = file.name.substring(0, 10);
+                        
+                        const fmMatch = text.match(/^---\n([\s\S]*?)\n---\n/);
+                        if (fmMatch) {
+                            content = text.replace(fmMatch[0], '');
+                            const fm = fmMatch[1];
+                            const titleMatch = fm.match(/title:\s*(.*)/);
+                            if(titleMatch) title = titleMatch[1];
+                            const dateMatch = fm.match(/date:\s*(.*)/);
+                            if(dateMatch) date = dateMatch[1];
+                        }
+
+                        const plainText = content.replace(/[#*`_\[\]]/g, '').trim();
+                        const excerpt = plainText.substring(0, 180).replace(/\s\w+$/, '') + '...';
+                        const wordCount = content.trim().split(/\s+/).length;
+                        const readTime = Math.ceil(wordCount / 225);
+
+                        return { file, title, date, excerpt, readTime, wordCount };
+                    } catch(e) {
+                        return { file, title: file.name, date: '', excerpt: '', readTime: 0, wordCount: 0 };
+                    }
+                }));
+
+                postsData.forEach((post, index) => {
                     const card = document.createElement('div');
                     card.className = 'post-card fade-in';
                     card.style.animationDelay = `${index * 0.1}s`;
                     card.innerHTML = `
-                        <span class="post-date">${date}</span>
-                        <h2 class="post-title" style="text-transform: capitalize;">${cleanTitle}</h2>
+                        <span class="post-date">${post.date}</span>
+                        <h2 class="post-title" style="text-transform: capitalize;">${post.title}</h2>
+                        <p class="post-excerpt">${post.excerpt}</p>
+                        <div class="post-meta">
+                            <span>
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                                ${post.readTime} min read
+                            </span>
+                            <span style="opacity: 0.3;">|</span>
+                            <span>${post.wordCount} words</span>
+                        </div>
                     `;
                     card.onclick = () => {
-                        window.history.pushState({}, '', `?post=${file.name}`);
-                        loadPost(file.name);
+                        window.history.pushState({}, '', `?post=${post.file.name}`);
+                        loadPost(post.file.name);
                     };
-                    mainContent.appendChild(card);
+                    listContainer.appendChild(card);
                 });
             } catch (error) {
                 console.error(error);
