@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Blog | Shi Zhang</title>
+    <link rel="stylesheet" href="style-new.css" />
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <style>
+        .blog-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 8rem 2rem 4rem;
+            min-height: 80vh;
+        }
+        .post-card {
+            background: var(--card-background);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            transition: transform 0.2s;
+            cursor: pointer;
+        }
+        .post-card:hover {
+            transform: translateY(-2px);
+            border-color: var(--text-primary);
+        }
+        .post-date {
+            font-family: monospace;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+        .post-title {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+        .post-excerpt {
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+        
+        /* Markdown Styles */
+        .markdown-body {
+            color: var(--text-primary);
+            line-height: 1.8;
+            font-size: 1.1rem;
+        }
+        .markdown-body h1 { font-size: 2.5rem; margin-bottom: 2rem; font-weight: 700; }
+        .markdown-body h2 { font-size: 2rem; margin-top: 3rem; margin-bottom: 1.5rem; }
+        .markdown-body h3 { font-size: 1.5rem; margin-top: 2rem; margin-bottom: 1rem; }
+        .markdown-body p { margin-bottom: 1.5rem; }
+        .markdown-body ul { list-style: disc; margin-left: 1.5rem; margin-bottom: 1.5rem; }
+        .markdown-body code { background: var(--skill-tag-bg); padding: 0.2em 0.4em; border-radius: 3px; font-size: 0.9em; font-family: monospace; }
+        .markdown-body pre { background: #1e1e1e; padding: 1.5rem; border-radius: 8px; overflow-x: auto; margin-bottom: 2rem; }
+        .markdown-body img { max-width: 100%; border-radius: 8px; margin: 2rem 0; }
+        .markdown-body blockquote { border-left: 4px solid var(--text-secondary); padding-left: 1rem; font-style: italic; color: var(--text-secondary); }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            margin-bottom: 2rem;
+            font-size: 0.9rem;
+        }
+        .back-btn:hover { color: var(--text-primary); }
+
+        /* Loading */
+        .loader {
+            text-align: center;
+            color: var(--text-secondary);
+            padding: 4rem;
+        }
+    </style>
+  </head>
+  <body>
+    <!-- Navigation -->
+    <nav>
+      <div class="nav-container">
+        <a href="index.html" class="logo">Shi Zhang</a>
+        <button class="mobile-menu-toggle">☰</button>
+        <ul class="nav-links">
+          <li><a href="index.html#about">About</a></li>
+          <li><a href="index.html#experience">Experience</a></li>
+          <li><a href="index.html#projects">Projects</a></li>
+          <li><a href="blog.html" style="color: var(--text-primary);">Blog</a></li>
+          <li><a href="contact.html">Contact</a></li>
+          <li>
+            <button class="theme-toggle" id="themeToggle">
+              <span class="theme-toggle-icon">☀️</span>
+              <span class="theme-toggle-text">Light</span>
+            </button>
+          </li>
+        </ul>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="blog-container" id="main-content">
+        <div class="loader">Loading thoughts...</div>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+      <div class="footer-container">
+        <p class="footer-copyright">© 2024 by Shi Zhang. All rights reserved.</p>
+      </div>
+    </footer>
+
+    <script src="theme.js"></script>
+    <script src="mobile-menu.js"></script>
+    <script>
+        const CONFIG = {
+            owner: 'zhangshi0512',
+            repo: 'shizhang.github.io',
+            path: '_posts'
+        };
+
+        const mainContent = document.getElementById('main-content');
+        const urlParams = new URLSearchParams(window.location.search);
+        const postName = urlParams.get('post');
+
+        if (postName) {
+            loadPost(postName);
+        } else {
+            loadList();
+        }
+
+        async function loadList() {
+            try {
+                const response = await fetch(`https://api.github.com/repos/${CONFIG.owner}/${CONFIG.repo}/contents/${CONFIG.path}`);
+                if (!response.ok) throw new Error('Failed to load posts');
+                const files = await response.json();
+                
+                const posts = files
+                    .filter(f => f.name.endsWith('.md'))
+                    .sort((a,b) => b.name.localeCompare(a.name)); // Sort by date (desc)
+
+                mainContent.innerHTML = `<h1 style="font-size: 3rem; margin-bottom: 3rem; text-align: center;">Thoughts</h1>`;
+                
+                if (posts.length === 0) {
+                    mainContent.innerHTML += `<div style="text-align:center; color: var(--text-secondary);">No posts found yet.</div>`;
+                    return;
+                }
+
+                posts.forEach(file => {
+                    const date = file.name.substring(0, 10);
+                    const title = file.name.substring(11).replace(/-/g, ' ').replace('.md', '');
+                    const card = document.createElement('div');
+                    card.className = 'post-card';
+                    card.innerHTML = `
+                        <span class="post-date">${date}</span>
+                        <h2 class="post-title" style="text-transform: capitalize;">${title}</h2>
+                    `;
+                    card.onclick = () => window.location.search = `?post=${file.name}`;
+                    mainContent.appendChild(card);
+                });
+            } catch (error) {
+                console.error(error);
+                mainContent.innerHTML = `<div class="loader">Failed to load posts. API limit may be reached.</div>`;
+            }
+        }
+
+        async function loadPost(filename) {
+            mainContent.innerHTML = `<div class="loader">Loading post...</div>`;
+            try {
+                // Fetch raw content to avoid base64 decoding issues/complexity
+                // Note: Standard raw.githubusercontent.com usage
+                const response = await fetch(`https://raw.githubusercontent.com/${CONFIG.owner}/${CONFIG.repo}/main/${CONFIG.path}/${filename}`);
+                if (!response.ok) throw new Error('Post not found');
+                const text = await response.text();
+                
+                // Strip Frontmatter (simple)
+                // We assume frontmatter ends with second ---
+                let content = text;
+                const fmMatch = text.match(/^---\n([\s\S]*?)\n---\n/);
+                let title = filename;
+                let date = '';
+
+                if (fmMatch) {
+                    content = text.replace(fmMatch[0], '');
+                    // Parse simple frontmatter if needed, or just rely on content
+                    const fm = fmMatch[1];
+                    const titleMatch = fm.match(/title:\s*(.*)/);
+                    if(titleMatch) title = titleMatch[1];
+                    
+                    const dateMatch = fm.match(/date:\s*(.*)/);
+                    if(dateMatch) date = dateMatch[1];
+                }
+
+                const html = marked.parse(content);
+                
+                mainContent.innerHTML = `
+                    <a href="blog.html" class="back-btn">← Back to Thoughts</a>
+                    <article class="markdown-body">
+                        <h1>${title}</h1>
+                        ${date ? `<p style="color: var(--text-secondary); margin-bottom: 2rem;">${date}</p>` : ''}
+                        ${html}
+                    </article>
+                `;
+            } catch (error) {
+                console.error(error);
+                mainContent.innerHTML = `
+                    <a href="blog.html" class="back-btn">← Back to Thoughts</a>
+                    <div class="loader">Error loading post.</div>`;
+            }
+        }
+    </script>
+  </body>
+</html>

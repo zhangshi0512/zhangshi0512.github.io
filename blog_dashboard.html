@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Glassmorphism Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0a0a0a; /* Match main site */
+            /* Subtle accent gradient overlay matching main site */
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(102, 126, 234, 0.15) 0, transparent 50%), 
+                radial-gradient(at 100% 0%, rgba(118, 75, 162, 0.15) 0, transparent 50%), 
+                radial-gradient(at 100% 100%, rgba(245, 87, 108, 0.1) 0, transparent 50%);
+            background-size: cover;
+            background-attachment: fixed;
+            color: #e0e0e0;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        /* Glassmorphism Utilities */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.07);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s;
+        }
+
+        .glass-card:hover {
+            transform: translateY(-2px);
+            background: rgba(255, 255, 255, 0.15);
+            border-color: rgba(255, 255, 255, 0.3);
+            cursor: pointer;
+        }
+
+        .glass-input {
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+        
+        .glass-input:focus {
+            outline: none;
+            border-color: rgba(255, 255, 255, 0.3);
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        /* Checkbox Customization */
+        .custom-checkbox {
+            appearance: none;
+            background-color: transparent;
+            margin: 0;
+            font: inherit;
+            color: currentColor;
+            width: 1.15em;
+            height: 1.15em;
+            border: 1px solid white;
+            border-radius: 0.15em;
+            display: grid;
+            place-content: center;
+            cursor: pointer;
+        }
+
+        .custom-checkbox::before {
+            content: "";
+            width: 0.65em;
+            height: 0.65em;
+            transform: scale(0);
+            transition: 120ms transform ease-in-out;
+            box-shadow: inset 1em 1em white;
+            transform-origin: center;
+            clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
+        }
+
+        .custom-checkbox:checked::before {
+            transform: scale(1);
+        }
+
+        /* Text Clamp */
+        .line-clamp-2 {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        
+        /* Grid Pattern for 'Tech' card */
+        .pixel-grid {
+            background-image: 
+                linear-gradient(rgba(0, 255, 0, 0.2) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 255, 0, 0.2) 1px, transparent 1px);
+            background-size: 10px 10px;
+        }
+        
+        .pixel-snake {
+            box-shadow: 
+                10px 0 #4ade80, 20px 0 #4ade80, 
+                20px 10px #4ade80, 20px 20px #4ade80,
+                10px 20px #4ade80, 0 20px #4ade80,
+                0 30px #4ade80, 0 40px #4ade80,
+                10px 40px #4ade80, 20px 40px #4ade80, 30px 40px #4ade80;
+        }
+
+        /* Utility for view switching */
+        .hidden-view {
+            display: none !important;
+        }
+
+        /* Animation for view transition */
+        .fade-in {
+            animation: fadeIn 0.3s ease-out forwards;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="text-white min-h-screen flex items-center justify-center p-4 md:p-8">
+
+    <!-- Dependencies -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/js-yaml/dist/js-yaml.min.js"></script>
+
+    <!-- LOGIN MODAL -->
+    <div id="login-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm hidden">
+        <div class="glass-panel w-full max-w-md p-8 rounded-2xl flex flex-col items-center text-center">
+            <h2 class="text-2xl font-light mb-4">Connect to GitHub</h2>
+            <p class="text-gray-400 text-sm mb-6">
+                To manage your blog, this dashboard needs a Personal Access Token (PAT). 
+                The token is stored locally in your browser.
+            </p>
+            
+            <a href="https://github.com/settings/tokens/new?scopes=public_repo&description=Shi+Zhang+Blog+Dashboard" 
+               target="_blank"
+               class="mb-6 px-4 py-2 bg-indigo-600 hover:bg-indigo-500 rounded-lg text-sm font-medium transition-colors flex items-center gap-2">
+                <span>🔑 Generate Token (public_repo)</span>
+            </a>
+
+            <div class="w-full space-y-3">
+                <input type="password" id="gh-token-input" placeholder="Paste your token here (ghp_...)" 
+                       class="w-full p-3 rounded-lg glass-input text-sm text-center focus:ring-2 ring-indigo-500 transition-all">
+                <button id="save-token-btn" class="w-full p-3 bg-white text-black rounded-lg font-medium hover:bg-gray-200 transition-colors">
+                    Access Dashboard
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Dashboard Container -->
+    <div id="app-container" class="glass-panel w-full max-w-[1400px] h-[95vh] md:h-[90vh] rounded-3xl overflow-hidden flex flex-col relative transition-all duration-300">
+        
+        <!-- HOME VIEW CONTAINER -->
+        <div id="home-view" class="flex flex-col h-full w-full fade-in">
+            <!-- Header Section -->
+            <div class="p-6 md:p-8 pb-0 shrink-0 z-10 flex justify-between items-center">
+                <div>
+                     <a href="index.html" class="text-xs text-gray-500 hover:text-white mb-2 block flex items-center gap-1 transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+                        Back to Website
+                    </a>
+                    <h1 id="welcome-msg" class="text-3xl font-light tracking-wide">Good evening</h1>
+                </div>
+                <div class="flex items-center gap-3">
+                    <img id="user-avatar" src="" alt="" class="w-8 h-8 rounded-full bg-gray-700 hidden">
+                    <button id="logout-btn" class="text-xs text-gray-400 hover:text-white underline">Logout</button>
+                </div>
+            </div>
+
+            <div class="flex flex-col lg:flex-row flex-1 overflow-hidden">
+                
+                <!-- Left Sidebar -->
+                <aside class="w-full lg:w-[400px] xl:w-[450px] p-6 md:p-8 flex flex-col gap-8 overflow-y-auto shrink-0 custom-scrollbar">
+                    
+                    <!-- Post List Section -->
+                    <section>
+                        <div class="flex justify-between items-center mb-4 text-gray-300">
+                            <div class="flex items-center gap-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                                <span class="font-medium">All Posts</span>
+                            </div>
+                            <!-- New Post Button -->
+                            <button onclick="createNewPost()" class="hover:text-white transition-colors"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg></button>
+                        </div>
+
+                        <!-- Dynamic List -->
+                        <div id="post-list" class="space-y-4 text-sm text-gray-400">
+                            <!-- Items will be injected here by dashboard.js -->
+                        </div>
+                    </section>
+                </aside>
+
+                <!-- Right Side (Placeholder for Dashboard Home) -->
+                <main class="flex-1 p-6 md:p-8 pt-0 lg:pt-8 overflow-y-auto custom-scrollbar flex items-center justify-center">
+                    <div class="text-center opacity-50">
+                        <p class="text-xl font-light">Select a post to edit</p>
+                        <p class="text-sm">or click + to create new</p>
+                    </div>
+                </main>
+            </div>
+        </div>
+        
+        <!-- DETAIL/EDITOR VIEW CONTAINER -->
+        <div id="detail-view" class="hidden-view flex flex-col h-full w-full fade-in">
+             <!-- Editor Header -->
+            <div class="p-6 md:p-8 shrink-0 z-10 flex items-center justify-between border-b border-white/10 bg-white/5">
+                <div class="flex items-center gap-4 flex-1">
+                    <button onclick="goBack()" class="p-2 rounded-full hover:bg-white/10 transition-colors group">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="group-hover:-translate-x-1 transition-transform"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+                    </button>
+                    <div class="flex-1 mr-4">
+                        <input type="text" id="editor-title" class="bg-transparent text-xl md:text-2xl font-light text-white w-full focus:outline-none placeholder-gray-600" placeholder="YYYY-MM-DD-filename.md">
+                    </div>
+                </div>
+                <div class="flex gap-2">
+                    <button id="save-post-btn" class="px-4 py-2 bg-white text-black rounded-lg text-sm font-bold hover:bg-gray-200 transition-colors">Save</button>
+                </div>
+            </div>
+
+            <!-- Editor Content -->
+            <div class="flex-1 flex overflow-hidden">
+                <!-- Write Column -->
+                <div class="w-1/2 p-6 md:p-8 border-r border-white/10 flex flex-col">
+                    <textarea id="editor-content" class="w-full h-full bg-transparent resize-none focus:outline-none text-gray-300 font-mono text-sm leading-relaxed custom-scrollbar" placeholder="# Write your post here..."></textarea>
+                </div>
+                <!-- Preview Column -->
+                <div class="w-1/2 p-6 md:p-8 overflow-y-auto custom-scrollbar bg-black/20">
+                    <div id="preview-container" class="prose prose-invert prose-sm max-w-none">
+                        <!-- Preview renders here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Load Logic -->
+    <script src="dashboard.js"></script>
+
+    <script>
+        // --- View Navigation & Helpers ---
+
+        const homeView = document.getElementById('home-view');
+        const detailView = document.getElementById('detail-view');
+
+        function openDetail(title, category) {
+            // Note: Content loading is handled by dashboard.js calling this
+            document.getElementById('detail-title').innerText = title || "New Post"; 
+            
+            homeView.classList.add('hidden-view');
+            detailView.classList.remove('hidden-view');
+            
+            detailView.classList.remove('fade-in');
+            void detailView.offsetWidth; 
+            detailView.classList.add('fade-in');
+        }
+
+        function goBack() {
+            detailView.classList.add('hidden-view');
+            homeView.classList.remove('hidden-view');
+            
+            homeView.classList.remove('fade-in');
+            void homeView.offsetWidth; 
+            homeView.classList.add('fade-in');
+        }
+
+        function createNewPost() {
+            // Reset Editor
+            document.getElementById('editor-title').value = new Date().toISOString().split('T')[0] + '-new-post.md';
+            document.getElementById('editor-content').value = "---\ntitle: New Post\ndate: " + new Date().toISOString().split('T')[0] + "\n---\n\n# New Post";
+            
+            // Set global state in Dashboard.js implicitly by clearing SHA
+            // We need a way to tell dashboard.js we are in "New" mode.
+            // dashboard.js can infer this if we don't call loadPostContent first.
+            // But we should probably expose a cleaner method. 
+            // For now, let's just clear the SHA variable if we could access it, 
+            // but since modules are separate, we rely on the input values.
+            // Actually, `dashboard.js` logic relies on `currentFilePath` matching the input.
+            // We should reload the window or handle this better. 
+            
+            // Hack for now: We just open the view. The save logic will see the filename doesn't match old path and treat as new.
+            openDetail('New Post', 'Draft');
+            
+            // Dispatch input event to trigger preview
+            document.getElementById('editor-content').dispatchEvent(new Event('input'));
+        }
+
+        // Background Mouse Effect
+        document.addEventListener('mousemove', (e) => {
+            const x = e.clientX / window.innerWidth;
+            const y = e.clientY / window.innerHeight;
+            document.body.style.backgroundPosition = `${x * 20}px ${y * 20}px`;
+        });
+    </script>
+</body>
+</html>
