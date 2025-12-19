@@ -373,35 +373,71 @@
         const urlParams = new URLSearchParams(window.location.search);
         const postName = urlParams.get('post');
 
-        // Configure marked to handle mermaid code blocks
-        const renderer = new marked.Renderer();
-        const originalCode = renderer.code.bind(renderer);
-        renderer.code = function(code, language, escaped) {
-            if (language === 'mermaid') {
-                return `<div class="mermaid" data-source="${encodeURIComponent(code)}" style="display: flex; justify-content: center; margin: 2rem 0; background: transparent; overflow-x: auto; max-width: 100%;">${code}</div>`;
+        // Create a custom renderer for marked
+        const mermaidRenderer = new marked.Renderer();
+        mermaidRenderer.code = function(code, lang) {
+            let codeText = typeof code === 'object' ? code.text : code;
+            let language = (typeof code === 'object' ? code.lang : lang) || '';
+            language = language.toLowerCase().trim();
+            const trimmedCode = codeText.trim();
+            
+            if (language.includes('mermaid') || 
+                trimmedCode.toLowerCase().includes('graph ') || 
+                trimmedCode.toLowerCase().includes('flowchart ') || 
+                trimmedCode.toLowerCase().includes('sequencediagram') || 
+                trimmedCode.toLowerCase().includes('gantt') || 
+                trimmedCode.toLowerCase().includes('classdiagram') || 
+                trimmedCode.toLowerCase().includes('statediagram') || 
+                trimmedCode.toLowerCase().includes('pie')) {
+                
+                const escapedCode = codeText
+                    .replace(/&/g, '&amp;')
+                    .replace(/</g, '&lt;')
+                    .replace(/>/g, '&gt;');
+                return `<div class="mermaid" data-source="${encodeURIComponent(codeText)}" style="display: block; margin: 2rem 0; background: transparent; overflow-x: auto; max-width: 100%; min-height: 50px; text-align: center;">${escapedCode}</div>`;
             }
-            return originalCode(code, language, escaped);
+            
+            // Fallback for non-mermaid code blocks
+            const escapedMain = codeText.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            return `<pre><code class="language-${language}">${escapedMain}</code></pre>`;
         };
-        marked.setOptions({ renderer });
 
         // Listen for theme changes to update Mermaid
         document.addEventListener('themeChanged', (e) => {
             if (window.mermaid) {
+                const isDark = e.detail.isDark;
                 mermaid.initialize({ 
-                    theme: e.detail.isDark ? 'dark' : 'default' 
+                    theme: isDark ? 'dark' : 'default',
+                    securityLevel: 'loose'
                 });
-                // If we are currently viewing a post, re-render it
                 const mermaidDivs = document.querySelectorAll('.mermaid');
                 if (mermaidDivs.length > 0) {
                     mermaidDivs.forEach(div => {
                         const source = decodeURIComponent(div.getAttribute('data-source'));
                         div.removeAttribute('data-processed');
-                        div.innerHTML = source;
+                        div.innerHTML = source.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
                     });
                     mermaid.run();
                 }
             }
         });
+        
+        // Apply global configuration
+        if (typeof marked !== 'undefined') {
+            marked.setOptions({ renderer: mermaidRenderer });
+        }
+        
+        async function runMermaid() {
+            if (window.mermaid) {
+                const isDark = document.body.classList.contains('light-theme') === false;
+                await mermaid.initialize({ 
+                    startOnLoad: false,
+                    theme: isDark ? 'dark' : 'default',
+                    securityLevel: 'loose'
+                });
+                await mermaid.run();
+            }
+        }
 
         if (postName) {
             loadPost(postName);
@@ -518,7 +554,9 @@
                 const wordCount = content.trim().split(/\s+/).length;
                 const readTime = Math.ceil(wordCount / 225);
 
-                const html = marked.parse(content);
+                // Use the most compatible way to parse
+                const parseFn = marked.parse || marked;
+                const html = parseFn(content);
                 
                 mainContent.innerHTML = `
                     <div class="fade-in">
@@ -541,10 +579,8 @@
                     </div>
                 `;
 
-                // Render Mermaid diagrams if they exist
-                if (window.mermaid) {
-                    await mermaid.run();
-                }
+                // Render Mermaid diagrams
+                requestAnimationFrame(runMermaid);
             } catch (error) {
                 console.error(error);
                 mainContent.innerHTML = `
