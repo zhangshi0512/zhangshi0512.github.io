@@ -409,9 +409,9 @@
                     if(dateMatch) date = dateMatch[1];
                 }
 
-                // If content starts with an H1 that matches the title, we might want to avoid doubling up.
-                // But usually, we'll let the markdown-body handle the first H1 if it exists.
-                // However, we definitely want to hide the "filename" as a title.
+                // Calculate Read Time
+                const wordCount = content.trim().split(/\s+/).length;
+                const readTime = Math.ceil(wordCount / 225);
 
                 const html = marked.parse(content);
                 
@@ -423,7 +423,14 @@
                         </a>
                         <article class="markdown-body">
                             ${!content.trim().startsWith('# ') ? `<h1 style="text-transform: capitalize;">${title}</h1>` : ''}
-                            <p class="post-date" style="margin-bottom: 3rem; font-size: 1rem;">${date}</p>
+                            <p class="post-date" style="margin-bottom: 3rem; font-size: 1rem; opacity: 0.8; display: flex; align-items: center; gap: 0.5rem;">
+                                <span>${date}</span>
+                                <span style="opacity: 0.3;">•</span>
+                                <span style="display: flex; align-items: center; gap: 0.3rem;">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                                    ${readTime} min read
+                                </span>
+                            </p>
                             ${html}
                         </article>
                     </div>
