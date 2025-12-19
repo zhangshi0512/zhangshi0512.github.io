@@ -14,6 +14,13 @@ let currentFileSha = null;
 let currentFilePath = null;
 let unsavedChanges = false;
 
+// Expose reset for new post creation
+window.resetEditorState = () => {
+    currentFileSha = null;
+    currentFilePath = null;
+    unsavedChanges = false;
+};
+
 // --- initialization ---
 document.addEventListener('DOMContentLoaded', async () => {
     // Check for existing token
@@ -190,7 +197,7 @@ async function loadPostContent(file) {
         if(contentInput) contentInput.value = content;
         
         // Use global openDetail from HTML
-        if(window.openDetail) window.openDetail(file.name, 'Blog Post');
+        if(window.openDetail) window.openDetail();
         
         updatePreview();
         unsavedChanges = false;
@@ -231,7 +238,7 @@ async function saveCurrentPost() {
         // Unicode safe base64 encoding
         const base64Content = btoa(unescape(encodeURIComponent(content))); 
         
-        await octokit.rest.repos.createOrUpdateFileContents({
+        const { data: saveResponse } = await octokit.rest.repos.createOrUpdateFileContents({
             owner: CONFIG.repoOwner,
             repo: CONFIG.repoName,
             path: path,
@@ -240,6 +247,10 @@ async function saveCurrentPost() {
             sha: sha || undefined,
             branch: CONFIG.branch
         });
+        
+        // Update state with new SHA to prevent 409 Conflict on next save
+        currentFileSha = saveResponse.content.sha;
+        currentFilePath = path; // Update path in case of rename
         
         alert("Saved successfully!");
         unsavedChanges = false;
