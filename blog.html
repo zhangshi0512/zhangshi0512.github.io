@@ -7,74 +7,228 @@
     <link rel="stylesheet" href="style-new.css" />
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0a0a0a;
+            background-image: 
+                radial-gradient(at 0% 0%, hsla(253,16%,7%,1) 0, transparent 50%), 
+                radial-gradient(at 50% 0%, hsla(225,39%,30%,1) 0, transparent 50%), 
+                radial-gradient(at 100% 0%, hsla(339,49%,30%,1) 0, transparent 50%),
+                radial-gradient(at 100% 100%, hsla(30,50%,30%,1) 0, transparent 50%),
+                radial-gradient(at 0% 100%, hsla(240,40%,20%,1) 0, transparent 50%);
+            background-size: cover;
+            background-attachment: fixed;
+            color: #e0e0e0;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.05); }
+        ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.2); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.3); }
+
         .blog-container {
-            max-width: 800px;
+            max-width: 900px;
             margin: 0 auto;
-            padding: 8rem 2rem 4rem;
+            padding: 10rem 2rem 6rem;
             min-height: 80vh;
         }
+
+        /* Glassmorphism Cards */
         .post-card {
-            background: var(--card-background);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 2rem;
-            margin-bottom: 2rem;
-            transition: transform 0.2s;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 2.5rem;
+            margin-bottom: 2.5rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             cursor: pointer;
+            position: relative;
+            overflow: hidden;
         }
+
+        .post-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--accent-gradient, linear-gradient(135deg, #667eea 0%, #764ba2 100%));
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
         .post-card:hover {
-            transform: translateY(-2px);
-            border-color: var(--text-primary);
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
         }
+
+        .post-card:hover::before {
+            opacity: 1;
+        }
+
         .post-date {
-            font-family: monospace;
-            color: var(--text-secondary);
-            font-size: 0.9rem;
-            margin-bottom: 0.5rem;
-            display: block;
-        }
-        .post-title {
-            font-size: 1.5rem;
+            font-family: 'Space Mono', monospace;
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 0.85rem;
             margin-bottom: 1rem;
-            color: var(--text-primary);
+            display: block;
+            letter-spacing: 0.05em;
         }
-        .post-excerpt {
-            color: var(--text-secondary);
-            line-height: 1.6;
+
+        .post-title {
+            font-size: 1.75rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            color: #fff;
+            letter-spacing: -0.02em;
+            line-height: 1.3;
+        }
+
+        /* Markdown Styles & Typography */
+        .markdown-body {
+            line-height: 1.7;
+            font-size: 1.15rem;
+            color: rgba(255, 255, 255, 0.85);
+            font-weight: 300;
+        }
+
+        .markdown-body h1 { 
+            font-size: clamp(2.5rem, 5vw, 3.5rem);
+            margin-bottom: 3rem; 
+            font-weight: 700; 
+            color: #fff; 
+            line-height: 1.1;
+            letter-spacing: -0.04em;
+        }
+
+        .markdown-body h2 { 
+            font-size: 1.8rem; 
+            margin-top: 4.5rem; 
+            margin-bottom: 1.75rem; 
+            font-weight: 600; 
+            color: #fff;
+            letter-spacing: -0.02em;
+        }
+
+        .markdown-body h3 {
+            font-size: 1.4rem;
+            margin-top: 3rem;
+            margin-bottom: 1.25rem;
+            font-weight: 600;
+            color: rgba(255,255,255,0.9);
+        }
+
+        .markdown-body p { 
+            margin-bottom: 2rem; 
+            line-height: 1.85;
         }
         
-        /* Markdown Styles */
-        .markdown-body {
-            color: var(--text-primary);
-            line-height: 1.8;
-            font-size: 1.1rem;
+        .markdown-body ul, .markdown-body ol {
+            margin-bottom: 2rem;
+            margin-left: 1.5rem;
+            color: rgba(255,255,255,0.75);
         }
-        .markdown-body h1 { font-size: 2.5rem; margin-bottom: 2rem; font-weight: 700; }
-        .markdown-body h2 { font-size: 2rem; margin-top: 3rem; margin-bottom: 1.5rem; }
-        .markdown-body h3 { font-size: 1.5rem; margin-top: 2rem; margin-bottom: 1rem; }
-        .markdown-body p { margin-bottom: 1.5rem; }
-        .markdown-body ul { list-style: disc; margin-left: 1.5rem; margin-bottom: 1.5rem; }
-        .markdown-body code { background: var(--skill-tag-bg); padding: 0.2em 0.4em; border-radius: 3px; font-size: 0.9em; font-family: monospace; }
-        .markdown-body pre { background: #1e1e1e; padding: 1.5rem; border-radius: 8px; overflow-x: auto; margin-bottom: 2rem; }
-        .markdown-body img { max-width: 100%; border-radius: 8px; margin: 2rem 0; }
-        .markdown-body blockquote { border-left: 4px solid var(--text-secondary); padding-left: 1rem; font-style: italic; color: var(--text-secondary); }
+
+        .markdown-body li {
+            margin-bottom: 0.75rem;
+        }
+
+        .markdown-body code {
+            background: rgba(255,255,255,0.1);
+            padding: 0.2rem 0.4rem;
+            border-radius: 6px;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.9em;
+        }
+
+        .markdown-body pre {
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 1.5rem;
+            border-radius: 16px;
+            margin: 2.5rem 0;
+            overflow-x: auto;
+        }
+
+        .markdown-body blockquote {
+            border-left: 4px solid #667eea;
+            padding: 1.5rem 2rem;
+            margin: 3rem 0;
+            background: rgba(102, 126, 234, 0.05);
+            border-radius: 0 16px 16px 0;
+            font-style: italic;
+            color: rgba(255,255,255,0.7);
+            font-size: 1.2rem;
+        }
+
+        .markdown-body img {
+            max-width: 100%;
+            border-radius: 20px;
+            margin: 3rem 0;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+            display: block;
+        }
+
+        .markdown-body hr {
+            border: none;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            margin: 4rem 0;
+        }
+
+        .markdown-body table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 2.5rem 0;
+            background: rgba(255,255,255,0.03);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .markdown-body th {
+            background: rgba(255,255,255,0.07);
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        .markdown-body td {
+            padding: 1rem;
+            border-top: 1px solid rgba(255,255,255,0.05);
+        }
 
         .back-btn {
             display: inline-flex;
             align-items: center;
-            gap: 0.5rem;
-            color: var(--text-secondary);
+            gap: 0.6rem;
+            color: rgba(255,255,255,0.5);
             text-decoration: none;
-            margin-bottom: 2rem;
-            font-size: 0.9rem;
+            margin-bottom: 4rem;
+            font-size: 0.95rem;
+            transition: color 0.2s;
         }
-        .back-btn:hover { color: var(--text-primary); }
+        .back-btn:hover { color: #fff; }
 
-        /* Loading */
         .loader {
             text-align: center;
-            color: var(--text-secondary);
-            padding: 4rem;
+            color: rgba(255,255,255,0.4);
+            padding: 6rem;
+            font-weight: 300;
+        }
+
+        /* Fade-in Animation */
+        .fade-in {
+            animation: fadeIn 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
     </style>
   </head>
@@ -105,7 +259,7 @@
 
     <!-- Main Content -->
     <main class="blog-container" id="main-content">
-        <div class="loader">Loading thoughts...</div>
+        <div class="loader">Gathering thoughts...</div>
     </main>
 
     <!-- Footer -->
@@ -142,69 +296,83 @@
                 
                 const posts = files
                     .filter(f => f.name.endsWith('.md'))
-                    .sort((a,b) => b.name.localeCompare(a.name)); // Sort by date (desc)
+                    .sort((a,b) => b.name.localeCompare(a.name));
 
-                mainContent.innerHTML = `<h1 style="font-size: 3rem; margin-bottom: 3rem; text-align: center;">Thoughts</h1>`;
+                mainContent.innerHTML = `<h1 class="fade-in" style="font-size: 3.5rem; margin-bottom: 5rem; text-align: center; font-weight: 600; letter-spacing: -0.04em;">Thoughts</h1>`;
                 
                 if (posts.length === 0) {
-                    mainContent.innerHTML += `<div style="text-align:center; color: var(--text-secondary);">No posts found yet.</div>`;
+                    mainContent.innerHTML += `<div style="text-align:center; color: rgba(255,255,255,0.4);">No entries found.</div>`;
                     return;
                 }
 
-                posts.forEach(file => {
+                posts.forEach((file, index) => {
+                    // Clean up filename for display in list
                     const date = file.name.substring(0, 10);
-                    const title = file.name.substring(11).replace(/-/g, ' ').replace('.md', '');
+                    const cleanTitle = file.name.substring(11)
+                        .replace(/-/g, ' ')
+                        .replace('.md', '');
+                    
                     const card = document.createElement('div');
-                    card.className = 'post-card';
+                    card.className = 'post-card fade-in';
+                    card.style.animationDelay = `${index * 0.1}s`;
                     card.innerHTML = `
                         <span class="post-date">${date}</span>
-                        <h2 class="post-title" style="text-transform: capitalize;">${title}</h2>
+                        <h2 class="post-title" style="text-transform: capitalize;">${cleanTitle}</h2>
                     `;
-                    card.onclick = () => window.location.search = `?post=${file.name}`;
+                    card.onclick = () => {
+                        window.history.pushState({}, '', `?post=${file.name}`);
+                        loadPost(file.name);
+                    };
                     mainContent.appendChild(card);
                 });
             } catch (error) {
                 console.error(error);
-                mainContent.innerHTML = `<div class="loader">Failed to load posts. API limit may be reached.</div>`;
+                mainContent.innerHTML = `<div class="loader">Failed to load posts.</div>`;
             }
         }
 
         async function loadPost(filename) {
-            mainContent.innerHTML = `<div class="loader">Loading post...</div>`;
+            mainContent.innerHTML = `<div class="loader">Unfolding content...</div>`;
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            
             try {
-                // Fetch raw content to avoid base64 decoding issues/complexity
-                // Note: Standard raw.githubusercontent.com usage
                 const response = await fetch(`https://raw.githubusercontent.com/${CONFIG.owner}/${CONFIG.repo}/main/${CONFIG.path}/${filename}`);
                 if (!response.ok) throw new Error('Post not found');
                 const text = await response.text();
                 
-                // Strip Frontmatter (simple)
-                // We assume frontmatter ends with second ---
                 let content = text;
-                const fmMatch = text.match(/^---\n([\s\S]*?)\n---\n/);
-                let title = filename;
-                let date = '';
+                let title = filename.substring(11).replace(/-/g, ' ').replace('.md', '');
+                let date = filename.substring(0, 10);
 
+                // Simple Frontmatter Parsing
+                const fmMatch = text.match(/^---\n([\s\S]*?)\n---\n/);
                 if (fmMatch) {
                     content = text.replace(fmMatch[0], '');
-                    // Parse simple frontmatter if needed, or just rely on content
                     const fm = fmMatch[1];
                     const titleMatch = fm.match(/title:\s*(.*)/);
                     if(titleMatch) title = titleMatch[1];
-                    
                     const dateMatch = fm.match(/date:\s*(.*)/);
                     if(dateMatch) date = dateMatch[1];
                 }
 
+                // If content starts with an H1 that matches the title, we might want to avoid doubling up.
+                // But usually, we'll let the markdown-body handle the first H1 if it exists.
+                // However, we definitely want to hide the "filename" as a title.
+
                 const html = marked.parse(content);
                 
                 mainContent.innerHTML = `
-                    <a href="blog.html" class="back-btn">← Back to Thoughts</a>
-                    <article class="markdown-body">
-                        <h1>${title}</h1>
-                        ${date ? `<p style="color: var(--text-secondary); margin-bottom: 2rem;">${date}</p>` : ''}
-                        ${html}
-                    </article>
+                    <div class="fade-in">
+                        <a href="blog.html" onclick="event.preventDefault(); window.history.pushState({}, '', 'blog.html'); loadList();" class="back-btn">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+                            Back to Thoughts
+                        </a>
+                        <article class="markdown-body">
+                            ${!content.trim().startsWith('# ') ? `<h1 style="text-transform: capitalize;">${title}</h1>` : ''}
+                            <p class="post-date" style="margin-bottom: 3rem; font-size: 1rem;">${date}</p>
+                            ${html}
+                        </article>
+                    </div>
                 `;
             } catch (error) {
                 console.error(error);
@@ -213,6 +381,14 @@
                     <div class="loader">Error loading post.</div>`;
             }
         }
+
+        // Handle browser back button
+        window.onpopstate = () => {
+            const newParams = new URLSearchParams(window.location.search);
+            const newPost = newParams.get('post');
+            if (newPost) loadPost(newPost);
+            else loadList();
+        };
     </script>
   </body>
 </html>
