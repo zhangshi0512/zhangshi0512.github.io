@@ -251,7 +251,7 @@ nav {
   line-height: 1.6;
 }
 
-/* Experience Timeline */
+/* Experience Stack */
 .experience {
   padding: 6rem 2rem;
 }
@@ -259,6 +259,7 @@ nav {
 .experience-container {
   max-width: var(--max-width);
   margin: 0 auto;
+  overflow: visible;
 }
 
 .experience h2 {
@@ -267,71 +268,81 @@ nav {
   text-align: center;
 }
 
-.timeline {
+.stack-container {
   position: relative;
-  max-width: 900px;
+  width: 100%;
+  max-width: 800px;
+  height: 400px; /* Adjust based on content height */
   margin: 0 auto;
+  perspective: 1000px; /* Gives a slight depth feel if we rotate, though mostly 2D */
 }
 
-.timeline::before {
-  content: '';
+.stack-card {
   position: absolute;
-  left: 50%;
   top: 0;
-  bottom: 0;
-  width: 2px;
-  background: var(--border-color);
-}
-
-.timeline-item {
-  position: relative;
-  padding: 2rem;
-  margin-bottom: 2rem;
-}
-
-.timeline-item:nth-child(odd) {
-  padding-right: 50%;
-  text-align: right;
-}
-
-.timeline-item:nth-child(even) {
-  padding-left: 50%;
-}
-
-.timeline-dot {
-  position: absolute;
-  top: 2rem;
-  left: 50%;
-  width: 16px;
-  height: 16px;
-  background: var(--background-color);
-  border: 3px solid var(--text-primary);
-  border-radius: 50%;
-  transform: translateX(-50%);
-}
-
-.timeline-content {
+  left: 0;
+  width: 100%;
   background: var(--card-background-alt);
-  padding: 1.5rem;
-  border-radius: 8px;
+  border-radius: 12px;
   border: 1px solid var(--border-color);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  transition: transform 0.5s cubic-bezier(0.4, 0.0, 0.2, 1), opacity 0.5s ease, filter 0.5s ease, z-index 0s;
+  cursor: pointer;
+  user-select: none;
+  /* Ensure content doesn't overflow */
+  max-height: 400px;
+  overflow-y: auto;
 }
+
+.stack-card-content {
+  padding: 2.5rem;
+}
+
+/* Base states for JS to toggle - or JS will apply inline styles */
+/* We'll rely mostly on JS to set translateX, scale, and z-index for dynamic stacking */
 
 .timeline-date {
   color: var(--text-secondary);
-  font-size: 0.9rem;
+  font-size: 0.95rem;
   margin-bottom: 0.5rem;
+  font-weight: 500;
 }
 
 .timeline-title {
-  font-size: 1.25rem;
+  font-size: 1.5rem;
   font-weight: 600;
   margin-bottom: 0.5rem;
+  color: var(--text-primary);
 }
 
 .timeline-company {
   color: var(--text-secondary);
-  margin-bottom: 1rem;
+  margin-bottom: 1.5rem;
+  font-size: 1.1rem;
+}
+
+.stack-card-content p, .stack-card-content ul {
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+.stack-card-content ul {
+  padding-left: 1.2rem;
+  margin-top: 1rem;
+}
+
+.stack-card-content li {
+  margin-bottom: 0.5rem;
+}
+
+/* Responsive adjustments for stack */
+@media (max-width: 768px) {
+  .stack-container {
+    height: 500px; /* Need more height for mobile content */
+  }
+  .stack-card-content {
+    padding: 1.5rem;
+  }
 }
 
 /* Projects Section */
