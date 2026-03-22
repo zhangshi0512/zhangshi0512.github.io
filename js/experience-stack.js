@@ -52,8 +52,65 @@ document.addEventListener('DOMContentLoaded', () => {
     card.setAttribute('aria-label', `Experience card ${i + 1} of ${cards.length}`);
   });
 
+  // Setup pagination dots
+  const dotsContainer = document.getElementById('experience-stack-dots');
+  let dots = [];
+
+  if (dotsContainer) {
+    cards.forEach((_, i) => {
+      const dot = document.createElement('div');
+      dot.classList.add('stack-dot');
+      if (i === 0) dot.classList.add('active');
+      dot.setAttribute('role', 'button');
+      dot.setAttribute('aria-label', `Go to experience card ${i + 1}`);
+      dot.setAttribute('tabindex', '0');
+
+      dot.addEventListener('click', () => jumpToCard(i));
+      dot.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          jumpToCard(i);
+        }
+      });
+
+      dotsContainer.appendChild(dot);
+      dots.push(dot);
+    });
+  }
+
+  const updateDots = () => {
+    dots.forEach((dot, i) => {
+      if (i === currentIndex) {
+        dot.classList.add('active');
+      } else {
+        dot.classList.remove('active');
+      }
+    });
+  };
+
   // Initial layout
   updateStackLayout();
+
+  const jumpToCard = (targetIndex) => {
+    if (isAnimating || targetIndex === currentIndex) return;
+
+    // For direct jumping, we update the index instantly
+    // without the single-card slide-out animation to keep it snappy.
+    isAnimating = true;
+
+    // Optional fade-out all visible cards for a brief shuffle effect
+    cards.forEach(card => card.style.opacity = '0');
+
+    setTimeout(() => {
+      currentIndex = targetIndex;
+      updateStackLayout();
+      updateDots();
+
+      setTimeout(() => {
+        isAnimating = false;
+      }, 500);
+    }, 150); // slight delay to allow opacity transition
+  };
 
   const handleCardInteraction = (clickedCard) => {
     if (isAnimating) return;
@@ -81,6 +138,7 @@ document.addEventListener('DOMContentLoaded', () => {
           requestAnimationFrame(() => {
             clickedCard.style.transition = '';
             isAnimating = false;
+            updateDots();
 
             // Move focus to the new top card for accessibility
             cards[currentIndex].focus();

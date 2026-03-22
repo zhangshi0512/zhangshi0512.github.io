@@ -344,6 +344,37 @@ nav {
   margin-bottom: 0.5rem;
 }
 
+/* Stack Dots Pagination */
+.stack-dots-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  margin-top: 5rem; /* space below the stack */
+  padding-bottom: 2rem;
+}
+
+.stack-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: var(--card-bg-hover);
+  border: 1px solid var(--border-color);
+  cursor: pointer;
+  transition: all var(--transition-speed) ease;
+}
+
+.stack-dot:hover {
+  background-color: var(--text-secondary);
+}
+
+.stack-dot.active {
+  background-color: var(--accent-color);
+  border-color: var(--accent-color);
+  transform: scale(1.3);
+  box-shadow: 0 0 10px var(--accent-color);
+}
+
 /* Responsive adjustments for stack */
 @media (max-width: 768px) {
   .stack-container {
