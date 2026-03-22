@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       // If the card is currently animating out, handle it separately
       if (card.classList.contains('animating-out')) {
-        card.style.transform = `translateX(-120%) scale(1) translateY(0)`;
+        card.style.transform = `translateX(-120%) scale(1) translateY(0) rotate(0deg)`;
         card.style.zIndex = totalCards + 1; // Stay on top while leaving
         card.style.opacity = 0;
       } else {
@@ -24,8 +24,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const xOffset = relativeIndex * 15;
         const yOffset = relativeIndex * 15;
         const scale = Math.max(0.8, 1 - (relativeIndex * 0.05));
+        const rotation = relativeIndex * 2; // Tilt cards 2 degrees per layer depth
 
-        card.style.transform = `translate(${xOffset}px, ${yOffset}px) scale(${scale})`;
+        card.style.transform = `translate(${xOffset}px, ${yOffset}px) scale(${scale}) rotate(${rotation}deg)`;
         card.style.zIndex = totalCards - relativeIndex;
 
         // Show only the top few cards, hide the rest
@@ -107,5 +108,53 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
   });
+
+  // Autoplay Logic
+  let autoPlayInterval;
+  const AUTOPLAY_DELAY = 6000; // 6 seconds
+
+  const startAutoPlay = () => {
+    stopAutoPlay(); // clear any existing
+    autoPlayInterval = setInterval(() => {
+        // Find current top card and interact
+        handleCardInteraction(cards[currentIndex]);
+    }, AUTOPLAY_DELAY);
+  };
+
+  const stopAutoPlay = () => {
+    if (autoPlayInterval) {
+        clearInterval(autoPlayInterval);
+    }
+  };
+
+  // Setup Intersection Observer to start autoplay only when visible
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            startAutoPlay();
+        } else {
+            stopAutoPlay();
+        }
+    });
+  }, { threshold: 0.5 }); // Start when 50% of the stack is visible
+
+  observer.observe(stackContainer);
+
+  // Pause autoplay on user interaction (hover or focus)
+  stackContainer.addEventListener('mouseenter', stopAutoPlay);
+  stackContainer.addEventListener('mouseleave', () => {
+      // Only restart if the stack is mostly in view to avoid hidden autoplays
+      const bounding = stackContainer.getBoundingClientRect();
+      const inView = (
+          bounding.top < window.innerHeight &&
+          bounding.bottom > 0
+      );
+      if (inView) {
+          startAutoPlay();
+      }
+  });
+
+  stackContainer.addEventListener('focusin', stopAutoPlay);
+  stackContainer.addEventListener('focusout', startAutoPlay);
 
 });
