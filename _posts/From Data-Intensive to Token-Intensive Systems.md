@@ -1,5 +1,5 @@
 ---
-The New Software Paradigm ———— From Data-Intensive to Token-Intensive Systems
+From Data-Intensive to Token-Intensive Systems
 date: 2026-03-23
 ---
 
