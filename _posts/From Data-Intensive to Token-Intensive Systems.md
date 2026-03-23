@@ -1,6 +1,5 @@
 ---
-The New Software Paradigm in the GenAI Era 
-————From Data-Intensive to Token-Intensive Systems
+The New Software Paradigm ———— From Data-Intensive to Token-Intensive Systems
 date: 2026-03-23
 ---
 
