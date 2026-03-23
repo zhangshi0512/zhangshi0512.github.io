@@ -1,6 +1,6 @@
 # From Data-Intensive to Token-Intensive Systems
 
-Over the past decade, the foundation of software engineering was clearly articulated in *Designing Data-Intensive Applications* by Martin Kleppmann. In that paradigm, software systems were primarily concerned with storing, retrieving, and transforming data, with core challenges centered around volume, velocity, and variety. However, with the rise of generative AI (GenAI), a new paradigm is emergingÃ¢ÂÂone where the fundamental unit is no longer Ã¢ÂÂdata,Ã¢ÂÂ but Ã¢ÂÂtokens.Ã¢ÂÂ
+Over the past decade, the foundation of software engineering was clearly articulated in *Designing Data-Intensive Applications* by Martin Kleppmann. In that paradigm, software systems were primarily concerned with storing, retrieving, and transforming data, with core challenges centered around volume, velocity, and variety. However, with the rise of generative AI (GenAI), a new paradigm is emerging—one where the fundamental unit is no longer “data,” but “tokens.”
 
 In this shift, software evolves from *data-intensive* to *token-intensive*. Tokens are no longer just fragments of text; they are semantic carriers, units of reasoning, and even economic primitives. This transformation is reshaping every layer of the stack, from hardware infrastructure to application logic.
 
