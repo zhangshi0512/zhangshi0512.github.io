@@ -24,6 +24,7 @@ from lib.scraper import (
     fetch_recent_tweets,
     filter_new_tweets,
     highest_tweet_id,
+    timeline_from_tweet_ids,
 )
 from lib.state import load_state, save_state
 
@@ -34,6 +35,11 @@ DRY_RUN = os.environ.get("DRY_RUN", "").lower() in {"1", "true", "yes"}
 SKIP_IMAGES = os.environ.get("SKIP_IMAGES", "").lower() in {"1", "true", "yes"}
 MAX_TWEETS = int(os.environ.get("MAX_TWEETS", "100"))
 MAX_PAGES = int(os.environ.get("MAX_PAGES", "5"))
+ARTICLE_TWEET_IDS = [
+    item.strip()
+    for item in os.environ.get("X_ARTICLE_TWEET_IDS", "").split(",")
+    if item.strip()
+]
 
 
 def log(message: str) -> None:
@@ -138,7 +144,7 @@ def append_step_summary(results: dict[str, list[str]]) -> None:
 async def main() -> None:
     state = load_state(ROOT, USERNAME)
     used_names = collect_existing_filenames()
-    client = create_client()
+    client = create_client(log=log)
 
     log(f"Syncing X Articles for @{state.get('username') or USERNAME} via Twikit")
     if state.get("since_id"):
@@ -151,11 +157,21 @@ async def main() -> None:
         USERNAME,
         max_count=MAX_TWEETS,
         max_pages=MAX_PAGES,
+        log=log,
     )
+
+    if not timeline and ARTICLE_TWEET_IDS:
+        log(
+            f"Timeline/search returned 0 tweets; using X_ARTICLE_TWEET_IDS "
+            f"({len(ARTICLE_TWEET_IDS)} id(s))"
+        )
+        timeline = timeline_from_tweet_ids(ARTICLE_TWEET_IDS, username=USERNAME)
 
     if not timeline:
         log("WARNING: Fetched 0 tweets from timeline and search fallback.")
         log("Check TWITTER_COOKIE_JSON is fresh and @Simonsterrific is accessible.")
+        log("Re-export cookies from x.com while logged in (auth_token + ct0 required).")
+        log("Optional bootstrap: set X_ARTICLE_TWEET_IDS to comma-separated status IDs.")
         raise SystemExit(1)
 
     to_check = filter_new_tweets(timeline, state.get("since_id"))

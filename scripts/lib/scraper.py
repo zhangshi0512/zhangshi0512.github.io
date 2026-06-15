@@ -5,10 +5,11 @@ from __future__ import annotations
 import json
 import os
 import re
+import traceback
 from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
-from typing import Any
+from typing import Any, Callable
 
 from .twikit_patch import apply_twikit_transaction_patch
 
@@ -25,6 +26,12 @@ from .article_parser import (
     find_tweet_data,
     parse_article_from_tweet_data,
 )
+
+LogFn = Callable[[str], None]
+
+
+def _default_log(message: str) -> None:
+    print(f"[scraper] {message}")
 
 
 @dataclass
@@ -47,21 +54,37 @@ class ArticlePayload:
     cover_url: str | None
 
 
-def load_cookie_map() -> dict[str, str]:
+def parse_cookie_json(raw: str) -> list[Any]:
+    """Parse cookie JSON from env/secret; tolerate extra quoting or double-encoding."""
+    text = raw.strip()
+    if not text:
+        raise RuntimeError("TWITTER_COOKIE_JSON is empty.")
+
+    if (text.startswith('"') and text.endswith('"')) or (text.startswith("'") and text.endswith("'")):
+        text = json.loads(text)
+
+    data = json.loads(text) if isinstance(text, str) else text
+    if isinstance(data, str):
+        data = json.loads(data)
+
+    if not isinstance(data, list):
+        raise RuntimeError("Cookie JSON must be a list of {name, value} objects.")
+
+    return data
+
+
+def load_cookie_map(*, log: LogFn = _default_log) -> dict[str, str]:
     cookie_json = os.environ.get("TWITTER_COOKIE_JSON")
     cookie_file = os.environ.get("TWITTER_COOKIE_FILE")
 
     if cookie_json:
-        cookie_list = json.loads(cookie_json)
+        cookie_list = parse_cookie_json(cookie_json)
     elif cookie_file:
-        cookie_list = json.loads(Path(cookie_file).read_text(encoding="utf-8"))
+        cookie_list = parse_cookie_json(Path(cookie_file).read_text(encoding="utf-8"))
     else:
         raise RuntimeError(
             "Missing TWITTER_COOKIE_JSON (GitHub secret) or TWITTER_COOKIE_FILE (local path)."
         )
-
-    if not isinstance(cookie_list, list):
-        raise RuntimeError("Cookie JSON must be a list of {name, value} objects.")
 
     cookie_map = {
         item["name"]: item["value"]
@@ -75,11 +98,15 @@ def load_cookie_map() -> dict[str, str]:
                 f"Cookie JSON is missing required cookie '{required}'. Re-export from x.com while logged in."
             )
 
+    log(
+        f"Loaded {len(cookie_map)} cookie(s): {', '.join(sorted(cookie_map))} "
+        f"(auth_token/ct0 present)"
+    )
     return cookie_map
 
 
-def create_client() -> Client:
-    cookies = load_cookie_map()
+def create_client(*, log: LogFn = _default_log) -> Client:
+    cookies = load_cookie_map(log=log)
     client = Client("en-US")
     client.set_cookies(cookies)
     return client
@@ -124,12 +151,39 @@ def is_article_candidate(tweet: Tweet) -> bool:
     return False
 
 
+def _result_len(batch: Any) -> int:
+    try:
+        return len(batch)
+    except TypeError:
+        return 0
+
+
+async def verify_user_lookup(
+    client: Client,
+    username: str,
+    *,
+    log: LogFn = _default_log,
+) -> str | None:
+    """Return user id when lookup succeeds; log and return None otherwise."""
+    try:
+        user = await client.get_user_by_screen_name(username)
+        user_id = str(user.id)
+        screen_name = getattr(user, "screen_name", None) or getattr(user, "username", username)
+        log(f"Resolved @{screen_name} -> user_id={user_id}")
+        return user_id
+    except Exception as exc:
+        log(f"User lookup failed for @{username}: {type(exc).__name__}: {exc}")
+        log(traceback.format_exc().rstrip())
+        return None
+
+
 async def fetch_recent_tweets(
     client: Client,
     username: str,
     *,
     max_count: int = 100,
     max_pages: int = 5,
+    log: LogFn = _default_log,
 ) -> list[TimelineTweet]:
     rows: dict[str, TimelineTweet] = {}
 
@@ -146,31 +200,37 @@ async def fetch_recent_tweets(
             is_candidate=is_article_candidate(tweet),
         )
 
-    # Primary: authenticated user timeline (more reliable than search in CI).
-    try:
-        user = await client.get_user_by_screen_name(username)
-        batch = await user.get_tweets("Tweets", count=min(40, max_count))
-        pages = 0
-        while batch is not None and pages < max_pages and len(rows) < max_count:
-            for tweet in batch:
-                add_tweet(tweet)
+    user_id = await verify_user_lookup(client, username, log=log)
+    if user_id:
+        try:
+            batch = await client.get_user_tweets(user_id, "Tweets", count=min(40, max_count))
+            pages = 0
+            while pages < max_pages and len(rows) < max_count:
+                page_count = _result_len(batch)
+                log(f"Timeline page {pages + 1}: {page_count} tweet(s)")
+                if page_count == 0:
+                    break
+                for tweet in batch:
+                    add_tweet(tweet)
+                    if len(rows) >= max_count:
+                        break
                 if len(rows) >= max_count:
                     break
-            if len(rows) >= max_count:
-                break
-            try:
-                batch = await batch.next()
-            except Exception:
-                break
-            pages += 1
-    except Exception:
-        pass
+                try:
+                    batch = await batch.next()
+                except Exception as exc:
+                    log(f"Timeline pagination stopped: {type(exc).__name__}: {exc}")
+                    break
+                pages += 1
+        except Exception as exc:
+            log(f"Timeline fetch failed: {type(exc).__name__}: {exc}")
+            log(traceback.format_exc().rstrip())
 
     if rows:
         ordered = sorted(rows.values(), key=lambda item: int(item.tweet_id))
         return ordered[-max_count:] if len(ordered) > max_count else ordered
 
-    # Fallback: search API (legacy path from Iditor scraper).
+    log("Timeline empty; trying search fallback (from:username)...")
     max_id: int | None = None
     pages = 0
     while len(rows) < max_count and pages < max_pages:
@@ -179,19 +239,56 @@ async def fetch_recent_tweets(
             query += f" max_id:{max_id}"
         try:
             batch = await client.search_tweet(query, "Latest")
-        except (NotFound, TooManyRequests):
+        except NotFound as exc:
+            log(f"Search returned NotFound for '{query}': {exc}")
             break
-        if not batch:
+        except TooManyRequests as exc:
+            log(f"Search rate-limited for '{query}': {exc}")
             break
+        except Exception as exc:
+            log(f"Search failed for '{query}': {type(exc).__name__}: {exc}")
+            log(traceback.format_exc().rstrip())
+            break
+
+        page_count = _result_len(batch)
+        log(f"Search page {pages + 1} ('{query}'): {page_count} tweet(s)")
+        if page_count == 0:
+            break
+
         ids: list[int] = []
         for tweet in batch:
             ids.append(int(tweet.id))
             add_tweet(tweet)
+        if not ids:
+            break
         max_id = min(ids) - 1
         pages += 1
 
     ordered = sorted(rows.values(), key=lambda item: int(item.tweet_id))
     return ordered[-max_count:] if len(ordered) > max_count else ordered
+
+
+def timeline_from_tweet_ids(
+    tweet_ids: list[str],
+    *,
+    username: str,
+) -> list[TimelineTweet]:
+    """Build timeline rows from explicit tweet IDs (bootstrap when timeline/search fail)."""
+    rows: list[TimelineTweet] = []
+    for tweet_id in tweet_ids:
+        tweet_id = tweet_id.strip()
+        if not tweet_id.isdigit():
+            continue
+        rows.append(
+            TimelineTweet(
+                tweet_id=tweet_id,
+                created_at=datetime.utcnow().isoformat() + "Z",
+                screen_name=username,
+                url=f"https://x.com/{username}/status/{tweet_id}",
+                is_candidate=True,
+            )
+        )
+    return rows
 
 
 async def fetch_article_payload(client: Client, tweet_id: str, fallback_url: str) -> ArticlePayload | None:

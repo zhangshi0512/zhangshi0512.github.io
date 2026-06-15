@@ -61,11 +61,20 @@ async def main() -> None:
         return
 
     section("Recent timeline scan")
-    timeline = await fetch_recent_tweets(client, USERNAME, max_count=50, max_pages=3)
+    timeline = await fetch_recent_tweets(
+        client,
+        USERNAME,
+        max_count=50,
+        max_pages=3,
+        log=lambda msg: print(f"  {msg}"),
+    )
     print(f"Fetched {len(timeline)} recent tweet(s) from user timeline")
 
     if not timeline:
-        print("\nFAIL: Timeline returned 0 tweets. Cookies may be expired or API blocked.")
+        print("\nFAIL: Timeline returned 0 tweets.")
+        print("Cookies may be expired, or X blocked the request from this network.")
+        print("Re-export cookies from x.com, update TWITTER_COOKIE_JSON, and retry.")
+        print("Or test a known article directly: python scripts/validate-x-sync.py --tweet-id <id>")
         raise SystemExit(2)
 
     verified = 0
