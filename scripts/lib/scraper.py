@@ -10,6 +10,10 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any
 
+from .twikit_patch import apply_twikit_transaction_patch
+
+apply_twikit_transaction_patch()
+
 from twikit import Client
 from twikit.client.gql import Endpoint
 from twikit.constants import TWEET_RESULT_BY_REST_ID_FEATURES
@@ -59,7 +63,19 @@ def load_cookie_map() -> dict[str, str]:
     if not isinstance(cookie_list, list):
         raise RuntimeError("Cookie JSON must be a list of {name, value} objects.")
 
-    return {item["name"]: item["value"] for item in cookie_list if "name" in item and "value" in item}
+    cookie_map = {
+        item["name"]: item["value"]
+        for item in cookie_list
+        if isinstance(item, dict) and "name" in item and "value" in item
+    }
+
+    for required in ("auth_token", "ct0"):
+        if required not in cookie_map:
+            raise RuntimeError(
+                f"Cookie JSON is missing required cookie '{required}'. Re-export from x.com while logged in."
+            )
+
+    return cookie_map
 
 
 def create_client() -> Client:
