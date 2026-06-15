@@ -11,9 +11,9 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any, Callable
 
-from .twikit_patch import apply_twikit_transaction_patch
+from .twikit_patch import apply_twikit_patches
 
-apply_twikit_transaction_patch()
+apply_twikit_patches()
 
 from twikit import Client
 from twikit.client.gql import Endpoint

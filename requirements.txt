@@ -1,4 +1,4 @@
-# Maintained fork: webpack KEY_BYTE fix + user payload parsing updates (Mar 2026).
-# scripts/lib/twikit_patch.py still applies as a fallback when using PyPI twikit.
+# Maintained fork: webpack KEY_BYTE fix. User legacy parsing is patched at runtime
+# via scripts/lib/twikit_patch.py (entities.description.urls, etc.).
 twikit @ git+https://github.com/ryanstoic/twikit.git@fix/ondemand-regex-webpack-format
 httpx>=0.27.0
