@@ -66,13 +66,14 @@ section { padding: 120px 48px; }
 .blog-card-tag { font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; border: 1px solid var(--border); padding: 3px 10px; border-radius: 2px; color: var(--fg-dim); }
 .blog-card-read { margin-top: auto; padding-top: 20px; font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); }
 .blog-empty { grid-column: 1/-1; padding: 80px; text-align: center; color: var(--fg-dim); font-size: 13px; }
-#blog-reader { position: fixed; inset: 0; z-index: 4000; background: var(--bg); overflow-y: auto; display: none; padding: 80px 48px 120px; }
+#blog-reader { position: fixed; inset: 0; z-index: 4000; background: var(--bg); overflow-y: auto; display: none; padding: 80px 24px 120px; }
 #blog-reader.open { display: block; }
+.reader-inner { max-width: 740px; width: 100%; margin: 0 auto; }
 .reader-back { display: inline-flex; align-items: center; gap: 8px; font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--fg-dim); background: none; border: none; cursor: none; transition: color 0.2s; font-family: var(--font-body); margin-bottom: 60px; }
 .reader-back:hover { color: var(--fg); }
-.reader-title { font-family: var(--font-display); font-size: clamp(40px, 6vw, 88px); line-height: 0.95; max-width: 900px; margin-bottom: 24px; }
-.reader-meta { font-size: 11px; letter-spacing: 0.12em; color: var(--fg-dim); margin-bottom: 60px; border-bottom: 1px solid var(--border); padding-bottom: 24px; }
-.reader-body { max-width: 680px; font-size: 14px; line-height: 2; color: oklch(80% 0.01 80); }
+.reader-title { font-family: var(--font-display); font-size: clamp(40px, 6vw, 88px); line-height: 0.95; width: 100%; margin: 0 auto 24px; text-align: center; }
+.reader-meta { font-size: 11px; letter-spacing: 0.12em; color: var(--fg-dim); margin-bottom: 60px; border-bottom: 1px solid var(--border); padding-bottom: 24px; text-align: center; }
+.reader-body { width: 100%; font-size: 14px; line-height: 2; color: oklch(80% 0.01 80); }
 .reader-body h1, .reader-body h2, .reader-body h3 { font-family: var(--font-display); color: var(--fg); margin-top: 2em; margin-bottom: 1em; line-height: 1.2; letter-spacing: 0.05em; }
 .reader-body h1 { font-size: 40px; }
 .reader-body h2 { font-size: 32px; }
@@ -88,6 +89,10 @@ section { padding: 120px 48px; }
 .reader-body li { margin-bottom: 0.5em; }
 .reader-body a { color: var(--accent); text-decoration: none; border-bottom: 1px solid transparent; transition: border-color 0.2s; }
 .reader-body a:hover { border-color: var(--accent); }
+@media (max-width: 600px) {
+  #blog-reader { padding: 72px 16px 96px; }
+  .reader-title { font-size: clamp(32px, 9vw, 56px); }
+}
 footer { border-top: 1px solid var(--border); padding: 24px 48px; display: flex; justify-content: space-between; font-size: 10px; letter-spacing: 0.1em; color: var(--fg-dim); }
 .reveal { opacity: 0; transform: translateY(40px); transition: opacity 0.7s cubic-bezier(0.16,1,0.3,1), transform 0.7s cubic-bezier(0.16,1,0.3,1); }
 .reveal.visible { opacity: 1; transform: translateY(0); }
@@ -135,10 +140,12 @@ footer { border-top: 1px solid var(--border); padding: 24px 48px; display: flex;
 </section>
 
 <div id="blog-reader">
-  <button class="reader-back" id="reader-back">← Back to writing</button>
-  <div class="reader-title" id="reader-title"></div>
-  <div class="reader-meta" id="reader-meta"></div>
-  <div class="reader-body" id="reader-body"></div>
+  <div class="reader-inner">
+    <button class="reader-back" id="reader-back">← Back to writing</button>
+    <div class="reader-title" id="reader-title"></div>
+    <div class="reader-meta" id="reader-meta"></div>
+    <div class="reader-body" id="reader-body"></div>
+  </div>
 </div>
 
 <footer>

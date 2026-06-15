@@ -148,6 +148,37 @@
     }
   }
 
+  function normalizeTitle(value) {
+    return value
+      .replace(/^["']|["']$/g, '')
+      .trim()
+      .toLowerCase()
+      .replace(/[-–—]/g, ' ')
+      .replace(/[^\w\s]/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim();
+  }
+
+  function resolveTitleAndContent(content, title, hasFrontmatterTitle) {
+    const h1Match = content.match(/^\s*#\s+(.+?)\s*(?:\r?\n|$)/);
+    if (!h1Match) {
+      return { title, content };
+    }
+
+    const h1Title = h1Match[1].trim();
+    const stripH1 = () => content.replace(/^\s*#\s+(.+?)\s*(?:\r?\n|$)/, '');
+
+    if (!hasFrontmatterTitle) {
+      return { title: h1Title, content: stripH1() };
+    }
+
+    if (normalizeTitle(h1Title) === normalizeTitle(title)) {
+      return { title, content: stripH1() };
+    }
+
+    return { title, content };
+  }
+
   async function openPostReader(filename, options = {}) {
     const readerId = options.readerId || 'blog-reader';
     const reader = document.getElementById(readerId);
@@ -172,13 +203,17 @@
       let date = filename.substring(0, 10);
       let tags = [];
       let source = '';
+      let hasFrontmatterTitle = false;
 
       const fmMatch = text.match(/^---\n([\s\S]*?)\n---\n/);
       if (fmMatch) {
         content = text.replace(fmMatch[0], '');
         const fm = fmMatch[1];
         const titleMatch = fm.match(/title:\s*(.*)/);
-        if (titleMatch) title = titleMatch[1].replace(/^["']|["']$/g, '');
+        if (titleMatch) {
+          title = titleMatch[1].replace(/^["']|["']$/g, '');
+          hasFrontmatterTitle = true;
+        }
         const dateMatch = fm.match(/date:\s*(.*)/);
         if (dateMatch) date = dateMatch[1].trim();
         const tagsMatch = fm.match(/tags:\s*\[(.*?)\]/);
@@ -186,6 +221,8 @@
         const sourceMatch = fm.match(/source:\s*(.*)/);
         if (sourceMatch) source = sourceMatch[1].trim();
       }
+
+      ({ title, content } = resolveTitleAndContent(content, title, hasFrontmatterTitle));
 
       const wordCount = content.trim().split(/\s+/).filter(Boolean).length;
       const readTime = Math.max(1, Math.ceil(wordCount / 225));

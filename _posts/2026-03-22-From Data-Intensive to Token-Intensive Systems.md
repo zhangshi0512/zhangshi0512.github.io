@@ -1,4 +1,7 @@
-# From Data-Intensive to Token-Intensive Systems
+---
+title: "From Data-Intensive to Token-Intensive Systems"
+date: 2026-03-22
+---
 
 Over the past decade, the foundation of software engineering was clearly articulated in *Designing Data-Intensive Applications* by Martin Kleppmann. In that paradigm, software systems were primarily concerned with storing, retrieving, and transforming data, with core challenges centered around volume, velocity, and variety. However, with the rise of generative AI (GenAI), a new paradigm is emerging—one where the fundamental unit is no longer “data,” but “tokens.”
 

@@ -1,4 +1,7 @@
-# How Generative AI Accelerates Eras and Compresses Processes
+---
+title: "How Generative AI Accelerates Eras and Compresses Processes"
+date: 2025-12-19
+---
 
 Human civilization doesn’t move along a smooth, gently rising curve. It advances through ruptures—technical inflection points that crack open the hardest constraints of an old world and force everything else to reorganize: production, institutions, culture, value, and even our sense of time.
 

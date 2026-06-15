@@ -6,8 +6,6 @@ source_id: "2060023993152008679"
 tags: [X Article]
 ---
 
-# What AI Actually Does to the Economy (That No One Is Talking About)
-
 ![Cover](assets/x-articles/2060023993152008679-cover.jpg)
 
 Let’s start with a common narrative: Like other technological revolutions, AI first replaces some labor, then creates new jobs, and ultimately boosts productivity across society.

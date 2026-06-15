@@ -1,4 +1,8 @@
-# Five Surprising Development Lessons from a Claude Code Engineer Interview
+---
+title: "Five Surprising Development Lessons from a Claude Code Engineer Interview"
+date: 2025-12-08
+---
+
 [Video Source](https://youtu.be/IDSAMqip6ms?list=TLGG8Q2__o9yYa0xOTEyMjAyNQ)
 
 ## Was This a Planned Revolution—or a Beautiful Accident?

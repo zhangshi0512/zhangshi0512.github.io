@@ -56,8 +56,6 @@ source_id: "{article["tweet_id"]}"
 tags: [X Article]
 ---
 
-# {title}
-
 {body}
 """
 

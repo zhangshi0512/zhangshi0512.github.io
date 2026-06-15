@@ -6,8 +6,6 @@ source_id: "2066394520799920427"
 tags: [X Article]
 ---
 
-# Trust is the New Moat: Why GTM Must Evolve in the AI Era
-
 ![Cover](assets/x-articles/2066394520799920427-cover.jpg)
 
 In an age where AI has made code cheap and products abundant, user attention is now the scarcest resource. We are witnessing a fundamental shift: Trust has replaced traffic as the most expensive currency for market entry.

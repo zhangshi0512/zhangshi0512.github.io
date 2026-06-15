@@ -1,4 +1,8 @@
-# Advanced Context Engineering for AI Agents  
+---
+title: "Advanced Context Engineering for AI Agents"
+date: 2025-10-16
+---
+
 ## Practical Lessons from the Manis Agent in Production
 
 The rapid evolution of artificial intelligence has brought about a fundamental shift in how developers think about building intelligent systems. What began as an emphasis on prompt engineering—carefully crafting inputs to elicit better model outputs—has evolved into a broader and more strategic discipline known as context engineering. This transition is inseparable from the rise of AI agents: systems that autonomously plan, call tools, and execute multi-step tasks over extended periods of time.
