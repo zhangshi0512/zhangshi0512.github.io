@@ -1,8 +1,23 @@
 {
   "username": "Simonsterrific",
   "user_id": null,
-  "since_id": null,
-  "last_synced_at": "2026-06-15T07:52:07.327336Z",
+  "since_id": "2066395249593696337",
+  "last_synced_at": "2026-06-15T08:21:22.811440Z",
   "sync_method": "twikit",
-  "articles": {}
+  "articles": {
+    "2060023993152008679": {
+      "filename": "2026-05-28-What-AI-Actually-Does-to-the-Economy-That-No-One-Is-Talking-About.md",
+      "published_at": "2026-05-28T15:42:48+00:00",
+      "content_sha": "6d6128af0d2f5dfe",
+      "source_url": "https://x.com/Simonsterrific/status/2060023993152008679",
+      "synced_at": "2026-06-15T08:21:22.507672Z"
+    },
+    "2066394520799920427": {
+      "filename": "2026-06-15-Trust-is-the-New-Moat-Why-GTM-Must-Evolve-in-the-AI-Era.md",
+      "published_at": "2026-06-15T05:37:00+00:00",
+      "content_sha": "9ba170c7cd5b3dbf",
+      "source_url": "https://x.com/Simonsterrific/status/2066394520799920427",
+      "synced_at": "2026-06-15T08:21:22.678082Z"
+    }
+  }
 }
