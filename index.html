@@ -226,6 +226,7 @@ section { padding: 120px 48px; }
 @media (max-width: 900px) {
   .project-grid { grid-template-columns: 1fr; }
   .pc-large, .pc-small, .pc-med-l, .pc-med-s { grid-column: span 1; height: 380px; }
+  .blog-grid { grid-template-columns: 1fr; }
 }
 /* RESUME */
 #resume { border-top: 1px solid var(--border); }
@@ -245,9 +246,10 @@ section { padding: 120px 48px; }
 .resume-download:hover { border-color: var(--accent); color: var(--accent); }
 /* BLOG */
 #blog { border-top: 1px solid var(--border); }
-.blog-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 64px; }
+.blog-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 64px; gap: 24px; flex-wrap: wrap; }
+.blog-header-actions { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
 .blog-title { font-family: var(--font-display); font-size: clamp(48px, 6vw, 96px); line-height: 1; }
-.blog-new-btn { display: inline-flex; align-items: center; gap: 10px; font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--fg); border: 1px solid var(--border); padding: 12px 24px; background: transparent; cursor: none; transition: border-color 0.3s, background 0.3s; font-family: var(--font-body); }
+.blog-new-btn { display: inline-flex; align-items: center; gap: 10px; font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--fg); border: 1px solid var(--border); padding: 12px 24px; background: transparent; cursor: none; transition: border-color 0.3s, background 0.3s; font-family: var(--font-body); text-decoration: none; }
 .blog-new-btn:hover { border-color: var(--accent); background: var(--accent-dim); }
 .blog-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; }
 .blog-card { padding: 36px 32px; background: oklch(12% 0.01 55); cursor: none; transition: background 0.3s; position: relative; overflow: hidden; }
@@ -342,6 +344,7 @@ footer { border-top: 1px solid var(--border); padding: 24px 48px; display: flex;
 
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+<script src="blog.js"></script>
 </head>
 <body>
 
@@ -691,7 +694,10 @@ footer { border-top: 1px solid var(--border); padding: 24px 48px; display: flex;
 <section id="blog">
   <div class="blog-header">
     <h2 class="blog-title reveal">Writing</h2>
-    <button class="blog-new-btn reveal" id="blog-new-btn" style="display:none;">+ New Post</button>
+    <div class="blog-header-actions">
+      <a href="blog.html" class="blog-new-btn reveal" id="blog-view-all" style="display:none;">View All →</a>
+      <button class="blog-new-btn reveal" id="blog-new-btn" style="display:none;">+ New Post</button>
+    </div>
   </div>
   <div class="blog-grid" id="blog-grid"></div>
 </section>
@@ -942,180 +948,9 @@ document.querySelectorAll('.skills-grid > div').forEach(el => barIO.observe(el))
 // ── PROJECT CARD REVEAL ──
 
 // ── BLOG ──
-const CONFIG = { owner: 'zhangshi0512', repo: 'shizhang.github.io', path: '_posts' };
-const blogGrid = document.getElementById('blog-grid');
-const reader = document.getElementById('blog-reader');
-
-if (typeof marked !== 'undefined') {
-  const mermaidRenderer = new marked.Renderer();
-  mermaidRenderer.code = function(code, lang) {
-      let codeText = typeof code === 'object' ? code.text : code;
-      let language = (typeof code === 'object' ? code.lang : lang) || '';
-      language = language.toLowerCase().trim();
-      const trimmedCode = codeText.trim();
-      if (language.includes('mermaid') || trimmedCode.toLowerCase().includes('graph ')) {
-          const escapedCode = codeText.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-          return `<div class="mermaid" data-source="${encodeURIComponent(codeText)}" style="display: block; margin: 2rem 0; background: transparent; overflow-x: auto; max-width: 100%; min-height: 50px; text-align: center;">${escapedCode}</div>`;
-      }
-      const escapedMain = codeText.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-      return `<pre><code class="language-${language}">${escapedMain}</code></pre>`;
-  };
-  marked.setOptions({ renderer: mermaidRenderer });
-}
-
-async function runMermaid() {
-  if (window.mermaid) {
-      await mermaid.initialize({ startOnLoad: false, theme: 'dark', securityLevel: 'loose' });
-      await mermaid.run();
-  }
-}
-
-async function loadBlogList() {
-    try {
-        const response = await fetch(`https://api.github.com/repos/${CONFIG.owner}/${CONFIG.repo}/contents/${CONFIG.path}`);
-        if (!response.ok) throw new Error('Failed to load posts');
-        const files = await response.json();
-        
-        const postFiles = files.filter(f => f.name.endsWith('.md')).sort((a,b) => b.name.localeCompare(a.name));
-        if (postFiles.length === 0) {
-            blogGrid.innerHTML = '<div class="blog-empty">No published posts yet.</div>';
-            return;
-        }
-
-        blogGrid.innerHTML = '';
-        const postsData = await Promise.all(postFiles.map(async (file) => {
-            try {
-                const res = await fetch(`https://raw.githubusercontent.com/${CONFIG.owner}/${CONFIG.repo}/main/${CONFIG.path}/${file.name}`);
-                const text = await res.text();
-                
-                let content = text;
-                let title = file.name.substring(11).replace(/-/g, ' ').replace('.md', '');
-                let date = file.name.substring(0, 10);
-                let tags = [];
-                
-                const fmMatch = text.match(/^---\n([\s\S]*?)\n---\n/);
-                if (fmMatch) {
-                    content = text.replace(fmMatch[0], '');
-                    const fm = fmMatch[1];
-                    const titleMatch = fm.match(/title:\s*(.*)/);
-                    if(titleMatch) title = titleMatch[1].replace(/^["']|["']$/g, '');
-                    const dateMatch = fm.match(/date:\s*(.*)/);
-                    if(dateMatch) date = dateMatch[1];
-                    const tagsMatch = fm.match(/tags:\s*\[(.*?)\]/);
-                    if(tagsMatch) tags = tagsMatch[1].split(',').map(t=>t.trim().replace(/['"]/g, ''));
-                }
-
-                const plainText = content.replace(/[#*`_\[\]]/g, '').trim();
-                const excerpt = plainText.substring(0, 160).replace(/\s\w+$/, '') + '...';
-                const wordCount = content.trim().split(/\s+/).length;
-                const readTime = Math.ceil(wordCount / 225);
-
-                return { file, title, date, excerpt, readTime, wordCount, tags };
-            } catch(e) {
-                return null;
-            }
-        }));
-
-        postsData.filter(Boolean).forEach((post, index) => {
-            const card = document.createElement('div');
-            card.className = 'blog-card reveal visible';
-            card.style.transitionDelay = `${index * 0.1}s`;
-            card.innerHTML = `
-              <div class="blog-card-date">${post.date} · ${post.readTime} min read</div>
-              <div class="blog-card-title">${post.title}</div>
-              <div class="blog-card-excerpt">${post.excerpt}</div>
-              <div class="blog-card-tags">${post.tags.map(t=>`<span class="blog-card-tag">${t}</span>`).join('')}</div>
-              <div class="blog-card-read">Read →</div>
-            `;
-            card.onclick = () => {
-                window.history.pushState({}, '', `?post=${post.file.name}`);
-                openPostReader(post.file.name);
-            };
-            blogGrid.appendChild(card);
-            if (typeof io !== 'undefined') io.observe(card);
-        });
-    } catch (error) {
-        console.error(error);
-        blogGrid.innerHTML = '<div class="blog-empty">Failed to load posts.</div>';
-    }
-}
-
-async function openPostReader(filename) {
-    document.getElementById('reader-title').textContent = 'Loading...';
-    document.getElementById('reader-meta').textContent = '';
-    document.getElementById('reader-body').innerHTML = '';
-    reader.classList.add('open');
-    reader.scrollTop = 0;
-    document.body.style.overflow = 'hidden';
-    
-    try {
-        const response = await fetch(`https://raw.githubusercontent.com/${CONFIG.owner}/${CONFIG.repo}/main/${CONFIG.path}/${filename}`);
-        if (!response.ok) throw new Error('Post not found');
-        const text = await response.text();
-        
-        let content = text;
-        let title = filename.substring(11).replace(/-/g, ' ').replace('.md', '');
-        let date = filename.substring(0, 10);
-        let tags = [];
-        let source = '';
-
-        const fmMatch = text.match(/^---\n([\s\S]*?)\n---\n/);
-        if (fmMatch) {
-            content = text.replace(fmMatch[0], '');
-            const fm = fmMatch[1];
-            const titleMatch = fm.match(/title:\s*(.*)/);
-            if(titleMatch) title = titleMatch[1].replace(/^["']|["']$/g, '');
-            const dateMatch = fm.match(/date:\s*(.*)/);
-            if(dateMatch) date = dateMatch[1];
-            const tagsMatch = fm.match(/tags:\s*\[(.*?)\]/);
-            if(tagsMatch) tags = tagsMatch[1].split(',').map(t=>t.trim().replace(/['"]/g, ''));
-            const sourceMatch = fm.match(/source:\s*(.*)/);
-            if(sourceMatch) source = sourceMatch[1].trim();
-        }
-
-        const wordCount = content.trim().split(/\s+/).length;
-        const readTime = Math.ceil(wordCount / 225);
-
-        const parseFn = marked.parse || marked;
-        const html = parseFn(content);
-        
-        document.getElementById('reader-title').textContent = title;
-        document.getElementById('reader-meta').innerHTML = [
-            `${date} · ${readTime} min read`,
-            tags.length ? tags.join(', ') : '',
-            source ? `<a href="${source}" target="_blank" rel="noopener noreferrer" style="color:inherit;text-decoration:underline;text-underline-offset:3px;">Originally on X</a>` : ''
-        ].filter(Boolean).join(' · ');
-        document.getElementById('reader-body').innerHTML = html;
-        
-        requestAnimationFrame(runMermaid);
-    } catch (error) {
-        console.error(error);
-        document.getElementById('reader-body').innerHTML = 'Error loading post.';
-    }
-}
-
-document.getElementById('reader-back').addEventListener('click', () => {
-    reader.classList.remove('open');
-    document.body.style.overflow = '';
-    window.history.pushState({}, '', window.location.pathname);
-});
-
-window.addEventListener('popstate', () => {
-    const params = new URLSearchParams(window.location.search);
-    const post = params.get('post');
-    if (post) openPostReader(post);
-    else {
-        reader.classList.remove('open');
-        document.body.style.overflow = '';
-    }
-});
-
-const urlParams = new URLSearchParams(window.location.search);
-const postName = urlParams.get('post');
-if (postName) {
-    openPostReader(postName);
-}
-loadBlogList();
+window.__blogRevealObserver = io;
+BlogApp.initReader({ backPath: window.location.pathname });
+BlogApp.loadBlogList({ limit: 6, viewAllId: 'blog-view-all' });
 
 // // ── TWEAKS ──
 const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
