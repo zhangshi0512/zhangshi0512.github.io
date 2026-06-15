@@ -1057,17 +1057,20 @@ async function openPostReader(filename) {
         let title = filename.substring(11).replace(/-/g, ' ').replace('.md', '');
         let date = filename.substring(0, 10);
         let tags = [];
+        let source = '';
 
         const fmMatch = text.match(/^---\n([\s\S]*?)\n---\n/);
         if (fmMatch) {
             content = text.replace(fmMatch[0], '');
             const fm = fmMatch[1];
             const titleMatch = fm.match(/title:\s*(.*)/);
-            if(titleMatch) title = titleMatch[1];
+            if(titleMatch) title = titleMatch[1].replace(/^["']|["']$/g, '');
             const dateMatch = fm.match(/date:\s*(.*)/);
             if(dateMatch) date = dateMatch[1];
             const tagsMatch = fm.match(/tags:\s*\[(.*?)\]/);
             if(tagsMatch) tags = tagsMatch[1].split(',').map(t=>t.trim().replace(/['"]/g, ''));
+            const sourceMatch = fm.match(/source:\s*(.*)/);
+            if(sourceMatch) source = sourceMatch[1].trim();
         }
 
         const wordCount = content.trim().split(/\s+/).length;
@@ -1077,7 +1080,11 @@ async function openPostReader(filename) {
         const html = parseFn(content);
         
         document.getElementById('reader-title').textContent = title;
-        document.getElementById('reader-meta').textContent = `${date} · ${readTime} min read · ${tags.join(', ')}`;
+        document.getElementById('reader-meta').innerHTML = [
+            `${date} · ${readTime} min read`,
+            tags.length ? tags.join(', ') : '',
+            source ? `<a href="${source}" target="_blank" rel="noopener noreferrer" style="color:inherit;text-decoration:underline;text-underline-offset:3px;">Originally on X</a>` : ''
+        ].filter(Boolean).join(' · ');
         document.getElementById('reader-body').innerHTML = html;
         
         requestAnimationFrame(runMermaid);

@@ -116,6 +116,28 @@ async function initializeGithub(token) {
 }
 
 // --- data fetching ---
+let syncedFilenames = new Set();
+
+async function loadSyncState() {
+    syncedFilenames = new Set();
+    try {
+        const { data } = await octokit.rest.repos.getContent({
+            owner: CONFIG.repoOwner,
+            repo: CONFIG.repoName,
+            path: '.x-sync/state.json',
+            ref: CONFIG.branch
+        });
+        const state = JSON.parse(atob(data.content));
+        for (const entry of Object.values(state.articles || {})) {
+            if (entry.filename) syncedFilenames.add(entry.filename);
+        }
+    } catch (error) {
+        if (error.status !== 404) {
+            console.warn('Could not load X sync state', error);
+        }
+    }
+}
+
 async function loadPosts() {
     const listContainer = document.getElementById('post-list');
     if(!listContainer) return;
@@ -123,6 +145,8 @@ async function loadPosts() {
     listContainer.innerHTML = '<div class="text-center text-gray-400 mt-10">Loading posts...</div>';
 
     try {
+        await loadSyncState();
+
         const { data: files } = await octokit.rest.repos.getContent({
             owner: CONFIG.repoOwner,
             repo: CONFIG.repoName,
@@ -157,6 +181,7 @@ async function loadPosts() {
 function createPostListItem(file) {
     const displayName = file.name.replace(/\.md$/, '').replace(/^\d{4}-\d{2}-\d{2}-/, '').replace(/-/g, ' ');
     const datePart = file.name.match(/^\d{4}-\d{2}-\d{2}/) ? file.name.match(/^\d{4}-\d{2}-\d{2}/)[0] : 'Draft';
+    const isSynced = syncedFilenames.has(file.name);
 
     const div = document.createElement('div');
     div.className = "group cursor-pointer hover:text-white transition-colors p-2 rounded-lg hover:bg-white/5";
@@ -164,6 +189,7 @@ function createPostListItem(file) {
         <div class="flex items-center gap-2 mb-1">
             <span class="text-xs text-gray-500 font-mono">${datePart}</span>
             <span class="text-white font-medium capitalize truncate">${displayName}</span>
+            ${isSynced ? '<span class="text-[10px] uppercase tracking-wider text-sky-300/80 border border-sky-300/20 rounded px-1.5 py-0.5">Synced</span>' : ''}
         </div>
         <div class="h-[1px] bg-white/5 w-full group-hover:bg-white/10 transition-colors"></div>
     `;

@@ -538,6 +538,7 @@
                 let content = text;
                 let title = filename.substring(11).replace(/-/g, ' ').replace('.md', '');
                 let date = filename.substring(0, 10);
+                let source = '';
 
                 // Simple Frontmatter Parsing
                 const fmMatch = text.match(/^---\n([\s\S]*?)\n---\n/);
@@ -545,9 +546,11 @@
                     content = text.replace(fmMatch[0], '');
                     const fm = fmMatch[1];
                     const titleMatch = fm.match(/title:\s*(.*)/);
-                    if(titleMatch) title = titleMatch[1];
+                    if(titleMatch) title = titleMatch[1].replace(/^["']|["']$/g, '');
                     const dateMatch = fm.match(/date:\s*(.*)/);
                     if(dateMatch) date = dateMatch[1];
+                    const sourceMatch = fm.match(/source:\s*(.*)/);
+                    if(sourceMatch) source = sourceMatch[1].trim();
                 }
 
                 // Calculate Read Time
@@ -566,13 +569,14 @@
                         </a>
                         <article class="markdown-body">
                             ${!content.trim().startsWith('# ') ? `<h1 style="text-transform: capitalize;">${title}</h1>` : ''}
-                            <p class="post-date" style="margin-bottom: 3rem; font-size: 1rem; opacity: 0.8; display: flex; align-items: center; gap: 0.5rem;">
+                            <p class="post-date" style="margin-bottom: 3rem; font-size: 1rem; opacity: 0.8; display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
                                 <span>${date}</span>
                                 <span style="opacity: 0.3;">•</span>
                                 <span style="display: flex; align-items: center; gap: 0.3rem;">
                                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
                                     ${readTime} min read
                                 </span>
+                                ${source ? `<span style="opacity: 0.3;">•</span><a href="${source}" target="_blank" rel="noopener noreferrer" style="color: inherit; text-decoration: underline; text-underline-offset: 3px;">Originally on X</a>` : ''}
                             </p>
                             ${html}
                         </article>
