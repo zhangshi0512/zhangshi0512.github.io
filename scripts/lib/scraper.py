@@ -128,49 +128,70 @@ async def fetch_recent_tweets(
     client: Client,
     username: str,
     *,
-    max_count: int = 30,
-    max_pages: int = 3,
+    max_count: int = 100,
+    max_pages: int = 5,
 ) -> list[TimelineTweet]:
     rows: dict[str, TimelineTweet] = {}
+
+    def add_tweet(tweet: Tweet) -> None:
+        tweet_id = str(tweet.id)
+        if tweet_id in rows:
+            return
+        screen_name = _tweet_screen_name(tweet)
+        rows[tweet_id] = TimelineTweet(
+            tweet_id=tweet_id,
+            created_at=_tweet_created_at_iso(tweet),
+            screen_name=screen_name,
+            url=f"https://x.com/{screen_name}/status/{tweet_id}",
+            is_candidate=is_article_candidate(tweet),
+        )
+
+    # Primary: authenticated user timeline (more reliable than search in CI).
+    try:
+        user = await client.get_user_by_screen_name(username)
+        batch = await user.get_tweets("Tweets", count=min(40, max_count))
+        pages = 0
+        while batch is not None and pages < max_pages and len(rows) < max_count:
+            for tweet in batch:
+                add_tweet(tweet)
+                if len(rows) >= max_count:
+                    break
+            if len(rows) >= max_count:
+                break
+            try:
+                batch = await batch.next()
+            except Exception:
+                break
+            pages += 1
+    except Exception:
+        pass
+
+    if rows:
+        ordered = sorted(rows.values(), key=lambda item: int(item.tweet_id))
+        return ordered[-max_count:] if len(ordered) > max_count else ordered
+
+    # Fallback: search API (legacy path from Iditor scraper).
     max_id: int | None = None
     pages = 0
-
     while len(rows) < max_count and pages < max_pages:
         query = f"from:{username}"
         if max_id is not None:
             query += f" max_id:{max_id}"
-
         try:
             batch = await client.search_tweet(query, "Latest")
         except (NotFound, TooManyRequests):
             break
-
         if not batch:
             break
-
         ids: list[int] = []
         for tweet in batch:
-            tweet_id = str(tweet.id)
-            ids.append(int(tweet_id))
-            if tweet_id in rows:
-                continue
-
-            screen_name = _tweet_screen_name(tweet)
-            rows[tweet_id] = TimelineTweet(
-                tweet_id=tweet_id,
-                created_at=_tweet_created_at_iso(tweet),
-                screen_name=screen_name,
-                url=f"https://x.com/{screen_name}/status/{tweet_id}",
-                is_candidate=is_article_candidate(tweet),
-            )
-
+            ids.append(int(tweet.id))
+            add_tweet(tweet)
         max_id = min(ids) - 1
         pages += 1
 
     ordered = sorted(rows.values(), key=lambda item: int(item.tweet_id))
-    if len(ordered) > max_count:
-        ordered = ordered[-max_count:]
-    return ordered
+    return ordered[-max_count:] if len(ordered) > max_count else ordered
 
 
 async def fetch_article_payload(client: Client, tweet_id: str, fallback_url: str) -> ArticlePayload | None:

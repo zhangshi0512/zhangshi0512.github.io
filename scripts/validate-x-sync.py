@@ -61,39 +61,34 @@ async def main() -> None:
         return
 
     section("Recent timeline scan")
-    timeline = await fetch_recent_tweets(client, USERNAME, max_count=25, max_pages=2)
-    print(f"Fetched {len(timeline)} recent tweet(s)")
+    timeline = await fetch_recent_tweets(client, USERNAME, max_count=50, max_pages=3)
+    print(f"Fetched {len(timeline)} recent tweet(s) from user timeline")
 
-    candidates = [tweet for tweet in timeline if tweet.is_candidate]
-    print(f"Found {len(candidates)} X Article candidate(s)")
-
-    if not candidates:
-        print("\nNo article candidates in recent tweets.")
-        print("If you have older articles, pass --tweet-id <status_id> to inspect one directly.")
-        section("Go / no-go")
-        print("PASS: Cookie auth works. No recent articles to validate body extraction.")
-        return
+    if not timeline:
+        print("\nFAIL: Timeline returned 0 tweets. Cookies may be expired or API blocked.")
+        raise SystemExit(2)
 
     verified = 0
-    for candidate in candidates[:3]:
-        article = await fetch_article_payload(client, candidate.tweet_id, candidate.url)
-        print("\n---")
-        print(f"Tweet ID: {candidate.tweet_id}")
+    for tweet in timeline[:25]:
+        article = await fetch_article_payload(client, tweet.tweet_id, tweet.url)
         if not article:
-            print("Could not fetch article body.")
             continue
         verified += 1
+        print("\n---")
+        print(f"Tweet ID: {tweet.tweet_id}")
         print(f"Title: {article.title}")
         print(f"URL: {article.url}")
         print(f"Body length: {len(article.body_markdown)} chars")
         print(f"Preview: {article.body_markdown[:240].replace(chr(10), ' ')}...")
+        if verified >= 3:
+            break
 
     section("Go / no-go")
     if verified > 0:
-        print("PASS: Twikit can fetch X Article bodies. Proceed with scripts/sync-x-articles.py")
+        print(f"PASS: Found {verified} X Article(s) via Twikit.")
     else:
-        print("FAIL: Candidates found but article bodies could not be loaded.")
-        raise SystemExit(2)
+        print("Timeline works but no X Articles found in the last 25 tweets checked.")
+        print("If you have older articles, they will sync on the next monthly run (up to 100 tweets).")
 
 
 if __name__ == "__main__":

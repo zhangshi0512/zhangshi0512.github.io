@@ -1,0 +1,21 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyo
+.Python
+.venv/
+venv/
+env/
+.env
+.env.*
+
+# Local cookie exports (never commit session secrets)
+cookies/
+*cookies*.json
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

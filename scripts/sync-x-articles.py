@@ -32,8 +32,8 @@ ASSETS_DIR = ROOT / "assets" / "x-articles"
 USERNAME = os.environ.get("X_USERNAME", "Simonsterrific")
 DRY_RUN = os.environ.get("DRY_RUN", "").lower() in {"1", "true", "yes"}
 SKIP_IMAGES = os.environ.get("SKIP_IMAGES", "").lower() in {"1", "true", "yes"}
-MAX_TWEETS = int(os.environ.get("MAX_TWEETS", "30"))
-MAX_PAGES = int(os.environ.get("MAX_PAGES", "3" if not os.environ.get("SINCE_ID_ONLY") else "1"))
+MAX_TWEETS = int(os.environ.get("MAX_TWEETS", "100"))
+MAX_PAGES = int(os.environ.get("MAX_PAGES", "5"))
 
 
 def log(message: str) -> None:
@@ -150,15 +150,27 @@ async def main() -> None:
         client,
         USERNAME,
         max_count=MAX_TWEETS,
-        max_pages=MAX_PAGES if not state.get("since_id") else 2,
+        max_pages=MAX_PAGES,
     )
-    candidates = [tweet for tweet in filter_new_tweets(timeline, state.get("since_id")) if tweet.is_candidate]
 
-    log(f"Fetched {len(timeline)} tweet(s), {len(candidates)} article candidate(s)")
+    if not timeline:
+        log("WARNING: Fetched 0 tweets from timeline and search fallback.")
+        log("Check TWITTER_COOKIE_JSON is fresh and @Simonsterrific is accessible.")
+        raise SystemExit(1)
+
+    to_check = filter_new_tweets(timeline, state.get("since_id"))
+    # Bootstrap: if nothing synced yet, scan full fetched timeline for articles.
+    if not state.get("articles"):
+        to_check = timeline
+
+    log(
+        f"Fetched {len(timeline)} tweet(s), checking {len(to_check)} "
+        f"({sum(1 for t in to_check if t.is_candidate)} heuristic article candidate(s))"
+    )
 
     results: dict[str, list[str]] = {"created": [], "updated": [], "skipped": []}
 
-    for timeline_tweet in candidates:
+    for timeline_tweet in to_check:
         await process_article(client, timeline_tweet, state, used_names, results)
 
     new_since_id = highest_tweet_id(timeline, state.get("since_id"))
