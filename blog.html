@@ -481,7 +481,7 @@
                             content = text.replace(fmMatch[0], '');
                             const fm = fmMatch[1];
                             const titleMatch = fm.match(/title:\s*(.*)/);
-                            if(titleMatch) title = titleMatch[1];
+                            if(titleMatch) title = titleMatch[1].replace(/^["']|["']$/g, '');
                             const dateMatch = fm.match(/date:\s*(.*)/);
                             if(dateMatch) date = dateMatch[1];
                         }
