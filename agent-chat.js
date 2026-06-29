@@ -13,7 +13,7 @@
   'use strict';
 
   // ─── Config ───────────────────────────────────────────────
-  const WIDGET_VERSION = '0.1.4';
+  const WIDGET_VERSION = '0.1.6';
   const BACKEND = window.AGENT_CHAT_BACKEND ||
     'https://simonsterrific-shizhang-agent.hf.space';
   const MAX_HISTORY = 12;
@@ -110,6 +110,7 @@
     @keyframes ac-fade-in{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
 
     /* Input */
+    .ac-disclaimer{flex:0 0 auto;padding:6px 18px 0;font-family:var(--font-body,'DM Mono',monospace);font-size:8px;line-height:1.45;color:oklch(45% 0.006 80);text-align:center;border-top:1px solid oklch(20% 0.006 55)}
     .ac-input-wrap{flex:0 0 auto;display:flex;align-items:center;gap:10px;padding:12px 18px;border-top:1px solid oklch(25% 0.008 55)}
     .ac-input{flex:1 1 auto;background:oklch(16% 0.01 55);border:1px solid oklch(25% 0.008 55);border-radius:6px;padding:10px 12px;font-family:var(--font-body,'DM Mono',monospace);font-size:12px;color:var(--fg,oklch(95% 0.008 80));outline:none;resize:none;line-height:1.5;max-height:80px;transition:border-color .2s}
     .ac-input:focus{border-color:var(--accent,oklch(72% 0.20 240))}
@@ -134,7 +135,7 @@
 
   const panel = document.createElement('div');
   panel.className = 'ac-panel';
-  panel.innerHTML = `<div class="ac-header"><div class="ac-header-title"><span class="ac-header-dot" id="ac-dot"></span>Ask Simon</div><div class="ac-header-actions"><span class="ac-status" id="ac-status">Ready</span><button class="ac-btn" id="ac-clear">Clear</button><button class="ac-btn" id="ac-close">✕</button></div></div><div class="ac-body" id="ac-body"><div class="ac-msg ac-msg-agent">Hi, I'm Simon's digital twin. Ask me anything about architecture, AI, career, or things I've written.</div></div><div class="ac-input-wrap"><textarea class="ac-input" id="ac-input" rows="1" placeholder="Ask me anything..."></textarea><button class="ac-send" id="ac-send" aria-label="Send"><svg viewBox="0 0 24 24"><path fill="oklch(10% 0.012 55)" d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg></button></div>`;
+  panel.innerHTML = `<div class="ac-header"><div class="ac-header-title"><span class="ac-header-dot" id="ac-dot"></span>Ask Simon</div><div class="ac-header-actions"><span class="ac-status" id="ac-status">Ready</span><button class="ac-btn" id="ac-clear">Clear</button><button class="ac-btn" id="ac-close">✕</button></div></div><div class="ac-body" id="ac-body"><div class="ac-msg ac-msg-agent">Hi, I'm Simon's digital twin. Ask me anything about architecture, AI, career, or things I've written.</div></div><div class="ac-disclaimer">Simon could be wrong or make mistakes, please perform fact check before using the context. / Simon 可能出错，请在使用相关内容前自行核查事实。</div><div class="ac-input-wrap"><textarea class="ac-input" id="ac-input" rows="1" placeholder="Ask me anything..."></textarea><button class="ac-send" id="ac-send" aria-label="Send"><svg viewBox="0 0 24 24"><path fill="oklch(10% 0.012 55)" d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg></button></div>`;
 
   document.body.appendChild(bubble);
   document.body.appendChild(panel);
@@ -397,7 +398,6 @@
     let transientEl = null;
     let transientTextEl = null;
     let transientTimer = null;
-    let transientIndex = 0;
     let realOutputStarted = false;
     let toolCount = 0, iteration = 0, firstEvent = false, lastThought = '';
     const transientMessageSets = {
@@ -406,12 +406,44 @@
         'Reading the shape of the question',
         'Selecting the first thread to pull',
         'Waiting for the model to choose a move',
+        'Checking which memory shelf matters',
+        'Tracing the nearest topic cluster',
+        'Looking for a useful entry point',
+        'Separating context from noise',
+        'Mapping the question to prior notes',
+        'Warming up the retrieval path',
+        'Finding the right level of detail',
+        'Skimming the index before opening files',
+        'Choosing between recall and precision',
+        'Looking for Simon-shaped evidence',
+        'Preparing the first grounded step',
+        'Checking if this needs deeper reading',
+        'Holding the answer until context lands',
+        'Following the strongest signal',
+        'Letting the knowledge base catch up',
+        'Assembling the first pass of context',
       ],
       zh: [
         '正在连接 Simon 的知识库',
         '正在判断这个问题的形状',
         '正在选择第一条线索',
         '等待模型决定下一步动作',
+        '正在确认哪一层记忆最相关',
+        '正在追踪最近的主题簇',
+        '正在寻找合适的切入点',
+        '正在把上下文和噪声分开',
+        '正在把问题映射到既有笔记',
+        '正在预热检索路径',
+        '正在判断需要多深的细节',
+        '正在先扫一遍知识库索引',
+        '正在平衡召回和精度',
+        '正在寻找更像 Simon 的证据',
+        '正在准备第一步可靠上下文',
+        '正在判断是否需要深读文件',
+        '先等上下文落地，再开始回答',
+        '正在顺着最强信号往下找',
+        '正在等待知识库跟上问题',
+        '正在组装第一版上下文',
       ],
     };
     const transientMessages = /[\u4e00-\u9fff]/.test(query)
@@ -420,6 +452,25 @@
     const transientHeartbeat = /[\u4e00-\u9fff]/.test(query)
       ? '仍在处理第一步'
       : 'Still working through the first step';
+    let transientQueue = [];
+
+    function shuffleMessages(messages) {
+      const shuffled = messages.slice();
+      for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        const tmp = shuffled[i];
+        shuffled[i] = shuffled[j];
+        shuffled[j] = tmp;
+      }
+      return shuffled;
+    }
+
+    function nextTransientMessage() {
+      if (!transientQueue.length) {
+        transientQueue = shuffleMessages(transientMessages);
+      }
+      return transientQueue.shift();
+    }
 
     function startTransientStatus() {
       transientEl = document.createElement('div');
@@ -427,10 +478,9 @@
       transientEl.innerHTML = '<span class="ac-transient-dot"></span><span class="ac-transient-text"></span>';
       transientTextEl = transientEl.querySelector('.ac-transient-text');
       bodyEl.appendChild(transientEl);
-      updateTransientStatus(transientMessages[0]);
+      updateTransientStatus(nextTransientMessage());
       transientTimer = setInterval(function () {
-        transientIndex = (transientIndex + 1) % transientMessages.length;
-        updateTransientStatus(transientMessages[transientIndex]);
+        updateTransientStatus(nextTransientMessage());
       }, 2200);
       scrollBottom();
     }
