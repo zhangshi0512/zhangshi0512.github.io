@@ -366,23 +366,6 @@
       const reader = resp.body.getReader();
       const decoder = new TextDecoder();
       let buffer = '';
-      // Use requestAnimationFrame to batch DOM updates for smoother streaming
-      let rafPending = false;
-
-      function renderStreamingAgent() {
-        if (!agentMsgDiv) return;
-        // During streaming: only inline markdown (bold/italic/code)
-        agentMsgDiv.innerHTML = renderMarkdown(agentText, true);
-        scrollBottom();
-        rafPending = false;
-      }
-
-      function scheduleRender() {
-        if (!rafPending) {
-          rafPending = true;
-          requestAnimationFrame(renderStreamingAgent);
-        }
-      }
 
       while (true) {
         const { done, value } = await reader.read();
@@ -443,6 +426,7 @@
     }
 
     function handleSSEEvent(event, data) {
+      console.log('[agent] SSE:', event, data);  // debug: verify events arrive
       if (!firstEvent) { firstEvent = true; hideTyping(); }
 
       switch (event) {
@@ -475,7 +459,8 @@
             setStatus('WRITING...', 'active');
           }
           agentText += data.content || '';
-          scheduleRender();   // rAF-batched Markdown render
+          agentMsgDiv.innerHTML = renderMarkdown(agentText, true);
+          scrollBottom();
           break;
 
         case 'done':
