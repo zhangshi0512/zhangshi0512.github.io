@@ -68,6 +68,11 @@
     .ac-msg-agent a{color:var(--accent,oklch(72% 0.20 240));text-decoration:underline;text-underline-offset:2px}
     .ac-msg-agent a:hover{opacity:.8}
     .ac-msg-agent blockquote{border-left:3px solid var(--accent,oklch(72% 0.20 240));padding:4px 0 4px 12px;margin:6px 0;color:oklch(60% 0.006 80);font-style:italic}
+    .ac-msg-agent table{width:100%;border-collapse:collapse;margin:8px 0;font-size:11px;line-height:1.5}
+    .ac-msg-agent th,.ac-msg-agent td{border:1px solid oklch(25% 0.008 55);padding:6px 10px;text-align:left;vertical-align:top}
+    .ac-msg-agent th{background:oklch(18% 0.01 55);color:var(--accent,oklch(72% 0.20 240));font-weight:600;white-space:nowrap}
+    .ac-msg-agent td{color:var(--fg-dim,oklch(80% 0.006 80))}
+    .ac-msg-agent tr:nth-child(even) td{background:oklch(15% 0.008 55)}
     .ac-msg-agent hr{border:none;border-top:1px solid oklch(25% 0.008 55);margin:10px 0}
     .ac-msg-agent p{margin:0 0 6px}
     .ac-msg-agent p:last-child{margin-bottom:0}
@@ -179,6 +184,47 @@
     html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>');
 
     if (inlineOnly) return html;
+
+    // ── Step 4.5: Tables (before paragraph wrapping, after inline formatting) ──
+    const tableRowRe = /^\|.+\|$/;
+    const tableSepRe = /^\|[-: |]+\|$/;
+    const lines = html.split('\n');
+    let i = 0;
+    while (i < lines.length) {
+      // Look for table start: header row followed by separator row
+      if (tableRowRe.test(lines[i]) && i + 1 < lines.length && tableSepRe.test(lines[i + 1])) {
+        const headerRow = lines[i];
+        const sepRow = lines[i + 1];
+        const dataRows = [];
+        let j = i + 2;
+        while (j < lines.length && tableRowRe.test(lines[j])) {
+          dataRows.push(lines[j]);
+          j++;
+        }
+        // Build <table>
+        const parseRow = (row) => row.replace(/^\||\|$/g, '').split('|');
+        const headerCells = parseRow(headerRow);
+        // Detect alignment from separator (skip for simplicity — use default)
+        let tbl = '<table><thead><tr>';
+        headerCells.forEach(cell => { tbl += '<th>' + cell.trim() + '</th>'; });
+        tbl += '</tr></thead>';
+        if (dataRows.length) {
+          tbl += '<tbody>';
+          dataRows.forEach(row => {
+            tbl += '<tr>';
+            parseRow(row).forEach(cell => { tbl += '<td>' + cell.trim() + '</td>'; });
+            tbl += '</tr>';
+          });
+          tbl += '</tbody>';
+        }
+        tbl += '</table>';
+        lines.splice(i, j - i, tbl);
+        i++; // skip past the inserted table
+      } else {
+        i++;
+      }
+    }
+    html = lines.join('\n');
 
     // ── Step 5: Block-level formatting ──
     // Blockquotes
