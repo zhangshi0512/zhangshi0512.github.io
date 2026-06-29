@@ -13,7 +13,7 @@
   'use strict';
 
   // ─── Config ───────────────────────────────────────────────
-  const WIDGET_VERSION = '0.1.2';
+  const WIDGET_VERSION = '0.1.4';
   const BACKEND = window.AGENT_CHAT_BACKEND ||
     'https://simonsterrific-shizhang-agent.hf.space';
   const MAX_HISTORY = 12;
@@ -82,6 +82,8 @@
 
     /* Thought */
     .ac-thought{align-self:flex-start;max-width:92%;font-size:10px;line-height:1.6;font-style:italic;font-family:var(--font-body,'DM Mono',monospace);color:oklch(50% 0.006 80);padding:6px 12px;border-radius:6px;background:oklch(14% 0.005 55);border-left:2px solid oklch(30% 0.008 55);animation:ac-fade-in .25s ease}
+    .ac-transient{align-self:flex-start;max-width:92%;display:flex;align-items:center;gap:8px;font-size:10px;line-height:1.6;font-family:var(--font-body,'DM Mono',monospace);color:oklch(62% 0.006 80);padding:7px 12px;border-radius:6px;background:oklch(14% 0.005 55);border-left:2px solid var(--accent,oklch(72% 0.20 240));animation:ac-fade-in .25s ease}
+    .ac-transient-dot{width:6px;height:6px;border-radius:50%;background:var(--accent,oklch(72% 0.20 240));box-shadow:0 0 10px oklch(72% 0.20 240/0.45);animation:ac-pulse-dot .9s ease-in-out infinite;flex-shrink:0}
 
     /* Tool Card */
     .ac-tool-card{align-self:flex-start;max-width:94%;width:100%;background:oklch(16% 0.01 55);border:1px solid oklch(22% 0.008 55);border-radius:8px;overflow:hidden;animation:ac-fade-in .25s ease;transition:border-color .2s}
@@ -387,16 +389,75 @@
     appendMessage('user', escapeHtml(query));
     history.push({ role: 'user', content: query });
 
-    showTyping();
-
     let agentMsgDiv = null;
     let agentText = '';
     let displayedAgentText = '';
     let pendingAgentText = '';
     let streamFlushTimer = null;
+    let transientEl = null;
+    let transientTextEl = null;
+    let transientTimer = null;
+    let transientIndex = 0;
+    let realOutputStarted = false;
     let toolCount = 0, iteration = 0, firstEvent = false, lastThought = '';
+    const transientMessageSets = {
+      en: [
+        'Connecting to Simon\'s knowledge base',
+        'Reading the shape of the question',
+        'Selecting the first thread to pull',
+        'Waiting for the model to choose a move',
+      ],
+      zh: [
+        '正在连接 Simon 的知识库',
+        '正在判断这个问题的形状',
+        '正在选择第一条线索',
+        '等待模型决定下一步动作',
+      ],
+    };
+    const transientMessages = /[\u4e00-\u9fff]/.test(query)
+      ? transientMessageSets.zh
+      : transientMessageSets.en;
+    const transientHeartbeat = /[\u4e00-\u9fff]/.test(query)
+      ? '仍在处理第一步'
+      : 'Still working through the first step';
+
+    function startTransientStatus() {
+      transientEl = document.createElement('div');
+      transientEl.className = 'ac-transient';
+      transientEl.innerHTML = '<span class="ac-transient-dot"></span><span class="ac-transient-text"></span>';
+      transientTextEl = transientEl.querySelector('.ac-transient-text');
+      bodyEl.appendChild(transientEl);
+      updateTransientStatus(transientMessages[0]);
+      transientTimer = setInterval(function () {
+        transientIndex = (transientIndex + 1) % transientMessages.length;
+        updateTransientStatus(transientMessages[transientIndex]);
+      }, 2200);
+      scrollBottom();
+    }
+
+    function updateTransientStatus(text) {
+      if (!transientTextEl || realOutputStarted) return;
+      transientTextEl.textContent = text;
+      scrollBottom();
+    }
+
+    function stopTransientStatus() {
+      realOutputStarted = true;
+      if (transientTimer !== null) {
+        clearInterval(transientTimer);
+        transientTimer = null;
+      }
+      if (transientEl) {
+        transientEl.remove();
+        transientEl = null;
+        transientTextEl = null;
+      }
+    }
+
+    startTransientStatus();
 
     function ensureAgentMessage() {
+      stopTransientStatus();
       if (!agentMsgDiv) {
         agentMsgDiv = appendMessage('agent', '');
         agentMsgDiv.classList.add('ac-msg-streaming');
@@ -509,6 +570,7 @@
 
     } catch (err) {
       if (streamFlushTimer !== null) clearTimeout(streamFlushTimer);
+      stopTransientStatus();
       dotEl.classList.remove('thinking');
       hideTyping();
       setStatus(err.name === 'AbortError' ? 'TIMEOUT' : 'ERROR', 'error');
@@ -533,6 +595,13 @@
       switch (event) {
         case 'thought': {
           const t = (data.content || '').trim();
+          if (!realOutputStarted) {
+            if (t && t !== lastThought) {
+              lastThought = t;
+            }
+            setStatus('ANALYZING...', 'active');
+            break;
+          }
           if (t && t !== lastThought) {
             lastThought = t;
             iteration++;
@@ -543,14 +612,16 @@
         }
 
         case 'tool_call':
+          stopTransientStatus();
           toolCount++;
           appendToolCard(data.tool, data.arguments, toolCount);
-          setStatus('ROUND ' + iteration + '/8 · SEARCHING', 'active');
+          setStatus(iteration ? 'ROUND ' + iteration + '/8 · SEARCHING' : 'SEARCHING', 'active');
           break;
 
         case 'tool_result':
+          stopTransientStatus();
           fillToolResult(toolCount, formatToolResult(data.result));
-          setStatus('ROUND ' + iteration + '/8 · ANALYZING', 'active');
+          setStatus(iteration ? 'ROUND ' + iteration + '/8 · ANALYZING' : 'ANALYZING', 'active');
           break;
 
         case 'chunk':
@@ -576,10 +647,14 @@
           break;  // full Markdown applied in outer block
 
         case 'heartbeat':
+          if (!realOutputStarted) {
+            updateTransientStatus(transientHeartbeat);
+          }
           setStatus('THINKING...', 'active');
           break;
 
         case 'error':
+          stopTransientStatus();
           dotEl.classList.remove('thinking');
           setStatus('ERROR', 'error');
           appendMessage('system', '⚠ ' + (data.message || 'Something went wrong.'));
