@@ -463,6 +463,15 @@
           scrollBottom();
           break;
 
+        case 'rollback':
+          // 后端发现之前发送的 chunk 其实是思考过程，需要清除
+          if (agentMsgDiv) {
+            agentMsgDiv.remove();
+            agentMsgDiv = null;
+            agentText = '';
+          }
+          break;
+
         case 'done':
           break;  // full Markdown applied in outer block
 
