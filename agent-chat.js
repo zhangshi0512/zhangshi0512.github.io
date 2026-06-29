@@ -13,7 +13,7 @@
   'use strict';
 
   // ─── Config ───────────────────────────────────────────────
-  const WIDGET_VERSION = '0.1.9';
+  const WIDGET_VERSION = '0.1.11';
   const BACKEND = window.AGENT_CHAT_BACKEND ||
     'https://simonsterrific-shizhang-agent.hf.space';
   const MAX_HISTORY = 12;
@@ -153,7 +153,7 @@
 
   const panel = document.createElement('div');
   panel.className = 'ac-panel';
-  panel.innerHTML = `<div class="ac-header"><div class="ac-header-title"><span class="ac-header-dot" id="ac-dot"></span>Ask Simon</div><div class="ac-header-actions"><span class="ac-status" id="ac-status">Ready</span><button class="ac-btn" id="ac-clear">Clear</button><button class="ac-btn" id="ac-close">✕</button></div></div><div class="ac-body" id="ac-body"><div class="ac-msg ac-msg-agent">Hi, I'm Simon's digital twin. Ask me anything about architecture, AI, career, or things I've written.</div></div><div class="ac-disclaimer">Simon could be wrong or make mistakes, please perform fact check before using the context. / Simon 可能出错，请在使用相关内容前自行核查事实。</div><div class="ac-input-wrap"><textarea class="ac-input" id="ac-input" rows="1" placeholder="Ask me anything..."></textarea><button class="ac-send" id="ac-send" aria-label="Send"><svg viewBox="0 0 24 24"><path fill="oklch(10% 0.012 55)" d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg></button></div>`;
+  panel.innerHTML = `<div class="ac-header"><div class="ac-header-title"><span class="ac-header-dot" id="ac-dot"></span>Ask Simon</div><div class="ac-header-actions"><span class="ac-status" id="ac-status">Ready</span><button class="ac-btn" id="ac-save">Save</button><button class="ac-btn" id="ac-clear">Clear</button><button class="ac-btn" id="ac-close">✕</button></div></div><div class="ac-body" id="ac-body"><div class="ac-msg ac-msg-agent">Hi, I'm Simon's digital twin. Ask me anything about architecture, AI, career, or things I've written.</div></div><div class="ac-disclaimer">Simon could be wrong or make mistakes, please perform fact check before using the context. / Simon 可能出错，请在使用相关内容前自行核查事实。</div><div class="ac-input-wrap"><textarea class="ac-input" id="ac-input" rows="1" placeholder="Ask me anything..."></textarea><button class="ac-send" id="ac-send" aria-label="Send"><svg viewBox="0 0 24 24"><path fill="oklch(10% 0.012 55)" d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg></button></div>`;
 
   ['n', 's', 'e', 'w', 'ne', 'nw', 'se', 'sw'].forEach(function (dir) {
     const handle = document.createElement('div');
@@ -171,6 +171,7 @@
   const headerEl = panel.querySelector('.ac-header');
   const closeBtn = document.getElementById('ac-close');
   const clearBtn = document.getElementById('ac-clear');
+  const saveBtn = document.getElementById('ac-save');
   const statusEl = document.getElementById('ac-status');
   const dotEl = document.getElementById('ac-dot');
 
@@ -409,25 +410,26 @@
     return div;
   }
 
-  function appendToolCard(toolName, toolArgs, iteration) {
+  function appendToolCard(toolName, toolArgs, toolCallId) {
     const icons = { list_directory:'📂', read_file:'📄', search_content:'🔎', read_index:'📋', get_metadata:'ℹ️' };
     const verbs = { list_directory:'Browsing', read_file:'Reading', search_content:'Searching', read_index:'Index', get_metadata:'Metadata' };
-    const target = toolArgs && toolArgs.path ? toolArgs.path
+    const target = toolArgs && toolArgs.path !== undefined ? (toolArgs.path || 'root')
       : (toolArgs && toolArgs.pattern ? '"' + toolArgs.pattern + '"' : '');
 
     const card = document.createElement('div');
     card.className = 'ac-tool-card';
-    card.innerHTML = `<div class="ac-tool-card-header"><span class="ac-tool-icon">${icons[toolName]||'⚙'}</span><span class="ac-tool-label">${verbs[toolName]||toolName}${target?': '+target:''}</span><span class="ac-tool-chevron">▼</span></div><div class="ac-tool-card-body" id="ac-tool-result-${iteration}"></div>`;
+    card.innerHTML = `<div class="ac-tool-card-header"><span class="ac-tool-icon">${icons[toolName]||'⚙'}</span><span class="ac-tool-label">${verbs[toolName]||toolName}${target?': '+target:''}</span><span class="ac-tool-chevron">▼</span></div><div class="ac-tool-card-body"></div>`;
+    const resultBody = card.querySelector('.ac-tool-card-body');
+    if (toolCallId) resultBody.dataset.toolCallId = toolCallId;
     card.querySelector('.ac-tool-card-header').addEventListener('click', function () {
       card.classList.toggle('expanded');
     });
     bodyEl.appendChild(card);
     scrollBottom();
-    return card;
+    return resultBody;
   }
 
-  function fillToolResult(iteration, resultText) {
-    const body = document.getElementById('ac-tool-result-' + iteration);
+  function fillToolResult(body, resultText) {
     if (!body) return;
     const cnt = extractMatchCount(resultText);
     let html = '';
@@ -436,6 +438,7 @@
     const preview = lines.slice(0, 10);
     html += preview.map(l => `<div class="ac-result-line">${escapeHtml(l.slice(0,200))}</div>`).join('');
     if (lines.length > 10) html += `<div class="ac-truncated">+ ${lines.length - 10} more lines</div>`;
+    if (!html) html = '<div class="ac-result-line">No displayable result.</div>';
     body.innerHTML = html;
   }
 
@@ -445,8 +448,12 @@
     if (result.error) return 'Error: ' + result.error;
 
     const lines = [];
+    if (result.ok !== undefined) lines.push('Status: ' + (result.ok ? 'ok' : 'failed'));
     if (result.path !== undefined) lines.push('Path: ' + (result.path || 'root'));
     if (result.overview) lines.push('Overview: ' + result.overview);
+    if (result.stats && typeof result.stats === 'object') {
+      lines.push('Stats: ' + Object.entries(result.stats).map(([k, v]) => k + '=' + v).join(', '));
+    }
     if (Array.isArray(result.core_viewpoints) && result.core_viewpoints.length) {
       lines.push('Core viewpoints:');
       result.core_viewpoints.slice(0, 6).forEach(v => lines.push('- ' + v));
@@ -518,6 +525,8 @@
     let transientTextEl = null;
     let transientTimer = null;
     let realOutputStarted = false;
+    const toolResultBodies = new Map();
+    let lastToolResultBody = null;
     let toolCount = 0, iteration = 0, firstEvent = false, lastThought = '';
     const transientMessageSets = {
       en: [
@@ -876,13 +885,17 @@
         case 'tool_call':
           stopTransientStatus();
           toolCount++;
-          appendToolCard(data.tool, data.arguments, toolCount);
+          lastToolResultBody = appendToolCard(data.tool, data.arguments, data.tool_call_id || String(toolCount));
+          if (data.tool_call_id) toolResultBodies.set(data.tool_call_id, lastToolResultBody);
           setStatus(iteration ? 'ROUND ' + iteration + '/8 · SEARCHING' : 'SEARCHING', 'active');
           break;
 
         case 'tool_result':
           stopTransientStatus();
-          fillToolResult(toolCount, formatToolResult(data.result));
+          fillToolResult(
+            (data.tool_call_id && toolResultBodies.get(data.tool_call_id)) || lastToolResultBody,
+            formatToolResult(data.result)
+          );
           setStatus(iteration ? 'ROUND ' + iteration + '/8 · ANALYZING' : 'ANALYZING', 'active');
           break;
 
@@ -930,6 +943,53 @@
   function openPanel() { isOpen = true; bubble.classList.add('ac-open'); panel.classList.add('ac-open'); inputEl.focus(); }
   function closePanel() { isOpen = false; bubble.classList.remove('ac-open'); panel.classList.remove('ac-open'); }
   function togglePanel() { isOpen ? closePanel() : openPanel(); }
+  function formatTimestamp(date) {
+    const pad = n => String(n).padStart(2, '0');
+    return date.getFullYear() + '-' +
+      pad(date.getMonth() + 1) + '-' +
+      pad(date.getDate()) + '_' +
+      pad(date.getHours()) + '-' +
+      pad(date.getMinutes()) + '-' +
+      pad(date.getSeconds());
+  }
+  function saveChatMarkdown() {
+    const now = new Date();
+    const turns = history.filter(m => m && (m.role === 'user' || m.role === 'assistant') && m.content);
+    if (!turns.length) {
+      setStatus('EMPTY', 'error');
+      setTimeout(() => setStatus('Ready', ''), 1200);
+      return;
+    }
+
+    const lines = [
+      '# Ask Simon Chat Export',
+      '',
+      '- Exported: ' + now.toLocaleString(),
+      '- Source: Ask Simon',
+      '',
+      '---',
+      '',
+    ];
+
+    turns.forEach(function (m) {
+      lines.push('## ' + (m.role === 'user' ? 'User' : 'Simon'));
+      lines.push('');
+      lines.push(m.content.trim());
+      lines.push('');
+    });
+
+    const blob = new Blob([lines.join('\n')], { type: 'text/markdown;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'ask-simon-chat-' + formatTimestamp(now) + '.md';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+    setStatus('SAVED', 'active');
+    setTimeout(() => setStatus('Ready', ''), 1200);
+  }
   function clearChat() {
     history = [];
     bodyEl.innerHTML = '<div class="ac-msg ac-msg-agent">Hi, I\'m Simon\'s digital twin. Ask me anything about architecture, AI, career, or things I\'ve written.</div>';
@@ -942,6 +1002,7 @@
     handle.addEventListener('pointerdown', startPanelResize);
   });
   closeBtn.addEventListener('click', closePanel);
+  saveBtn.addEventListener('click', saveChatMarkdown);
   clearBtn.addEventListener('click', clearChat);
 
   window.addEventListener('resize', function () {
