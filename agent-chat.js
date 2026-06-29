@@ -13,7 +13,7 @@
   'use strict';
 
   // ─── Config ───────────────────────────────────────────────
-  const WIDGET_VERSION = '0.1.8';
+  const WIDGET_VERSION = '0.1.9';
   const BACKEND = window.AGENT_CHAT_BACKEND ||
     'https://simonsterrific-shizhang-agent.hf.space';
   const MAX_HISTORY = 12;
@@ -44,19 +44,16 @@
     .ac-status.active{color:var(--accent,oklch(72% 0.20 240))}
     .ac-status.error{color:oklch(72% 0.20 30)}
 
-    .ac-body{flex:1 1 auto;overflow-y:auto;padding:16px 18px;display:flex;flex-direction:column;gap:10px;scroll-behavior:smooth}
-    .ac-body::-webkit-scrollbar{width:4px}
-    .ac-body::-webkit-scrollbar-track{background:transparent}
-    .ac-body::-webkit-scrollbar-thumb{background:oklch(30% 0.008 55);border-radius:2px}
+    .ac-body{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding:16px 18px;display:flex;flex-direction:column;gap:10px;scroll-behavior:smooth;scrollbar-width:none;-ms-overflow-style:none}
+    .ac-body::-webkit-scrollbar{display:none}
 
     /* Messages */
-    .ac-msg{max-width:88%;font-size:12px;line-height:1.7;font-family:var(--font-body,'DM Mono',monospace);padding:10px 14px;border-radius:8px;animation:ac-fade-in .3s ease;word-break:break-word}
+    .ac-msg{flex:0 0 auto;max-width:88%;font-size:12px;line-height:1.7;font-family:var(--font-body,'DM Mono',monospace);padding:10px 14px;border-radius:8px;animation:ac-fade-in .3s ease;word-break:break-word;scrollbar-width:none;-ms-overflow-style:none}
+    .ac-msg::-webkit-scrollbar{display:none}
     .ac-msg-user{align-self:flex-end;background:var(--accent,oklch(72% 0.20 240));color:oklch(10% 0.012 55);font-weight:500;border-bottom-right-radius:2px}
-    .ac-msg-agent{align-self:flex-start;background:oklch(18% 0.01 55);color:var(--fg,oklch(95% 0.008 80));border-bottom-left-radius:2px;border:1px solid oklch(25% 0.008 55);overflow-x:auto;max-width:min(88%,100%)}
+    .ac-msg-agent{align-self:flex-start;background:oklch(18% 0.01 55);color:var(--fg,oklch(95% 0.008 80));border-bottom-left-radius:2px;border:1px solid oklch(25% 0.008 55);overflow:auto;max-width:min(88%,100%);max-height:min(65vh,520px)}
     .ac-msg-agent.ac-msg-streaming{border-left:2px solid var(--accent,oklch(72% 0.20 240))}
-    .ac-msg-agent::-webkit-scrollbar{height:4px}
-    .ac-msg-agent::-webkit-scrollbar-track{background:transparent}
-    .ac-msg-agent::-webkit-scrollbar-thumb{background:oklch(32% 0.012 55);border-radius:2px}
+    .ac-msg-agent::-webkit-scrollbar{display:none}
 
     /* Markdown inside agent messages */
     .ac-msg-agent h1,.ac-msg-agent h2,.ac-msg-agent h3{font-family:var(--font-display,'Bebas Neue',sans-serif);font-weight:400;margin:8px 0 4px;line-height:1.3;color:var(--fg,oklch(95% 0.008 80))}
@@ -66,7 +63,8 @@
     .ac-msg-agent strong{color:var(--accent,oklch(72% 0.20 240));font-weight:600}
     .ac-msg-agent em{color:oklch(85% 0.008 80);font-style:italic}
     .ac-msg-agent code{background:oklch(22% 0.01 55);color:var(--accent,oklch(72% 0.20 240));padding:1px 5px;border-radius:3px;font-family:var(--font-body,'DM Mono',monospace);font-size:11px}
-    .ac-msg-agent pre{background:oklch(14% 0.01 55);border:1px solid oklch(22% 0.008 55);border-radius:6px;padding:10px 14px;overflow-x:auto;font-size:11px;line-height:1.6;margin:8px 0}
+    .ac-msg-agent pre{background:oklch(14% 0.01 55);border:1px solid oklch(22% 0.008 55);border-radius:6px;padding:10px 14px;overflow:auto;font-size:11px;line-height:1.6;margin:8px 0;scrollbar-width:none;-ms-overflow-style:none}
+    .ac-msg-agent pre::-webkit-scrollbar{display:none}
     .ac-msg-agent pre code{background:none;color:var(--fg,oklch(95% 0.008 80));padding:0;font-size:inherit}
     .ac-msg-agent ul,.ac-msg-agent ol{margin:4px 0;padding-left:18px}
     .ac-msg-agent li{margin:2px 0;line-height:1.6}
@@ -84,8 +82,8 @@
     .ac-msg-agent p:last-child{margin-bottom:0}
 
     /* Thought */
-    .ac-thought{align-self:flex-start;max-width:92%;font-size:10px;line-height:1.6;font-style:italic;font-family:var(--font-body,'DM Mono',monospace);color:oklch(50% 0.006 80);padding:6px 12px;border-radius:6px;background:oklch(14% 0.005 55);border-left:2px solid oklch(30% 0.008 55);animation:ac-fade-in .25s ease}
-    .ac-transient{align-self:flex-start;max-width:94%;width:100%;padding:9px 12px 8px;border-radius:8px;background:oklch(14% 0.005 55);border:1px solid oklch(22% 0.008 55);animation:ac-fade-in .25s ease;overflow:hidden}
+    .ac-thought{flex:0 0 auto;align-self:flex-start;max-width:92%;font-size:10px;line-height:1.6;font-style:italic;font-family:var(--font-body,'DM Mono',monospace);color:oklch(50% 0.006 80);padding:6px 12px;border-radius:6px;background:oklch(14% 0.005 55);border-left:2px solid oklch(30% 0.008 55);animation:ac-fade-in .25s ease}
+    .ac-transient{flex:0 0 auto;align-self:flex-start;max-width:94%;width:100%;padding:9px 12px 8px;border-radius:8px;background:oklch(14% 0.005 55);border:1px solid oklch(22% 0.008 55);animation:ac-fade-in .25s ease;overflow:hidden}
     .ac-transient-list{position:relative;display:flex;flex-direction:column;gap:5px;padding-left:13px;border-left:1px solid oklch(32% 0.02 240/0.5)}
     .ac-transient-item{position:relative;font-family:var(--font-body,'DM Mono',monospace);font-size:10px;line-height:1.45;color:oklch(62% 0.006 80);animation:ac-timeline-in .32s cubic-bezier(.16,1,.3,1);transition:opacity .25s,transform .25s}
     .ac-transient-item::before{content:'';position:absolute;left:-16px;top:.55em;width:6px;height:6px;border-radius:50%;background:oklch(38% 0.012 80);box-shadow:0 0 0 3px oklch(14% 0.005 55)}
@@ -98,7 +96,7 @@
     @keyframes ac-timeline-in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 
     /* Tool Card */
-    .ac-tool-card{align-self:flex-start;max-width:94%;width:100%;background:oklch(16% 0.01 55);border:1px solid oklch(22% 0.008 55);border-radius:8px;overflow:hidden;animation:ac-fade-in .25s ease;transition:border-color .2s}
+    .ac-tool-card{flex:0 0 auto;align-self:flex-start;max-width:94%;width:100%;background:oklch(16% 0.01 55);border:1px solid oklch(22% 0.008 55);border-radius:8px;overflow:hidden;animation:ac-fade-in .25s ease;transition:border-color .2s}
     .ac-tool-card:hover{border-color:oklch(35% 0.01 55)}
     .ac-tool-card-header{display:flex;align-items:center;gap:8px;padding:8px 12px;cursor:pointer;user-select:none;transition:background .15s}
     .ac-tool-card-header:hover{background:oklch(19% 0.008 55)}
@@ -106,7 +104,8 @@
     .ac-tool-card-header .ac-tool-label{flex:1 1 auto;min-width:0;font-family:var(--font-body,'DM Mono',monospace);font-size:10px;letter-spacing:.04em;color:var(--fg,oklch(95% 0.008 80));white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
     .ac-tool-card-header .ac-tool-chevron{font-size:8px;color:oklch(45% 0.006 80);transition:transform .2s;flex-shrink:0}
     .ac-tool-card.expanded .ac-tool-chevron{transform:rotate(180deg)}
-    .ac-tool-card-body{display:none;padding:8px 12px 12px;border-top:1px solid oklch(22% 0.008 55);font-family:var(--font-body,'DM Mono',monospace);font-size:10px;line-height:1.6;color:oklch(60% 0.006 80);max-height:180px;overflow-y:auto}
+    .ac-tool-card-body{display:none;padding:8px 12px 12px;border-top:1px solid oklch(22% 0.008 55);font-family:var(--font-body,'DM Mono',monospace);font-size:10px;line-height:1.6;color:oklch(60% 0.006 80);max-height:180px;overflow-y:auto;scrollbar-width:none;-ms-overflow-style:none}
+    .ac-tool-card-body::-webkit-scrollbar{display:none}
     .ac-tool-card.expanded .ac-tool-card-body{display:block}
     .ac-tool-card-body .ac-match-count{display:inline-flex;align-items:center;gap:4px;background:oklch(22% 0.01 55);color:var(--accent,oklch(72% 0.20 240));padding:2px 8px;border-radius:10px;font-size:10px;font-weight:500;margin-bottom:6px}
     .ac-tool-card-body .ac-result-line{padding:3px 0;border-bottom:1px solid oklch(17% 0.005 55)}
@@ -114,7 +113,7 @@
     .ac-tool-card-body .ac-truncated{color:oklch(45% 0.006 80);margin-top:4px;font-style:italic}
 
     /* Typing */
-    .ac-typing{align-self:flex-start;display:flex;gap:4px;padding:8px 14px;background:oklch(18% 0.01 55);border-radius:8px;border:1px solid oklch(25% 0.008 55)}
+    .ac-typing{flex:0 0 auto;align-self:flex-start;display:flex;gap:4px;padding:8px 14px;background:oklch(18% 0.01 55);border-radius:8px;border:1px solid oklch(25% 0.008 55)}
     .ac-typing span{width:6px;height:6px;border-radius:50%;background:var(--fg-dim,oklch(55% 0.006 80));animation:ac-blink 1.4s infinite both}
     .ac-typing span:nth-child(2){animation-delay:.2s}
     .ac-typing span:nth-child(3){animation-delay:.4s}
