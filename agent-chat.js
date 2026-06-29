@@ -413,7 +413,7 @@
 
         case 'tool_call':
           toolCount++;
-          appendToolCard(data.name, data.arguments, toolCount);
+          appendToolCard(data.tool, data.arguments, toolCount);
           setStatus('ROUND ' + iteration + '/8 · SEARCHING', 'active');
           break;
 
