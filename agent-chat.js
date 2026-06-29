@@ -13,12 +13,13 @@
   'use strict';
 
   // ─── Config ───────────────────────────────────────────────
-  const WIDGET_VERSION = '0.1.11';
+  const WIDGET_VERSION = '0.1.12';
   const BACKEND = window.AGENT_CHAT_BACKEND ||
     'https://simonsterrific-shizhang-agent.hf.space';
   const MAX_HISTORY = 12;
   const STREAM_FLUSH_MS = 28;
   const STREAM_CHARS_PER_TICK = 2;
+  const STREAM_RENDER_MS = 90;
   let history = [];
 
   // ─── Inject Styles ────────────────────────────────────────
@@ -288,6 +289,12 @@
     return html;
   }
 
+  function renderStreamingMarkdown(text) {
+    const fenceCount = (text.match(/```/g) || []).length;
+    const safeText = fenceCount % 2 === 1 ? text + '\n```' : text;
+    return renderMarkdown(safeText, false);
+  }
+
   // ─── Helpers ──────────────────────────────────────────────
 
   const MIN_PANEL_WIDTH = 320;
@@ -521,6 +528,8 @@
     let displayedAgentText = '';
     let pendingAgentText = '';
     let streamFlushTimer = null;
+    let streamRenderTimer = null;
+    let lastStreamRenderAt = 0;
     let transientEl = null;
     let transientTextEl = null;
     let transientTimer = null;
@@ -738,8 +747,23 @@
 
     function renderStreamingText() {
       ensureAgentMessage();
-      agentMsgDiv.innerHTML = renderMarkdown(displayedAgentText, true);
-      scrollBottom();
+      const now = performance.now();
+      const renderNow = function () {
+        streamRenderTimer = null;
+        lastStreamRenderAt = performance.now();
+        agentMsgDiv.innerHTML = renderStreamingMarkdown(displayedAgentText);
+        scrollBottom();
+      };
+
+      if (now - lastStreamRenderAt >= STREAM_RENDER_MS) {
+        if (streamRenderTimer !== null) {
+          clearTimeout(streamRenderTimer);
+          streamRenderTimer = null;
+        }
+        renderNow();
+      } else if (streamRenderTimer === null) {
+        streamRenderTimer = setTimeout(renderNow, STREAM_RENDER_MS - (now - lastStreamRenderAt));
+      }
     }
 
     function scheduleStreamFlush() {
@@ -778,6 +802,14 @@
         }
         flushStreamText();
         await new Promise(resolve => setTimeout(resolve, STREAM_FLUSH_MS));
+      }
+      if (streamRenderTimer !== null) {
+        clearTimeout(streamRenderTimer);
+        streamRenderTimer = null;
+      }
+      if (agentMsgDiv) {
+        agentMsgDiv.innerHTML = renderStreamingMarkdown(displayedAgentText);
+        scrollBottom();
       }
     }
 
@@ -841,6 +873,7 @@
 
     } catch (err) {
       if (streamFlushTimer !== null) clearTimeout(streamFlushTimer);
+      if (streamRenderTimer !== null) clearTimeout(streamRenderTimer);
       stopTransientStatus();
       dotEl.classList.remove('thinking');
       hideTyping();
@@ -914,6 +947,10 @@
             if (streamFlushTimer !== null) {
               clearTimeout(streamFlushTimer);
               streamFlushTimer = null;
+            }
+            if (streamRenderTimer !== null) {
+              clearTimeout(streamRenderTimer);
+              streamRenderTimer = null;
             }
           }
           break;
