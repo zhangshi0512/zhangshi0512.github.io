@@ -13,7 +13,7 @@
   'use strict';
 
   // ─── Config ───────────────────────────────────────────────
-  const WIDGET_VERSION = '0.1.1';
+  const WIDGET_VERSION = '0.1.2';
   const BACKEND = window.AGENT_CHAT_BACKEND ||
     'https://simonsterrific-shizhang-agent.hf.space';
   const MAX_HISTORY = 12;
@@ -465,35 +465,36 @@
       const decoder = new TextDecoder();
       let buffer = '';
 
+      function processSSEBlock(block) {
+        let currentEvent = '';
+        const dataLines = [];
+        for (const rawLine of block.split(/\r?\n/)) {
+          const line = rawLine.trimEnd();
+          if (line.startsWith('event:')) {
+            currentEvent = line.slice(6).trim();
+          } else if (line.startsWith('data:')) {
+            dataLines.push(line.slice(5).trimStart());
+          }
+        }
+        if (!dataLines.length) return;
+        try {
+          handleSSEEvent(currentEvent, JSON.parse(dataLines.join('\n')));
+        } catch { /* skip malformed SSE payload */ }
+      }
+
       while (true) {
         const { done, value } = await reader.read();
         if (done) break;
         buffer += decoder.decode(value, { stream: true });
-        const lines = buffer.split('\n');
-        buffer = lines.pop() || '';
-
-        let currentEvent = '';
-        for (const line of lines) {
-          if (line.startsWith('event: ')) {
-            currentEvent = line.slice(7).trim();
-          } else if (line.startsWith('data: ')) {
-            try {
-              const data = JSON.parse(line.slice(6));
-              handleSSEEvent(currentEvent, data);
-            } catch { /* skip */ }
-          }
-        }
+        const blocks = buffer.split(/\r?\n\r?\n/);
+        buffer = blocks.pop() || '';
+        blocks.forEach(processSSEBlock);
       }
 
       // Process remaining buffer
+      buffer += decoder.decode();
       if (buffer.trim()) {
-        let currentEvent = '';
-        for (const line of buffer.split('\n')) {
-          if (line.startsWith('event: ')) currentEvent = line.slice(7).trim();
-          else if (line.startsWith('data: ')) {
-            try { handleSSEEvent(currentEvent, JSON.parse(line.slice(6))); } catch { /* skip */ }
-          }
-        }
+        processSSEBlock(buffer);
       }
 
       // ── DONE: finish paced stream, then apply full Markdown render ──
@@ -573,6 +574,10 @@
 
         case 'done':
           break;  // full Markdown applied in outer block
+
+        case 'heartbeat':
+          setStatus('THINKING...', 'active');
+          break;
 
         case 'error':
           dotEl.classList.remove('thinking');
