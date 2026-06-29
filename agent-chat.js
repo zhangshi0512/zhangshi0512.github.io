@@ -50,8 +50,8 @@
     /* ── Panel ── */
     .ac-panel {
       position: fixed; bottom: 28px; right: 28px; z-index: 7999;
-      width: 380px; max-width: calc(100vw - 40px);
-      height: 540px; max-height: calc(100vh - 80px);
+      width: 400px; max-width: calc(100vw - 40px);
+      height: 580px; max-height: calc(100vh - 80px);
       background: oklch(12% 0.01 55);
       border: 1px solid oklch(25% 0.008 55);
       border-radius: 12px;
@@ -84,8 +84,15 @@
     .ac-header-dot {
       width: 8px; height: 8px; border-radius: 50%;
       background: var(--accent, oklch(72% 0.20 240));
+      transition: background 0.3s;
     }
-    .ac-header-actions { display: flex; gap: 8px; }
+    .ac-header-dot.thinking {
+      animation: ac-pulse-dot 0.8s ease-in-out infinite;
+    }
+    @keyframes ac-pulse-dot {
+      0%,100%{opacity:1} 50%{opacity:0.3}
+    }
+    .ac-header-actions { display: flex; gap: 8px; align-items: center; }
     .ac-btn {
       background: none; border: 1px solid oklch(30% 0.008 55);
       color: var(--fg-dim, oklch(55% 0.006 80));
@@ -99,11 +106,21 @@
       color: var(--fg, oklch(95% 0.008 80));
     }
 
+    /* ── Status bar ── */
+    .ac-status {
+      font-size: 9px; letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--fg-dim, oklch(55% 0.006 80));
+    }
+    .ac-status.active {
+      color: var(--accent, oklch(72% 0.20 240));
+    }
+    .ac-status.error { color: oklch(72% 0.20 30); }
+
     /* ── Messages Area ── */
     .ac-body {
       flex: 1 1 auto; overflow-y: auto;
       padding: 16px 18px;
-      display: flex; flex-direction: column; gap: 14px;
+      display: flex; flex-direction: column; gap: 10px;
       scroll-behavior: smooth;
     }
     .ac-body::-webkit-scrollbar { width: 4px; }
@@ -132,30 +149,112 @@
       border-bottom-left-radius: 2px;
       border: 1px solid oklch(25% 0.008 55);
     }
-    .ac-msg-system {
-      align-self: center;
-      max-width: 92%;
-      background: transparent;
-      color: var(--fg-dim, oklch(55% 0.006 80));
-      font-size: 10px; letter-spacing: 0.06em;
-      text-align: center; padding: 4px 8px;
-    }
-    .ac-msg-streaming {
+    .ac-msg-agent.ac-msg-streaming {
       border-left: 2px solid var(--accent, oklch(72% 0.20 240));
     }
 
-    /* ── Tool Calls ── */
-    .ac-tool {
+    /* ── Thought — inline reasoning ── */
+    .ac-thought {
       align-self: flex-start; max-width: 92%;
-      font-size: 10px; letter-spacing: 0.06em;
-      color: var(--fg-dim, oklch(55% 0.006 80));
-      background: oklch(16% 0.01 55);
-      border: 1px solid oklch(22% 0.008 55);
-      border-radius: 6px; padding: 6px 10px;
-      display: flex; align-items: center; gap: 6px;
+      font-size: 10px; line-height: 1.6; font-style: italic;
+      font-family: var(--font-body, 'DM Mono', monospace);
+      color: oklch(50% 0.006 80);
+      padding: 6px 12px; border-radius: 6px;
+      background: oklch(14% 0.005 55);
+      border-left: 2px solid oklch(30% 0.008 55);
       animation: ac-fade-in 0.25s ease;
     }
-    .ac-tool-icon { font-size: 13px; }
+
+    /* ── Tool Card — expandable tool execution ── */
+    .ac-tool-card {
+      align-self: flex-start; max-width: 94%; width: 100%;
+      background: oklch(16% 0.01 55);
+      border: 1px solid oklch(22% 0.008 55);
+      border-radius: 8px;
+      overflow: hidden;
+      animation: ac-fade-in 0.25s ease;
+      transition: border-color 0.2s;
+    }
+    .ac-tool-card:hover {
+      border-color: oklch(35% 0.01 55);
+    }
+    .ac-tool-card-header {
+      display: flex; align-items: center; gap: 8px;
+      padding: 8px 12px; cursor: pointer;
+      user-select: none;
+      transition: background 0.15s;
+    }
+    .ac-tool-card-header:hover {
+      background: oklch(19% 0.008 55);
+    }
+    .ac-tool-card-header .ac-tool-icon {
+      width: 24px; height: 24px; border-radius: 5px;
+      background: oklch(22% 0.01 55);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px; flex-shrink: 0;
+    }
+    .ac-tool-card-header .ac-tool-label {
+      flex: 1 1 auto; min-width: 0;
+      font-family: var(--font-body, 'DM Mono', monospace);
+      font-size: 10px; letter-spacing: 0.04em;
+      color: var(--fg, oklch(95% 0.008 80));
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .ac-tool-card-header .ac-tool-chevron {
+      font-size: 8px; color: oklch(45% 0.006 80);
+      transition: transform 0.2s;
+      flex-shrink: 0;
+    }
+    .ac-tool-card.expanded .ac-tool-chevron {
+      transform: rotate(180deg);
+    }
+    .ac-tool-card-body {
+      display: none;
+      padding: 8px 12px 12px;
+      border-top: 1px solid oklch(22% 0.008 55);
+      font-family: var(--font-body, 'DM Mono', monospace);
+      font-size: 10px; line-height: 1.6;
+      color: oklch(60% 0.006 80);
+    }
+    .ac-tool-card.expanded .ac-tool-card-body {
+      display: block;
+    }
+    .ac-tool-card-body .ac-match-count {
+      display: inline-flex; align-items: center; gap: 4px;
+      background: oklch(22% 0.01 55);
+      color: var(--accent, oklch(72% 0.20 240));
+      padding: 2px 8px; border-radius: 10px;
+      font-size: 10px; font-weight: 500;
+      margin-bottom: 6px;
+    }
+    .ac-tool-card-body .ac-result-line {
+      padding: 3px 0;
+      border-bottom: 1px solid oklch(17% 0.005 55);
+    }
+    .ac-tool-card-body .ac-result-line:last-child {
+      border-bottom: none;
+    }
+    .ac-tool-card-body .ac-truncated {
+      color: oklch(45% 0.006 80);
+      margin-top: 4px; font-style: italic;
+    }
+
+    /* ── Iteration step marker ── */
+    .ac-step {
+      align-self: stretch;
+      display: flex; align-items: center; gap: 10px;
+      padding: 0 4px;
+    }
+    .ac-step-line {
+      flex: 1 1 auto; height: 1px;
+      background: oklch(20% 0.008 55);
+    }
+    .ac-step-label {
+      font-family: var(--font-body, 'DM Mono', monospace);
+      font-size: 8px; letter-spacing: 0.1em; text-transform: uppercase;
+      color: oklch(40% 0.006 80);
+      white-space: nowrap;
+    }
 
     /* ── Typing Indicator ── */
     .ac-typing {
@@ -224,14 +323,6 @@
       }
       .ac-bubble { bottom: 16px; right: 16px; }
     }
-
-    /* ── Connection Status ── */
-    .ac-status {
-      font-size: 9px; letter-spacing: 0.08em; text-transform: uppercase;
-      color: var(--fg-dim, oklch(55% 0.006 80));
-      margin-right: auto;
-    }
-    .ac-status.error { color: oklch(72% 0.20 30); }
   `;
 
   const styleEl = document.createElement('style');
@@ -240,19 +331,17 @@
 
   // ─── Build DOM ────────────────────────────────────────────
 
-  // Bubble button
   const bubble = document.createElement('button');
   bubble.className = 'ac-bubble';
   bubble.setAttribute('aria-label', 'Chat with Simon');
   bubble.innerHTML = `<svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>`;
 
-  // Panel
   const panel = document.createElement('div');
   panel.className = 'ac-panel';
   panel.innerHTML = `
     <div class="ac-header">
       <div class="ac-header-title">
-        <span class="ac-header-dot"></span>Ask Simon
+        <span class="ac-header-dot" id="ac-dot"></span>Ask Simon
       </div>
       <div class="ac-header-actions">
         <span class="ac-status" id="ac-status">Ready</span>
@@ -262,7 +351,7 @@
     </div>
     <div class="ac-body" id="ac-body">
       <div class="ac-msg ac-msg-agent">
-        Hi, I'm Simon's digital twin. Ask me anything — about architecture, AI, career, or things I've written.
+        Hi, I'm Simon's digital twin. Ask me anything about architecture, AI, career, or things I've written.
       </div>
     </div>
     <div class="ac-input-wrap">
@@ -285,8 +374,9 @@
   const closeBtn  = document.getElementById('ac-close');
   const clearBtn  = document.getElementById('ac-clear');
   const statusEl  = document.getElementById('ac-status');
+  const dotEl     = document.getElementById('ac-dot');
 
-  let isOpen     = false;
+  let isOpen      = false;
   let isStreaming = false;
 
   // ─── Helpers ──────────────────────────────────────────────
@@ -295,9 +385,9 @@
     bodyEl.scrollTop = bodyEl.scrollHeight;
   }
 
-  function setStatus(text, isError) {
+  function setStatus(text, cls) {
     statusEl.textContent = text;
-    statusEl.className = 'ac-status' + (isError ? ' error' : '');
+    statusEl.className = 'ac-status' + (cls ? ' ' + cls : '');
   }
 
   function appendMessage(role, html) {
@@ -309,21 +399,84 @@
     return div;
   }
 
-  function appendTool(name, args) {
-    const toolNames = {
-      list_directory: 'Browsing',
-      read_file:      'Reading',
-      search_content: 'Searching',
-      read_index:     'Index',
-      get_metadata:   'Metadata',
-    };
-    const label = toolNames[name] || name;
-    const argPreview = args && args.path ? args.path : '';
+  function appendThought(text) {
     const div = document.createElement('div');
-    div.className = 'ac-tool';
-    div.innerHTML = `<span class="ac-tool-icon">🔍</span> ${label}: <span style="color:var(--fg);opacity:0.7">${argPreview}</span>`;
+    div.className = 'ac-thought';
+    div.textContent = text;
     bodyEl.appendChild(div);
     scrollBottom();
+    return div;
+  }
+
+  function appendToolCard(toolName, toolArgs, iteration) {
+    const icons = {
+      list_directory: '📂', read_file: '📄', search_content: '🔎',
+      read_index: '📋', get_metadata: 'ℹ️',
+    };
+    const verbs = {
+      list_directory: 'Browsing', read_file: 'Reading',
+      search_content: 'Searching', read_index: 'Index',
+      get_metadata: 'Metadata',
+    };
+    const icon = icons[toolName] || '⚙';
+    const verb = verbs[toolName] || toolName;
+    const target = toolArgs && toolArgs.path ? toolArgs.path
+      : (toolArgs && toolArgs.pattern ? `"${toolArgs.pattern}"` : '');
+
+    const card = document.createElement('div');
+    card.className = 'ac-tool-card';
+    card.innerHTML = `
+      <div class="ac-tool-card-header">
+        <span class="ac-tool-icon">${icon}</span>
+        <span class="ac-tool-label">${verb}${target ? ': ' + target : ''}</span>
+        <span class="ac-tool-chevron">▼</span>
+      </div>
+      <div class="ac-tool-card-body" id="ac-tool-result-${iteration}"></div>
+    `;
+
+    // Toggle expand on header click
+    card.querySelector('.ac-tool-card-header').addEventListener('click', function () {
+      card.classList.toggle('expanded');
+    });
+
+    bodyEl.appendChild(card);
+    scrollBottom();
+    return card;
+  }
+
+  function fillToolResult(iteration, resultText) {
+    const body = document.getElementById('ac-tool-result-' + iteration);
+    if (!body) return;
+
+    // Try to parse structured info from the result
+    const matchCount = extractMatchCount(resultText);
+    let html = '';
+
+    if (matchCount !== null) {
+      html += `<div class="ac-match-count">Found ${matchCount} items</div>`;
+    }
+
+    // Show truncated result
+    const lines = resultText.split('\n').filter(l => l.trim());
+    const preview = lines.slice(0, 10);
+    html += preview.map(l => `<div class="ac-result-line">${escapeHtml(l.slice(0, 200))}</div>`).join('');
+
+    if (lines.length > 10) {
+      html += `<div class="ac-truncated">+ ${lines.length - 10} more lines</div>`;
+    }
+
+    body.innerHTML = html;
+  }
+
+  function extractMatchCount(text) {
+    // Try common patterns: "Found X matches", "X articles", etc.
+    const m1 = text.match(/Found\s+(\d+)\s+match/i);
+    if (m1) return parseInt(m1[1]);
+    const m2 = text.match(/(\d+)\s+(?:articles?|files?|items?|results?)/i);
+    if (m2) return parseInt(m2[1]);
+    const m3 = text.match(/total:\s*(\d+)/i);
+    if (m3) return parseInt(m3[1]);
+    return null;
   }
 
   function showTyping() {
@@ -347,24 +500,28 @@
     isStreaming = true;
     sendBtn.disabled = true;
     inputEl.disabled = true;
-    setStatus('Thinking...', false);
+
+    // Visual: start thinking state
+    dotEl.classList.add('thinking');
+    setStatus('ANALYZING...', 'active');
 
     // Show user message
     appendMessage('user', escapeHtml(query));
     history.push({ role: 'user', content: query });
 
-    // Show typing indicator
+    // Show typing indicator while waiting for first SSE event
     showTyping();
 
-    // Streaming agent message container
-    let agentMsgDiv = null;
-    let agentContent = '';
-    let toolCount = 0;
-    let doneReceived = false;
+    let agentMsgDiv   = null;
+    let agentContent  = '';
+    let toolCount     = 0;
+    let iteration     = 0;      // which agent loop iteration
+    let firstEvent    = false;
+    let lastThought   = '';     // last thought shown (avoid duplicates)
 
     try {
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 120000); // 2 min
+      const timeoutId = setTimeout(() => controller.abort(), 120000);
 
       const resp = await fetch(BACKEND + '/chat', {
         method: 'POST',
@@ -392,28 +549,23 @@
         if (done) break;
 
         buffer += decoder.decode(value, { stream: true });
-
-        // Parse SSE events from buffer
         const lines = buffer.split('\n');
-        buffer = lines.pop() || ''; // keep incomplete line
+        buffer = lines.pop() || '';
 
         let currentEvent = '';
         for (const line of lines) {
           if (line.startsWith('event: ')) {
             currentEvent = line.slice(7).trim();
           } else if (line.startsWith('data: ')) {
-            const dataStr = line.slice(6);
             try {
-              const data = JSON.parse(dataStr);
+              const data = JSON.parse(line.slice(6));
               handleSSEEvent(currentEvent, data);
-            } catch {
-              // skip unparseable
-            }
+            } catch { /* skip */ }
           }
         }
       }
 
-      // Process remaining buffer
+      // Process remaining
       if (buffer.trim()) {
         const lastLines = buffer.split('\n');
         let currentEvent = '';
@@ -421,25 +573,27 @@
           if (line.startsWith('event: ')) {
             currentEvent = line.slice(7).trim();
           } else if (line.startsWith('data: ')) {
-            const dataStr = line.slice(6);
             try {
-              const data = JSON.parse(dataStr);
+              const data = JSON.parse(line.slice(6));
               handleSSEEvent(currentEvent, data);
             } catch { /* skip */ }
           }
         }
       }
 
-      setStatus('Ready', false);
+      // Final state
+      dotEl.classList.remove('thinking');
+      setStatus('Ready', '');
 
     } catch (err) {
+      dotEl.classList.remove('thinking');
       hideTyping();
       if (err.name === 'AbortError') {
-        setStatus('Timeout', true);
-        appendMessage('system', '⏱ Request timed out. Please try again.');
+        setStatus('TIMEOUT', 'error');
+        appendMessage('system', '⏱ Request timed out.');
       } else {
-        setStatus('Error', true);
-        appendMessage('system', '⚠ Connection failed. Check that the backend is running.');
+        setStatus('ERROR', 'error');
+        appendMessage('system', '⚠ Connection lost.');
       }
       console.error('[agent-chat]', err);
     } finally {
@@ -457,49 +611,65 @@
       }
     }
 
+    // ─── SSE event router ────────────────────────────────────
+
     function handleSSEEvent(event, data) {
+      // Remove typing indicator on first real event
+      if (!firstEvent) {
+        firstEvent = true;
+        hideTyping();
+      }
+
       switch (event) {
-        case 'thought':
-          // Show thought as brief indicator
-          if (data.content) {
-            setStatus('Thinking: ' + data.content.slice(0, 40) + '...', false);
+        case 'thought': {
+          const thought = (data.content || '').trim();
+          if (thought && thought !== lastThought) {
+            lastThought = thought;
+            iteration++;
+            appendThought('💭 ' + thought);
+            setStatus(`ROUND ${iteration}/8`, 'active');
           }
           break;
+        }
 
-        case 'tool_call':
+        case 'tool_call': {
           toolCount++;
-          hideTyping();
-          appendTool(data.name, data.arguments);
-          setStatus(`Searching... (${toolCount})`, false);
+          const card = appendToolCard(data.name, data.arguments, toolCount);
+          setStatus(`ROUND ${iteration}/8 · TOOL ${toolCount}`, 'active');
           break;
+        }
 
-        case 'tool_result':
-          // Tool result consumed, nothing to show
+        case 'tool_result': {
+          const resultStr = typeof data.result === 'string' ? data.result
+            : JSON.stringify(data.result || '');
+          fillToolResult(toolCount, resultStr);
+          setStatus(`ROUND ${iteration}/8 · ANALYZING`, 'active');
           break;
+        }
 
-        case 'chunk':
+        case 'chunk': {
           if (!agentMsgDiv) {
-            hideTyping();
             agentMsgDiv = appendMessage('agent', '');
             agentMsgDiv.classList.add('ac-msg-streaming');
-            setStatus('Writing...', false);
+            setStatus('WRITING...', 'active');
           }
           agentContent += data.content || '';
           agentMsgDiv.innerHTML = escapeHtml(agentContent);
           scrollBottom();
           break;
+        }
 
         case 'done':
-          doneReceived = true;
-          setStatus('Ready', false);
+          dotEl.classList.remove('thinking');
+          setStatus('Ready', '');
           if (agentMsgDiv) {
             agentMsgDiv.classList.remove('ac-msg-streaming');
           }
           break;
 
         case 'error':
-          hideTyping();
-          setStatus('Error', true);
+          dotEl.classList.remove('thinking');
+          setStatus('ERROR', 'error');
           appendMessage('system', '⚠ ' + (data.message || 'Something went wrong.'));
           break;
       }
@@ -533,30 +703,26 @@
 
   function clearChat() {
     history = [];
-    // Keep only the welcome message
     bodyEl.innerHTML = `
       <div class="ac-msg ac-msg-agent">
-        Hi, I'm Simon's digital twin. Ask me anything — about architecture, AI, career, or things I've written.
+        Hi, I'm Simon's digital twin. Ask me anything about architecture, AI, career, or things I've written.
       </div>
     `;
-    setStatus('Ready', false);
+    setStatus('Ready', '');
   }
 
   // ─── Event Bindings ───────────────────────────────────────
 
   bubble.addEventListener('click', togglePanel);
-
   closeBtn.addEventListener('click', closePanel);
   clearBtn.addEventListener('click', clearChat);
 
-  // Close on Escape
   document.addEventListener('keydown', function (e) {
     if (e.key === 'Escape' && isOpen) {
       closePanel();
     }
   });
 
-  // Send on Enter (Shift+Enter for newline)
   inputEl.addEventListener('keydown', function (e) {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
@@ -569,7 +735,6 @@
     }
   });
 
-  // Auto-resize textarea
   inputEl.addEventListener('input', function () {
     inputEl.style.height = 'auto';
     inputEl.style.height = Math.min(inputEl.scrollHeight, 80) + 'px';
@@ -584,7 +749,7 @@
     }
   });
 
-  // ─── Health check on load ─────────────────────────────────
+  // ─── Health check ─────────────────────────────────────────
 
   (async function healthCheck() {
     try {
@@ -592,12 +757,12 @@
       if (resp.ok) {
         const h = await resp.json();
         console.log('[agent-chat] Backend healthy:', h);
-        setStatus('Ready', false);
+        setStatus('Ready', '');
       } else {
-        setStatus('Offline', true);
+        setStatus('OFFLINE', 'error');
       }
     } catch {
-      setStatus('Offline', true);
+      setStatus('OFFLINE', 'error');
       console.warn('[agent-chat] Backend unreachable at', BACKEND);
     }
   })();
