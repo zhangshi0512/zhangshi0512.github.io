@@ -13,7 +13,7 @@
   'use strict';
 
   // ─── Config ───────────────────────────────────────────────
-  const WIDGET_VERSION = '0.1.6';
+  const WIDGET_VERSION = '0.1.8';
   const BACKEND = window.AGENT_CHAT_BACKEND ||
     'https://simonsterrific-shizhang-agent.hf.space';
   const MAX_HISTORY = 12;
@@ -29,15 +29,15 @@
     .ac-bubble.ac-open{opacity:0;pointer-events:none}
     @keyframes ac-pulse{0%,100%{box-shadow:0 0 24px oklch(72% 0.20 240/0.35)}50%{box-shadow:0 0 36px oklch(72% 0.20 240/0.50)}}
 
-    .ac-panel{position:fixed;bottom:28px;right:28px;z-index:7999;width:420px;max-width:calc(100vw - 32px);height:600px;max-height:calc(100vh - 80px);background:oklch(12% 0.01 55);border:1px solid oklch(25% 0.008 55);border-radius:12px;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 16px 48px oklch(0% 0 0/0.55);transform:translateY(12px) scale(.96);opacity:0;pointer-events:none;transition:transform .3s cubic-bezier(.16,1,.3,1),opacity .25s}
+    .ac-panel{position:fixed;bottom:28px;right:28px;z-index:7999;width:420px;min-width:320px;max-width:calc(100vw - 16px);height:600px;min-height:380px;max-height:calc(100vh - 16px);background:oklch(12% 0.01 55);border:1px solid oklch(25% 0.008 55);border-radius:12px;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 16px 48px oklch(0% 0 0/0.55);transform:translateY(12px) scale(.96);opacity:0;pointer-events:none;transition:transform .3s cubic-bezier(.16,1,.3,1),opacity .25s}
     .ac-panel.ac-open{transform:translateY(0) scale(1);opacity:1;pointer-events:all}
 
-    .ac-header{flex:0 0 auto;display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid oklch(25% 0.008 55)}
+    .ac-header{flex:0 0 auto;display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid oklch(25% 0.008 55);cursor:move;user-select:none}
     .ac-header-title{font-family:var(--font-display,'Bebas Neue',sans-serif);font-size:20px;letter-spacing:.04em;color:var(--fg,oklch(95% 0.008 80));display:flex;align-items:center;gap:8px}
     .ac-header-dot{width:8px;height:8px;border-radius:50%;background:var(--accent,oklch(72% 0.20 240));transition:background .3s}
     .ac-header-dot.thinking{animation:ac-pulse-dot .8s ease-in-out infinite}
     @keyframes ac-pulse-dot{0%,100%{opacity:1}50%{opacity:.3}}
-    .ac-header-actions{display:flex;gap:8px;align-items:center}
+    .ac-header-actions{display:flex;gap:8px;align-items:center;cursor:default}
     .ac-btn{background:none;border:1px solid oklch(30% 0.008 55);color:var(--fg-dim,oklch(55% 0.006 80));font-family:var(--font-body,'DM Mono',monospace);font-size:10px;letter-spacing:.1em;text-transform:uppercase;padding:4px 10px;border-radius:4px;cursor:pointer;transition:border-color .2s,color .2s}
     .ac-btn:hover{border-color:var(--accent,oklch(72% 0.20 240));color:var(--fg,oklch(95% 0.008 80))}
     .ac-status{font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--fg-dim,oklch(55% 0.006 80))}
@@ -52,8 +52,11 @@
     /* Messages */
     .ac-msg{max-width:88%;font-size:12px;line-height:1.7;font-family:var(--font-body,'DM Mono',monospace);padding:10px 14px;border-radius:8px;animation:ac-fade-in .3s ease;word-break:break-word}
     .ac-msg-user{align-self:flex-end;background:var(--accent,oklch(72% 0.20 240));color:oklch(10% 0.012 55);font-weight:500;border-bottom-right-radius:2px}
-    .ac-msg-agent{align-self:flex-start;background:oklch(18% 0.01 55);color:var(--fg,oklch(95% 0.008 80));border-bottom-left-radius:2px;border:1px solid oklch(25% 0.008 55)}
+    .ac-msg-agent{align-self:flex-start;background:oklch(18% 0.01 55);color:var(--fg,oklch(95% 0.008 80));border-bottom-left-radius:2px;border:1px solid oklch(25% 0.008 55);overflow-x:auto;max-width:min(88%,100%)}
     .ac-msg-agent.ac-msg-streaming{border-left:2px solid var(--accent,oklch(72% 0.20 240))}
+    .ac-msg-agent::-webkit-scrollbar{height:4px}
+    .ac-msg-agent::-webkit-scrollbar-track{background:transparent}
+    .ac-msg-agent::-webkit-scrollbar-thumb{background:oklch(32% 0.012 55);border-radius:2px}
 
     /* Markdown inside agent messages */
     .ac-msg-agent h1,.ac-msg-agent h2,.ac-msg-agent h3{font-family:var(--font-display,'Bebas Neue',sans-serif);font-weight:400;margin:8px 0 4px;line-height:1.3;color:var(--fg,oklch(95% 0.008 80))}
@@ -71,7 +74,7 @@
     .ac-msg-agent a{color:var(--accent,oklch(72% 0.20 240));text-decoration:underline;text-underline-offset:2px}
     .ac-msg-agent a:hover{opacity:.8}
     .ac-msg-agent blockquote{border-left:3px solid var(--accent,oklch(72% 0.20 240));padding:4px 0 4px 12px;margin:6px 0;color:oklch(60% 0.006 80);font-style:italic}
-    .ac-msg-agent table{width:100%;border-collapse:collapse;margin:8px 0;font-size:11px;line-height:1.5}
+    .ac-msg-agent table{width:max-content;min-width:100%;border-collapse:collapse;margin:8px 0;font-size:11px;line-height:1.5}
     .ac-msg-agent th,.ac-msg-agent td{border:1px solid oklch(25% 0.008 55);padding:6px 10px;text-align:left;vertical-align:top}
     .ac-msg-agent th{background:oklch(18% 0.01 55);color:var(--accent,oklch(72% 0.20 240));font-weight:600;white-space:nowrap}
     .ac-msg-agent td{color:var(--fg-dim,oklch(80% 0.006 80))}
@@ -82,8 +85,17 @@
 
     /* Thought */
     .ac-thought{align-self:flex-start;max-width:92%;font-size:10px;line-height:1.6;font-style:italic;font-family:var(--font-body,'DM Mono',monospace);color:oklch(50% 0.006 80);padding:6px 12px;border-radius:6px;background:oklch(14% 0.005 55);border-left:2px solid oklch(30% 0.008 55);animation:ac-fade-in .25s ease}
-    .ac-transient{align-self:flex-start;max-width:92%;display:flex;align-items:center;gap:8px;font-size:10px;line-height:1.6;font-family:var(--font-body,'DM Mono',monospace);color:oklch(62% 0.006 80);padding:7px 12px;border-radius:6px;background:oklch(14% 0.005 55);border-left:2px solid var(--accent,oklch(72% 0.20 240));animation:ac-fade-in .25s ease}
-    .ac-transient-dot{width:6px;height:6px;border-radius:50%;background:var(--accent,oklch(72% 0.20 240));box-shadow:0 0 10px oklch(72% 0.20 240/0.45);animation:ac-pulse-dot .9s ease-in-out infinite;flex-shrink:0}
+    .ac-transient{align-self:flex-start;max-width:94%;width:100%;padding:9px 12px 8px;border-radius:8px;background:oklch(14% 0.005 55);border:1px solid oklch(22% 0.008 55);animation:ac-fade-in .25s ease;overflow:hidden}
+    .ac-transient-list{position:relative;display:flex;flex-direction:column;gap:5px;padding-left:13px;border-left:1px solid oklch(32% 0.02 240/0.5)}
+    .ac-transient-item{position:relative;font-family:var(--font-body,'DM Mono',monospace);font-size:10px;line-height:1.45;color:oklch(62% 0.006 80);animation:ac-timeline-in .32s cubic-bezier(.16,1,.3,1);transition:opacity .25s,transform .25s}
+    .ac-transient-item::before{content:'';position:absolute;left:-16px;top:.55em;width:6px;height:6px;border-radius:50%;background:oklch(38% 0.012 80);box-shadow:0 0 0 3px oklch(14% 0.005 55)}
+    .ac-transient-item.current{color:oklch(78% 0.008 80)}
+    .ac-transient-item.current::before{background:var(--accent,oklch(72% 0.20 240));box-shadow:0 0 10px oklch(72% 0.20 240/0.45),0 0 0 3px oklch(14% 0.005 55);animation:ac-pulse-dot .9s ease-in-out infinite}
+    .ac-transient-item.old-1{opacity:.7}
+    .ac-transient-item.old-2{opacity:.5}
+    .ac-transient-item.old-3{opacity:.34}
+    .ac-transient-item.old-4{opacity:.22}
+    @keyframes ac-timeline-in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 
     /* Tool Card */
     .ac-tool-card{align-self:flex-start;max-width:94%;width:100%;background:oklch(16% 0.01 55);border:1px solid oklch(22% 0.008 55);border-radius:8px;overflow:hidden;animation:ac-fade-in .25s ease;transition:border-color .2s}
@@ -119,6 +131,13 @@
     .ac-send:hover{opacity:.8}
     .ac-send:disabled{opacity:.35;pointer-events:none}
     .ac-send svg{width:16px;height:16px}
+    .ac-resize-handle{position:absolute;z-index:3;background:transparent}
+    .ac-resize-n,.ac-resize-s{left:12px;right:12px;height:8px;cursor:ns-resize}
+    .ac-resize-n{top:0}.ac-resize-s{bottom:0}
+    .ac-resize-e,.ac-resize-w{top:12px;bottom:12px;width:8px;cursor:ew-resize}
+    .ac-resize-e{right:0}.ac-resize-w{left:0}
+    .ac-resize-ne,.ac-resize-nw,.ac-resize-se,.ac-resize-sw{width:16px;height:16px}
+    .ac-resize-ne{right:0;top:0;cursor:nesw-resize}.ac-resize-nw{left:0;top:0;cursor:nwse-resize}.ac-resize-se{right:0;bottom:0;cursor:nwse-resize}.ac-resize-sw{left:0;bottom:0;cursor:nesw-resize}
 
     @media(max-width:480px){.ac-panel{width:calc(100vw - 20px);right:10px;bottom:10px;height:calc(100vh - 60px);max-height:none;border-radius:10px}.ac-bubble{bottom:16px;right:16px}}
   `;
@@ -137,12 +156,20 @@
   panel.className = 'ac-panel';
   panel.innerHTML = `<div class="ac-header"><div class="ac-header-title"><span class="ac-header-dot" id="ac-dot"></span>Ask Simon</div><div class="ac-header-actions"><span class="ac-status" id="ac-status">Ready</span><button class="ac-btn" id="ac-clear">Clear</button><button class="ac-btn" id="ac-close">✕</button></div></div><div class="ac-body" id="ac-body"><div class="ac-msg ac-msg-agent">Hi, I'm Simon's digital twin. Ask me anything about architecture, AI, career, or things I've written.</div></div><div class="ac-disclaimer">Simon could be wrong or make mistakes, please perform fact check before using the context. / Simon 可能出错，请在使用相关内容前自行核查事实。</div><div class="ac-input-wrap"><textarea class="ac-input" id="ac-input" rows="1" placeholder="Ask me anything..."></textarea><button class="ac-send" id="ac-send" aria-label="Send"><svg viewBox="0 0 24 24"><path fill="oklch(10% 0.012 55)" d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg></button></div>`;
 
+  ['n', 's', 'e', 'w', 'ne', 'nw', 'se', 'sw'].forEach(function (dir) {
+    const handle = document.createElement('div');
+    handle.className = 'ac-resize-handle ac-resize-' + dir;
+    handle.dataset.resizeDir = dir;
+    panel.appendChild(handle);
+  });
+
   document.body.appendChild(bubble);
   document.body.appendChild(panel);
 
   const bodyEl = document.getElementById('ac-body');
   const inputEl = document.getElementById('ac-input');
   const sendBtn = document.getElementById('ac-send');
+  const headerEl = panel.querySelector('.ac-header');
   const closeBtn = document.getElementById('ac-close');
   const clearBtn = document.getElementById('ac-clear');
   const statusEl = document.getElementById('ac-status');
@@ -262,6 +289,99 @@
   }
 
   // ─── Helpers ──────────────────────────────────────────────
+
+  const MIN_PANEL_WIDTH = 320;
+  const MIN_PANEL_HEIGHT = 380;
+  const PANEL_MARGIN = 8;
+
+  function clamp(n, min, max) {
+    return Math.min(Math.max(n, min), max);
+  }
+
+  function setPanelGeometry(left, top, width, height) {
+    const maxWidth = Math.max(MIN_PANEL_WIDTH, window.innerWidth - PANEL_MARGIN * 2);
+    const maxHeight = Math.max(MIN_PANEL_HEIGHT, window.innerHeight - PANEL_MARGIN * 2);
+    const nextWidth = clamp(width, MIN_PANEL_WIDTH, maxWidth);
+    const nextHeight = clamp(height, MIN_PANEL_HEIGHT, maxHeight);
+    const nextLeft = clamp(left, PANEL_MARGIN, window.innerWidth - nextWidth - PANEL_MARGIN);
+    const nextTop = clamp(top, PANEL_MARGIN, window.innerHeight - nextHeight - PANEL_MARGIN);
+
+    panel.style.left = nextLeft + 'px';
+    panel.style.top = nextTop + 'px';
+    panel.style.width = nextWidth + 'px';
+    panel.style.height = nextHeight + 'px';
+    panel.style.right = 'auto';
+    panel.style.bottom = 'auto';
+  }
+
+  function freezePanelGeometry() {
+    const rect = panel.getBoundingClientRect();
+    setPanelGeometry(rect.left, rect.top, rect.width, rect.height);
+  }
+
+  function startPanelDrag(e) {
+    if (e.button !== 0 || e.target.closest('.ac-header-actions')) return;
+    e.preventDefault();
+    freezePanelGeometry();
+    const rect = panel.getBoundingClientRect();
+    const startX = e.clientX;
+    const startY = e.clientY;
+
+    function move(ev) {
+      setPanelGeometry(rect.left + ev.clientX - startX, rect.top + ev.clientY - startY, rect.width, rect.height);
+    }
+
+    function up() {
+      window.removeEventListener('pointermove', move);
+      window.removeEventListener('pointerup', up);
+    }
+
+    window.addEventListener('pointermove', move);
+    window.addEventListener('pointerup', up, { once: true });
+  }
+
+  function startPanelResize(e) {
+    if (e.button !== 0) return;
+    const dir = e.currentTarget.dataset.resizeDir || '';
+    e.preventDefault();
+    e.stopPropagation();
+    freezePanelGeometry();
+    const rect = panel.getBoundingClientRect();
+    const startX = e.clientX;
+    const startY = e.clientY;
+
+    function move(ev) {
+      const dx = ev.clientX - startX;
+      const dy = ev.clientY - startY;
+      let left = rect.left;
+      let top = rect.top;
+      let width = rect.width;
+      let height = rect.height;
+
+      if (dir.includes('e')) width = rect.width + dx;
+      if (dir.includes('s')) height = rect.height + dy;
+      if (dir.includes('w')) {
+        width = rect.width - dx;
+        left = rect.left + dx;
+      }
+      if (dir.includes('n')) {
+        height = rect.height - dy;
+        top = rect.top + dy;
+      }
+
+      if (width < MIN_PANEL_WIDTH && dir.includes('w')) left = rect.right - MIN_PANEL_WIDTH;
+      if (height < MIN_PANEL_HEIGHT && dir.includes('n')) top = rect.bottom - MIN_PANEL_HEIGHT;
+      setPanelGeometry(left, top, width, height);
+    }
+
+    function up() {
+      window.removeEventListener('pointermove', move);
+      window.removeEventListener('pointerup', up);
+    }
+
+    window.addEventListener('pointermove', move);
+    window.addEventListener('pointerup', up, { once: true });
+  }
 
   function scrollBottom() {
     bodyEl.scrollTop = bodyEl.scrollHeight;
@@ -422,36 +542,113 @@
         'Following the strongest signal',
         'Letting the knowledge base catch up',
         'Assembling the first pass of context',
+        'Opening a narrow path through the archive',
+        'Testing whether the question needs memory',
+        'Measuring the distance to a useful answer',
+        'Listening for the topic under the wording',
+        'Scanning for the least noisy clue',
+        'Pulling one reference thread at a time',
+        'Framing the answer before writing it',
+        'Sorting broad context into smaller pieces',
+        'Weighing personal memory against general knowledge',
+        'Narrowing the search window',
+        'Aligning tone with the question',
+        'Sketching a compact answer shape',
+        'Collecting enough context to be precise',
+        'Anchoring the response before it starts',
+        'Filtering out the easy but weak answer',
+        'Comparing nearby memories',
+        'Marking the strongest source candidate',
+        'Crossing off irrelevant branches',
+        'Keeping the first answer from rushing out',
+        'Building a small context map',
+        'Turning the query into retrieval terms',
+        'Reading between the prompt lines',
+        'Watching for the first reliable signal',
+        'Choosing a compact route through the notes',
+        'Pulling context without flooding the answer',
+        'Checking the archive before improvising',
+        'Letting the first pass settle',
+        'Threading memory into the response',
+        'Searching for the practical angle',
+        'Preparing a grounded opening',
+        'Balancing specificity with speed',
+        'Running a quick relevance check',
+        'Looking past the obvious phrasing',
+        'Settling on the answer\'s center of gravity',
+        'Translating context into a useful reply',
+        'Keeping the response tied to evidence',
+        'Matching the question to Simon\'s timeline',
+        'Waiting for the first solid foothold',
+        'Moving from vague context to usable signal',
+        'Folding the notes into a coherent path',
       ],
       zh: [
-        '正在连接 Simon 的知识库',
-        '正在判断这个问题的形状',
-        '正在选择第一条线索',
+        '连接到 Simon 的知识库',
+        '先看这个问题的形状',
+        '挑出第一条线索',
         '等待模型决定下一步动作',
-        '正在确认哪一层记忆最相关',
-        '正在追踪最近的主题簇',
-        '正在寻找合适的切入点',
-        '正在把上下文和噪声分开',
-        '正在把问题映射到既有笔记',
-        '正在预热检索路径',
-        '正在判断需要多深的细节',
-        '正在先扫一遍知识库索引',
-        '正在平衡召回和精度',
-        '正在寻找更像 Simon 的证据',
-        '正在准备第一步可靠上下文',
-        '正在判断是否需要深读文件',
+        '确认哪一层记忆最相关',
+        '追踪最近的主题簇',
+        '找一个合适的切入点',
+        '把上下文和噪声分开',
+        '问题正在映射到既有笔记',
+        '检索路径开始预热',
+        '判断细节应该下潜多深',
+        '先扫一遍知识库索引',
+        '在召回和精度之间找平衡',
+        '寻找更像 Simon 的证据',
+        '准备第一步可靠上下文',
+        '判断是否需要深读文件',
         '先等上下文落地，再开始回答',
-        '正在顺着最强信号往下找',
-        '正在等待知识库跟上问题',
-        '正在组装第一版上下文',
+        '顺着最强信号往下找',
+        '知识库正在跟上问题',
+        '组装第一版上下文',
+        '从档案里打开一条窄路',
+        '先判断这个问题需不需要记忆',
+        '量一下它离可用答案有多远',
+        '听出措辞下面真正的话题',
+        '扫掉噪声，留下最小线索',
+        '一根线一根线往外抽',
+        '先给答案搭一个形状',
+        '把大块上下文拆小一点',
+        '在个人记忆和常识之间称重',
+        '缩小检索窗口',
+        '让语气对齐问题',
+        '给回答画一张小草图',
+        '攒够上下文再保持精确',
+        '先把回答锚住',
+        '过滤掉容易但薄弱的答案',
+        '对照几段相邻记忆',
+        '标出最强的来源候选',
+        '划掉无关分支',
+        '先别让答案太快冲出来',
+        '搭一张小型上下文地图',
+        '把问题改写成检索词',
+        '读一下提示词的弦外之音',
+        '等第一个可靠信号出现',
+        '选一条穿过笔记的短路径',
+        '抽取上下文，但不淹没回答',
+        '先查档案，再组织语言',
+        '让第一轮判断沉一下',
+        '把记忆线索织进回答',
+        '寻找更实际的切面',
+        '准备一个有依据的开头',
+        '在速度和具体性之间找平衡',
+        '做一次快速相关性检查',
+        '越过问题表面的措辞',
+        '找到回答的重心',
+        '把上下文翻译成可用回答',
+        '让回答贴着证据走',
+        '匹配问题和 Simon 的时间线',
+        '等一个扎实的落脚点',
+        '从模糊上下文走向可用信号',
+        '把笔记折成一条连贯路径',
       ],
     };
     const transientMessages = /[\u4e00-\u9fff]/.test(query)
       ? transientMessageSets.zh
       : transientMessageSets.en;
-    const transientHeartbeat = /[\u4e00-\u9fff]/.test(query)
-      ? '仍在处理第一步'
-      : 'Still working through the first step';
     let transientQueue = [];
 
     function shuffleMessages(messages) {
@@ -472,11 +669,20 @@
       return transientQueue.shift();
     }
 
+    function refreshTransientTimeline() {
+      if (!transientTextEl) return;
+      const items = Array.from(transientTextEl.querySelectorAll('.ac-transient-item'));
+      items.forEach(function (item, index) {
+        const age = items.length - 1 - index;
+        item.className = 'ac-transient-item' + (age === 0 ? ' current' : ' old-' + Math.min(age, 4));
+      });
+    }
+
     function startTransientStatus() {
       transientEl = document.createElement('div');
       transientEl.className = 'ac-transient';
-      transientEl.innerHTML = '<span class="ac-transient-dot"></span><span class="ac-transient-text"></span>';
-      transientTextEl = transientEl.querySelector('.ac-transient-text');
+      transientEl.innerHTML = '<div class="ac-transient-list"></div>';
+      transientTextEl = transientEl.querySelector('.ac-transient-list');
       bodyEl.appendChild(transientEl);
       updateTransientStatus(nextTransientMessage());
       transientTimer = setInterval(function () {
@@ -487,7 +693,14 @@
 
     function updateTransientStatus(text) {
       if (!transientTextEl || realOutputStarted) return;
-      transientTextEl.textContent = text;
+      const item = document.createElement('div');
+      item.className = 'ac-transient-item current';
+      item.textContent = text;
+      transientTextEl.appendChild(item);
+      while (transientTextEl.children.length > 5) {
+        transientTextEl.firstElementChild.remove();
+      }
+      refreshTransientTimeline();
       scrollBottom();
     }
 
@@ -698,7 +911,7 @@
 
         case 'heartbeat':
           if (!realOutputStarted) {
-            updateTransientStatus(transientHeartbeat);
+            updateTransientStatus(nextTransientMessage());
           }
           setStatus('THINKING...', 'active');
           break;
@@ -725,8 +938,16 @@
   }
 
   bubble.addEventListener('click', togglePanel);
+  headerEl.addEventListener('pointerdown', startPanelDrag);
+  panel.querySelectorAll('.ac-resize-handle').forEach(function (handle) {
+    handle.addEventListener('pointerdown', startPanelResize);
+  });
   closeBtn.addEventListener('click', closePanel);
   clearBtn.addEventListener('click', clearChat);
+
+  window.addEventListener('resize', function () {
+    if (isOpen && panel.style.left && panel.style.top) freezePanelGeometry();
+  });
 
   document.addEventListener('keydown', function (e) {
     if (e.key === 'Escape' && isOpen) closePanel();
