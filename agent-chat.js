@@ -13,9 +13,12 @@
   'use strict';
 
   // ─── Config ───────────────────────────────────────────────
+  const WIDGET_VERSION = '0.1.1';
   const BACKEND = window.AGENT_CHAT_BACKEND ||
     'https://simonsterrific-shizhang-agent.hf.space';
   const MAX_HISTORY = 12;
+  const STREAM_FLUSH_MS = 28;
+  const STREAM_CHARS_PER_TICK = 2;
   let history = [];
 
   // ─── Inject Styles ────────────────────────────────────────
@@ -314,6 +317,45 @@
     body.innerHTML = html;
   }
 
+  function formatToolResult(result) {
+    if (typeof result === 'string') return result;
+    if (!result || typeof result !== 'object') return '';
+    if (result.error) return 'Error: ' + result.error;
+
+    const lines = [];
+    if (result.path !== undefined) lines.push('Path: ' + (result.path || 'root'));
+    if (result.overview) lines.push('Overview: ' + result.overview);
+    if (Array.isArray(result.core_viewpoints) && result.core_viewpoints.length) {
+      lines.push('Core viewpoints:');
+      result.core_viewpoints.slice(0, 6).forEach(v => lines.push('- ' + v));
+    }
+    if (Array.isArray(result.subtopics) && result.subtopics.length) {
+      lines.push('Subtopics:');
+      result.subtopics.slice(0, 8).forEach(t => {
+        lines.push('- ' + (t.name || t.path || JSON.stringify(t)));
+      });
+    }
+    if (Array.isArray(result.articles) && result.articles.length) {
+      lines.push('Articles:');
+      result.articles.slice(0, 8).forEach(a => {
+        lines.push('- ' + (a.title || a.path || JSON.stringify(a)));
+      });
+    }
+    if (Array.isArray(result.matches)) {
+      lines.push('Found ' + (result.match_count || result.matches.length) + ' matches');
+      result.matches.slice(0, 8).forEach(m => {
+        lines.push('- ' + (m.file || '') + (m.line_number ? ':' + m.line_number : ''));
+        if (m.context) lines.push('  ' + m.context.replace(/\n/g, ' / ').slice(0, 220));
+      });
+    }
+    if (result.content) lines.push(result.content);
+    if (Array.isArray(result.entries)) {
+      result.entries.slice(0, 12).forEach(e => lines.push('- ' + e.type + ': ' + e.name));
+    }
+
+    return lines.length ? lines.join('\n') : JSON.stringify(result, null, 2);
+  }
+
   function extractMatchCount(text) {
     return ((text.match(/Found\s+(\d+)\s+match/i) ||
              text.match(/(\d+)\s+(?:articles?|files?|items?|results?)/i) ||
@@ -349,7 +391,63 @@
 
     let agentMsgDiv = null;
     let agentText = '';
+    let displayedAgentText = '';
+    let pendingAgentText = '';
+    let streamFlushTimer = null;
     let toolCount = 0, iteration = 0, firstEvent = false, lastThought = '';
+
+    function ensureAgentMessage() {
+      if (!agentMsgDiv) {
+        agentMsgDiv = appendMessage('agent', '');
+        agentMsgDiv.classList.add('ac-msg-streaming');
+        setStatus('WRITING...', 'active');
+      }
+    }
+
+    function renderStreamingText() {
+      ensureAgentMessage();
+      agentMsgDiv.innerHTML = renderMarkdown(displayedAgentText, true);
+      scrollBottom();
+    }
+
+    function scheduleStreamFlush() {
+      if (streamFlushTimer === null) {
+        streamFlushTimer = setTimeout(flushStreamText, STREAM_FLUSH_MS);
+      }
+    }
+
+    function flushStreamText() {
+      streamFlushTimer = null;
+      if (!pendingAgentText) return;
+
+      const nextSize = pendingAgentText[0] === '\n'
+        ? 1
+        : Math.min(STREAM_CHARS_PER_TICK, pendingAgentText.length);
+      displayedAgentText += pendingAgentText.slice(0, nextSize);
+      pendingAgentText = pendingAgentText.slice(nextSize);
+      renderStreamingText();
+
+      if (pendingAgentText) scheduleStreamFlush();
+    }
+
+    function queueStreamText(content) {
+      if (!content) return;
+      agentText += content;
+      pendingAgentText += content;
+      ensureAgentMessage();
+      scheduleStreamFlush();
+    }
+
+    async function drainStreamText() {
+      while (pendingAgentText) {
+        if (streamFlushTimer !== null) {
+          clearTimeout(streamFlushTimer);
+          streamFlushTimer = null;
+        }
+        flushStreamText();
+        await new Promise(resolve => setTimeout(resolve, STREAM_FLUSH_MS));
+      }
+    }
 
     try {
       const controller = new AbortController();
@@ -398,8 +496,9 @@
         }
       }
 
-      // ── DONE: apply full Markdown render ──
+      // ── DONE: finish paced stream, then apply full Markdown render ──
       if (agentMsgDiv && agentText.trim()) {
+        await drainStreamText();
         agentMsgDiv.innerHTML = renderMarkdown(agentText, false);
         agentMsgDiv.classList.remove('ac-msg-streaming');
       }
@@ -408,6 +507,7 @@
       setStatus('Ready', '');
 
     } catch (err) {
+      if (streamFlushTimer !== null) clearTimeout(streamFlushTimer);
       dotEl.classList.remove('thinking');
       hideTyping();
       setStatus(err.name === 'AbortError' ? 'TIMEOUT' : 'ERROR', 'error');
@@ -448,19 +548,12 @@
           break;
 
         case 'tool_result':
-          fillToolResult(toolCount, typeof data.result === 'string' ? data.result : JSON.stringify(data.result || ''));
+          fillToolResult(toolCount, formatToolResult(data.result));
           setStatus('ROUND ' + iteration + '/8 · ANALYZING', 'active');
           break;
 
         case 'chunk':
-          if (!agentMsgDiv) {
-            agentMsgDiv = appendMessage('agent', '');
-            agentMsgDiv.classList.add('ac-msg-streaming');
-            setStatus('WRITING...', 'active');
-          }
-          agentText += data.content || '';
-          agentMsgDiv.innerHTML = renderMarkdown(agentText, true);
-          scrollBottom();
+          queueStreamText(data.content || '');
           break;
 
         case 'rollback':
@@ -469,6 +562,12 @@
             agentMsgDiv.remove();
             agentMsgDiv = null;
             agentText = '';
+            displayedAgentText = '';
+            pendingAgentText = '';
+            if (streamFlushTimer !== null) {
+              clearTimeout(streamFlushTimer);
+              streamFlushTimer = null;
+            }
           }
           break;
 
@@ -526,7 +625,7 @@
   (async function () {
     try {
       const resp = await fetch(BACKEND + '/health', { signal: AbortSignal.timeout(5000) });
-      if (resp.ok) { const h = await resp.json(); console.log('[agent-chat] healthy:', h); setStatus('Ready', ''); }
+      if (resp.ok) { const h = await resp.json(); console.log('[agent-chat] healthy:', h, 'widget:', WIDGET_VERSION); setStatus('Ready', ''); }
       else setStatus('OFFLINE', 'error');
     } catch { setStatus('OFFLINE', 'error'); console.warn('[agent-chat] unreachable:', BACKEND); }
   })();
