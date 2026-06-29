@@ -2,11 +2,10 @@
  * agent-chat.js — Floating chat bubble + SSE streaming panel
  * for shizhang-agent backend (HF Spaces).
  *
- * USAGE: add <script src="agent-chat.js"></script> to index.html
+ * v2 — adds Markdown rendering, transparent agent reasoning display.
  *
  * Backend URL is read from the global AGENT_CHAT_BACKEND or defaults below.
- * Override in HTML before loading this script:
- *   <script>window.AGENT_CHAT_BACKEND = 'https://xxx.hf.space';</script>
+ *   <script>window.AGENT_CHAT_BACKEND = 'https://xxx.workers.dev';</script>
  *   <script src="agent-chat.js"></script>
  */
 
@@ -16,313 +15,101 @@
   // ─── Config ───────────────────────────────────────────────
   const BACKEND = window.AGENT_CHAT_BACKEND ||
     'https://simonsterrific-shizhang-agent.hf.space';
-
-  const MAX_HISTORY = 12;       // conversation turns to keep
-  let history = [];             // [{role, content}, ...]
+  const MAX_HISTORY = 12;
+  let history = [];
 
   // ─── Inject Styles ────────────────────────────────────────
   const STYLE = /*css*/`
-    /* ── Bubble ── */
-    .ac-bubble {
-      position: fixed; bottom: 28px; right: 28px; z-index: 8000;
-      width: 52px; height: 52px; border-radius: 50%;
-      background: var(--accent, oklch(72% 0.20 240));
-      border: none; cursor: pointer;
-      display: flex; align-items: center; justify-content: center;
-      box-shadow: 0 0 24px oklch(72% 0.20 240 / 0.35);
-      transition: transform 0.25s ease, box-shadow 0.25s ease, opacity 0.25s;
-      animation: ac-pulse 3s ease-in-out infinite;
-    }
-    .ac-bubble:hover {
-      transform: scale(1.12);
-      box-shadow: 0 0 36px oklch(72% 0.20 240 / 0.55);
-    }
-    .ac-bubble svg {
-      width: 24px; height: 24px; fill: oklch(10% 0.012 55);
-    }
-    .ac-bubble.ac-open { opacity: 0; pointer-events: none; }
+    .ac-bubble{position:fixed;bottom:28px;right:28px;z-index:8000;width:52px;height:52px;border-radius:50%;background:var(--accent,oklch(72% 0.20 240));border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 0 24px oklch(72% 0.20 240/0.35);transition:transform .25s,box-shadow .25s,opacity .25s;animation:ac-pulse 3s ease-in-out infinite}
+    .ac-bubble:hover{transform:scale(1.12);box-shadow:0 0 36px oklch(72% 0.20 240/0.55)}
+    .ac-bubble svg{width:24px;height:24px;fill:oklch(10% 0.012 55)}
+    .ac-bubble.ac-open{opacity:0;pointer-events:none}
+    @keyframes ac-pulse{0%,100%{box-shadow:0 0 24px oklch(72% 0.20 240/0.35)}50%{box-shadow:0 0 36px oklch(72% 0.20 240/0.50)}}
 
-    @keyframes ac-pulse {
-      0%, 100% { box-shadow: 0 0 24px oklch(72% 0.20 240 / 0.35); }
-      50%      { box-shadow: 0 0 36px oklch(72% 0.20 240 / 0.50); }
-    }
+    .ac-panel{position:fixed;bottom:28px;right:28px;z-index:7999;width:420px;max-width:calc(100vw - 32px);height:600px;max-height:calc(100vh - 80px);background:oklch(12% 0.01 55);border:1px solid oklch(25% 0.008 55);border-radius:12px;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 16px 48px oklch(0% 0 0/0.55);transform:translateY(12px) scale(.96);opacity:0;pointer-events:none;transition:transform .3s cubic-bezier(.16,1,.3,1),opacity .25s}
+    .ac-panel.ac-open{transform:translateY(0) scale(1);opacity:1;pointer-events:all}
 
-    /* ── Panel ── */
-    .ac-panel {
-      position: fixed; bottom: 28px; right: 28px; z-index: 7999;
-      width: 400px; max-width: calc(100vw - 40px);
-      height: 580px; max-height: calc(100vh - 80px);
-      background: oklch(12% 0.01 55);
-      border: 1px solid oklch(25% 0.008 55);
-      border-radius: 12px;
-      display: flex; flex-direction: column;
-      overflow: hidden;
-      box-shadow: 0 16px 48px oklch(0% 0 0 / 0.55);
-      transform: translateY(12px) scale(0.96);
-      opacity: 0; pointer-events: none;
-      transition: transform 0.3s cubic-bezier(0.16,1,0.3,1),
-                  opacity 0.25s;
-    }
-    .ac-panel.ac-open {
-      transform: translateY(0) scale(1);
-      opacity: 1; pointer-events: all;
-    }
+    .ac-header{flex:0 0 auto;display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid oklch(25% 0.008 55)}
+    .ac-header-title{font-family:var(--font-display,'Bebas Neue',sans-serif);font-size:20px;letter-spacing:.04em;color:var(--fg,oklch(95% 0.008 80));display:flex;align-items:center;gap:8px}
+    .ac-header-dot{width:8px;height:8px;border-radius:50%;background:var(--accent,oklch(72% 0.20 240));transition:background .3s}
+    .ac-header-dot.thinking{animation:ac-pulse-dot .8s ease-in-out infinite}
+    @keyframes ac-pulse-dot{0%,100%{opacity:1}50%{opacity:.3}}
+    .ac-header-actions{display:flex;gap:8px;align-items:center}
+    .ac-btn{background:none;border:1px solid oklch(30% 0.008 55);color:var(--fg-dim,oklch(55% 0.006 80));font-family:var(--font-body,'DM Mono',monospace);font-size:10px;letter-spacing:.1em;text-transform:uppercase;padding:4px 10px;border-radius:4px;cursor:pointer;transition:border-color .2s,color .2s}
+    .ac-btn:hover{border-color:var(--accent,oklch(72% 0.20 240));color:var(--fg,oklch(95% 0.008 80))}
+    .ac-status{font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--fg-dim,oklch(55% 0.006 80))}
+    .ac-status.active{color:var(--accent,oklch(72% 0.20 240))}
+    .ac-status.error{color:oklch(72% 0.20 30)}
 
-    /* ── Header ── */
-    .ac-header {
-      flex: 0 0 auto;
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 14px 18px;
-      border-bottom: 1px solid oklch(25% 0.008 55);
-    }
-    .ac-header-title {
-      font-family: var(--font-display, 'Bebas Neue', sans-serif);
-      font-size: 20px; letter-spacing: 0.04em;
-      color: var(--fg, oklch(95% 0.008 80));
-      display: flex; align-items: center; gap: 8px;
-    }
-    .ac-header-dot {
-      width: 8px; height: 8px; border-radius: 50%;
-      background: var(--accent, oklch(72% 0.20 240));
-      transition: background 0.3s;
-    }
-    .ac-header-dot.thinking {
-      animation: ac-pulse-dot 0.8s ease-in-out infinite;
-    }
-    @keyframes ac-pulse-dot {
-      0%,100%{opacity:1} 50%{opacity:0.3}
-    }
-    .ac-header-actions { display: flex; gap: 8px; align-items: center; }
-    .ac-btn {
-      background: none; border: 1px solid oklch(30% 0.008 55);
-      color: var(--fg-dim, oklch(55% 0.006 80));
-      font-family: var(--font-body, 'DM Mono', monospace);
-      font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase;
-      padding: 4px 10px; border-radius: 4px; cursor: pointer;
-      transition: border-color 0.2s, color 0.2s;
-    }
-    .ac-btn:hover {
-      border-color: var(--accent, oklch(72% 0.20 240));
-      color: var(--fg, oklch(95% 0.008 80));
-    }
+    .ac-body{flex:1 1 auto;overflow-y:auto;padding:16px 18px;display:flex;flex-direction:column;gap:10px;scroll-behavior:smooth}
+    .ac-body::-webkit-scrollbar{width:4px}
+    .ac-body::-webkit-scrollbar-track{background:transparent}
+    .ac-body::-webkit-scrollbar-thumb{background:oklch(30% 0.008 55);border-radius:2px}
 
-    /* ── Status bar ── */
-    .ac-status {
-      font-size: 9px; letter-spacing: 0.08em; text-transform: uppercase;
-      color: var(--fg-dim, oklch(55% 0.006 80));
-    }
-    .ac-status.active {
-      color: var(--accent, oklch(72% 0.20 240));
-    }
-    .ac-status.error { color: oklch(72% 0.20 30); }
+    /* Messages */
+    .ac-msg{max-width:88%;font-size:12px;line-height:1.7;font-family:var(--font-body,'DM Mono',monospace);padding:10px 14px;border-radius:8px;animation:ac-fade-in .3s ease;word-break:break-word}
+    .ac-msg-user{align-self:flex-end;background:var(--accent,oklch(72% 0.20 240));color:oklch(10% 0.012 55);font-weight:500;border-bottom-right-radius:2px}
+    .ac-msg-agent{align-self:flex-start;background:oklch(18% 0.01 55);color:var(--fg,oklch(95% 0.008 80));border-bottom-left-radius:2px;border:1px solid oklch(25% 0.008 55)}
+    .ac-msg-agent.ac-msg-streaming{border-left:2px solid var(--accent,oklch(72% 0.20 240))}
 
-    /* ── Messages Area ── */
-    .ac-body {
-      flex: 1 1 auto; overflow-y: auto;
-      padding: 16px 18px;
-      display: flex; flex-direction: column; gap: 10px;
-      scroll-behavior: smooth;
-    }
-    .ac-body::-webkit-scrollbar { width: 4px; }
-    .ac-body::-webkit-scrollbar-track { background: transparent; }
-    .ac-body::-webkit-scrollbar-thumb {
-      background: oklch(30% 0.008 55); border-radius: 2px;
-    }
+    /* Markdown inside agent messages */
+    .ac-msg-agent h1,.ac-msg-agent h2,.ac-msg-agent h3{font-family:var(--font-display,'Bebas Neue',sans-serif);font-weight:400;margin:8px 0 4px;line-height:1.3;color:var(--fg,oklch(95% 0.008 80))}
+    .ac-msg-agent h1{font-size:17px;letter-spacing:.04em}
+    .ac-msg-agent h2{font-size:15px;letter-spacing:.03em}
+    .ac-msg-agent h3{font-size:13px;letter-spacing:.02em}
+    .ac-msg-agent strong{color:var(--accent,oklch(72% 0.20 240));font-weight:600}
+    .ac-msg-agent em{color:oklch(85% 0.008 80);font-style:italic}
+    .ac-msg-agent code{background:oklch(22% 0.01 55);color:var(--accent,oklch(72% 0.20 240));padding:1px 5px;border-radius:3px;font-family:var(--font-body,'DM Mono',monospace);font-size:11px}
+    .ac-msg-agent pre{background:oklch(14% 0.01 55);border:1px solid oklch(22% 0.008 55);border-radius:6px;padding:10px 14px;overflow-x:auto;font-size:11px;line-height:1.6;margin:8px 0}
+    .ac-msg-agent pre code{background:none;color:var(--fg,oklch(95% 0.008 80));padding:0;font-size:inherit}
+    .ac-msg-agent ul,.ac-msg-agent ol{margin:4px 0;padding-left:18px}
+    .ac-msg-agent li{margin:2px 0;line-height:1.6}
+    .ac-msg-agent li::marker{color:var(--accent,oklch(72% 0.20 240))}
+    .ac-msg-agent a{color:var(--accent,oklch(72% 0.20 240));text-decoration:underline;text-underline-offset:2px}
+    .ac-msg-agent a:hover{opacity:.8}
+    .ac-msg-agent blockquote{border-left:3px solid var(--accent,oklch(72% 0.20 240));padding:4px 0 4px 12px;margin:6px 0;color:oklch(60% 0.006 80);font-style:italic}
+    .ac-msg-agent hr{border:none;border-top:1px solid oklch(25% 0.008 55);margin:10px 0}
+    .ac-msg-agent p{margin:0 0 6px}
+    .ac-msg-agent p:last-child{margin-bottom:0}
 
-    /* ── Messages ── */
-    .ac-msg {
-      max-width: 88%; font-size: 12px; line-height: 1.7;
-      font-family: var(--font-body, 'DM Mono', monospace);
-      padding: 10px 14px; border-radius: 8px;
-      animation: ac-fade-in 0.3s ease;
-    }
-    .ac-msg-user {
-      align-self: flex-end;
-      background: var(--accent, oklch(72% 0.20 240));
-      color: oklch(10% 0.012 55); font-weight: 500;
-      border-bottom-right-radius: 2px;
-    }
-    .ac-msg-agent {
-      align-self: flex-start;
-      background: oklch(18% 0.01 55);
-      color: var(--fg, oklch(95% 0.008 80));
-      border-bottom-left-radius: 2px;
-      border: 1px solid oklch(25% 0.008 55);
-    }
-    .ac-msg-agent.ac-msg-streaming {
-      border-left: 2px solid var(--accent, oklch(72% 0.20 240));
-    }
+    /* Thought */
+    .ac-thought{align-self:flex-start;max-width:92%;font-size:10px;line-height:1.6;font-style:italic;font-family:var(--font-body,'DM Mono',monospace);color:oklch(50% 0.006 80);padding:6px 12px;border-radius:6px;background:oklch(14% 0.005 55);border-left:2px solid oklch(30% 0.008 55);animation:ac-fade-in .25s ease}
 
-    /* ── Thought — inline reasoning ── */
-    .ac-thought {
-      align-self: flex-start; max-width: 92%;
-      font-size: 10px; line-height: 1.6; font-style: italic;
-      font-family: var(--font-body, 'DM Mono', monospace);
-      color: oklch(50% 0.006 80);
-      padding: 6px 12px; border-radius: 6px;
-      background: oklch(14% 0.005 55);
-      border-left: 2px solid oklch(30% 0.008 55);
-      animation: ac-fade-in 0.25s ease;
-    }
+    /* Tool Card */
+    .ac-tool-card{align-self:flex-start;max-width:94%;width:100%;background:oklch(16% 0.01 55);border:1px solid oklch(22% 0.008 55);border-radius:8px;overflow:hidden;animation:ac-fade-in .25s ease;transition:border-color .2s}
+    .ac-tool-card:hover{border-color:oklch(35% 0.01 55)}
+    .ac-tool-card-header{display:flex;align-items:center;gap:8px;padding:8px 12px;cursor:pointer;user-select:none;transition:background .15s}
+    .ac-tool-card-header:hover{background:oklch(19% 0.008 55)}
+    .ac-tool-card-header .ac-tool-icon{width:24px;height:24px;border-radius:5px;background:oklch(22% 0.01 55);display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0}
+    .ac-tool-card-header .ac-tool-label{flex:1 1 auto;min-width:0;font-family:var(--font-body,'DM Mono',monospace);font-size:10px;letter-spacing:.04em;color:var(--fg,oklch(95% 0.008 80));white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .ac-tool-card-header .ac-tool-chevron{font-size:8px;color:oklch(45% 0.006 80);transition:transform .2s;flex-shrink:0}
+    .ac-tool-card.expanded .ac-tool-chevron{transform:rotate(180deg)}
+    .ac-tool-card-body{display:none;padding:8px 12px 12px;border-top:1px solid oklch(22% 0.008 55);font-family:var(--font-body,'DM Mono',monospace);font-size:10px;line-height:1.6;color:oklch(60% 0.006 80);max-height:180px;overflow-y:auto}
+    .ac-tool-card.expanded .ac-tool-card-body{display:block}
+    .ac-tool-card-body .ac-match-count{display:inline-flex;align-items:center;gap:4px;background:oklch(22% 0.01 55);color:var(--accent,oklch(72% 0.20 240));padding:2px 8px;border-radius:10px;font-size:10px;font-weight:500;margin-bottom:6px}
+    .ac-tool-card-body .ac-result-line{padding:3px 0;border-bottom:1px solid oklch(17% 0.005 55)}
+    .ac-tool-card-body .ac-result-line:last-child{border-bottom:none}
+    .ac-tool-card-body .ac-truncated{color:oklch(45% 0.006 80);margin-top:4px;font-style:italic}
 
-    /* ── Tool Card — expandable tool execution ── */
-    .ac-tool-card {
-      align-self: flex-start; max-width: 94%; width: 100%;
-      background: oklch(16% 0.01 55);
-      border: 1px solid oklch(22% 0.008 55);
-      border-radius: 8px;
-      overflow: hidden;
-      animation: ac-fade-in 0.25s ease;
-      transition: border-color 0.2s;
-    }
-    .ac-tool-card:hover {
-      border-color: oklch(35% 0.01 55);
-    }
-    .ac-tool-card-header {
-      display: flex; align-items: center; gap: 8px;
-      padding: 8px 12px; cursor: pointer;
-      user-select: none;
-      transition: background 0.15s;
-    }
-    .ac-tool-card-header:hover {
-      background: oklch(19% 0.008 55);
-    }
-    .ac-tool-card-header .ac-tool-icon {
-      width: 24px; height: 24px; border-radius: 5px;
-      background: oklch(22% 0.01 55);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 13px; flex-shrink: 0;
-    }
-    .ac-tool-card-header .ac-tool-label {
-      flex: 1 1 auto; min-width: 0;
-      font-family: var(--font-body, 'DM Mono', monospace);
-      font-size: 10px; letter-spacing: 0.04em;
-      color: var(--fg, oklch(95% 0.008 80));
-      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-    }
-    .ac-tool-card-header .ac-tool-chevron {
-      font-size: 8px; color: oklch(45% 0.006 80);
-      transition: transform 0.2s;
-      flex-shrink: 0;
-    }
-    .ac-tool-card.expanded .ac-tool-chevron {
-      transform: rotate(180deg);
-    }
-    .ac-tool-card-body {
-      display: none;
-      padding: 8px 12px 12px;
-      border-top: 1px solid oklch(22% 0.008 55);
-      font-family: var(--font-body, 'DM Mono', monospace);
-      font-size: 10px; line-height: 1.6;
-      color: oklch(60% 0.006 80);
-    }
-    .ac-tool-card.expanded .ac-tool-card-body {
-      display: block;
-    }
-    .ac-tool-card-body .ac-match-count {
-      display: inline-flex; align-items: center; gap: 4px;
-      background: oklch(22% 0.01 55);
-      color: var(--accent, oklch(72% 0.20 240));
-      padding: 2px 8px; border-radius: 10px;
-      font-size: 10px; font-weight: 500;
-      margin-bottom: 6px;
-    }
-    .ac-tool-card-body .ac-result-line {
-      padding: 3px 0;
-      border-bottom: 1px solid oklch(17% 0.005 55);
-    }
-    .ac-tool-card-body .ac-result-line:last-child {
-      border-bottom: none;
-    }
-    .ac-tool-card-body .ac-truncated {
-      color: oklch(45% 0.006 80);
-      margin-top: 4px; font-style: italic;
-    }
+    /* Typing */
+    .ac-typing{align-self:flex-start;display:flex;gap:4px;padding:8px 14px;background:oklch(18% 0.01 55);border-radius:8px;border:1px solid oklch(25% 0.008 55)}
+    .ac-typing span{width:6px;height:6px;border-radius:50%;background:var(--fg-dim,oklch(55% 0.006 80));animation:ac-blink 1.4s infinite both}
+    .ac-typing span:nth-child(2){animation-delay:.2s}
+    .ac-typing span:nth-child(3){animation-delay:.4s}
+    @keyframes ac-blink{0%,80%,100%{opacity:.3;transform:scale(.8)}40%{opacity:1;transform:scale(1)}}
+    @keyframes ac-fade-in{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
 
-    /* ── Iteration step marker ── */
-    .ac-step {
-      align-self: stretch;
-      display: flex; align-items: center; gap: 10px;
-      padding: 0 4px;
-    }
-    .ac-step-line {
-      flex: 1 1 auto; height: 1px;
-      background: oklch(20% 0.008 55);
-    }
-    .ac-step-label {
-      font-family: var(--font-body, 'DM Mono', monospace);
-      font-size: 8px; letter-spacing: 0.1em; text-transform: uppercase;
-      color: oklch(40% 0.006 80);
-      white-space: nowrap;
-    }
+    /* Input */
+    .ac-input-wrap{flex:0 0 auto;display:flex;align-items:center;gap:10px;padding:12px 18px;border-top:1px solid oklch(25% 0.008 55)}
+    .ac-input{flex:1 1 auto;background:oklch(16% 0.01 55);border:1px solid oklch(25% 0.008 55);border-radius:6px;padding:10px 12px;font-family:var(--font-body,'DM Mono',monospace);font-size:12px;color:var(--fg,oklch(95% 0.008 80));outline:none;resize:none;line-height:1.5;max-height:80px;transition:border-color .2s}
+    .ac-input:focus{border-color:var(--accent,oklch(72% 0.20 240))}
+    .ac-input::placeholder{color:oklch(40% 0.006 80)}
+    .ac-send{background:var(--accent,oklch(72% 0.20 240));color:oklch(10% 0.012 55);border:none;border-radius:6px;width:36px;height:36px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex:0 0 auto;transition:opacity .2s}
+    .ac-send:hover{opacity:.8}
+    .ac-send:disabled{opacity:.35;pointer-events:none}
+    .ac-send svg{width:16px;height:16px}
 
-    /* ── Typing Indicator ── */
-    .ac-typing {
-      align-self: flex-start;
-      display: flex; gap: 4px; padding: 8px 14px;
-      background: oklch(18% 0.01 55);
-      border-radius: 8px; border: 1px solid oklch(25% 0.008 55);
-    }
-    .ac-typing span {
-      width: 6px; height: 6px; border-radius: 50%;
-      background: var(--fg-dim, oklch(55% 0.006 80));
-      animation: ac-blink 1.4s infinite both;
-    }
-    .ac-typing span:nth-child(2) { animation-delay: 0.2s; }
-    .ac-typing span:nth-child(3) { animation-delay: 0.4s; }
-
-    @keyframes ac-blink {
-      0%, 80%, 100% { opacity: 0.3; transform: scale(0.8); }
-      40% { opacity: 1; transform: scale(1); }
-    }
-    @keyframes ac-fade-in {
-      from { opacity: 0; transform: translateY(6px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-
-    /* ── Input Area ── */
-    .ac-input-wrap {
-      flex: 0 0 auto;
-      display: flex; align-items: center; gap: 10px;
-      padding: 12px 18px;
-      border-top: 1px solid oklch(25% 0.008 55);
-    }
-    .ac-input {
-      flex: 1 1 auto;
-      background: oklch(16% 0.01 55);
-      border: 1px solid oklch(25% 0.008 55);
-      border-radius: 6px;
-      padding: 10px 12px;
-      font-family: var(--font-body, 'DM Mono', monospace);
-      font-size: 12px; color: var(--fg, oklch(95% 0.008 80));
-      outline: none; resize: none;
-      line-height: 1.5; max-height: 80px;
-      transition: border-color 0.2s;
-    }
-    .ac-input:focus { border-color: var(--accent, oklch(72% 0.20 240)); }
-    .ac-input::placeholder { color: oklch(40% 0.006 80); }
-    .ac-send {
-      background: var(--accent, oklch(72% 0.20 240));
-      color: oklch(10% 0.012 55);
-      border: none; border-radius: 6px;
-      width: 36px; height: 36px;
-      display: flex; align-items: center; justify-content: center;
-      cursor: pointer; flex: 0 0 auto;
-      transition: opacity 0.2s;
-    }
-    .ac-send:hover { opacity: 0.8; }
-    .ac-send:disabled { opacity: 0.35; pointer-events: none; }
-    .ac-send svg { width: 16px; height: 16px; }
-
-    /* ── Responsive ── */
-    @media (max-width: 480px) {
-      .ac-panel {
-        width: calc(100vw - 20px); right: 10px; bottom: 10px;
-        height: calc(100vh - 60px); max-height: none;
-        border-radius: 10px;
-      }
-      .ac-bubble { bottom: 16px; right: 16px; }
-    }
+    @media(max-width:480px){.ac-panel{width:calc(100vw - 20px);right:10px;bottom:10px;height:calc(100vh - 60px);max-height:none;border-radius:10px}.ac-bubble{bottom:16px;right:16px}}
   `;
 
   const styleEl = document.createElement('style');
@@ -330,7 +117,6 @@
   document.head.appendChild(styleEl);
 
   // ─── Build DOM ────────────────────────────────────────────
-
   const bubble = document.createElement('button');
   bubble.className = 'ac-bubble';
   bubble.setAttribute('aria-label', 'Chat with Simon');
@@ -338,46 +124,90 @@
 
   const panel = document.createElement('div');
   panel.className = 'ac-panel';
-  panel.innerHTML = `
-    <div class="ac-header">
-      <div class="ac-header-title">
-        <span class="ac-header-dot" id="ac-dot"></span>Ask Simon
-      </div>
-      <div class="ac-header-actions">
-        <span class="ac-status" id="ac-status">Ready</span>
-        <button class="ac-btn" id="ac-clear" title="Clear chat">Clear</button>
-        <button class="ac-btn" id="ac-close" title="Close">✕</button>
-      </div>
-    </div>
-    <div class="ac-body" id="ac-body">
-      <div class="ac-msg ac-msg-agent">
-        Hi, I'm Simon's digital twin. Ask me anything about architecture, AI, career, or things I've written.
-      </div>
-    </div>
-    <div class="ac-input-wrap">
-      <textarea class="ac-input" id="ac-input" rows="1"
-        placeholder="Ask me anything..."
-        ></textarea>
-      <button class="ac-send" id="ac-send" aria-label="Send">
-        <svg viewBox="0 0 24 24"><path fill="oklch(10% 0.012 55)" d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
-      </button>
-    </div>
-  `;
+  panel.innerHTML = `<div class="ac-header"><div class="ac-header-title"><span class="ac-header-dot" id="ac-dot"></span>Ask Simon</div><div class="ac-header-actions"><span class="ac-status" id="ac-status">Ready</span><button class="ac-btn" id="ac-clear">Clear</button><button class="ac-btn" id="ac-close">✕</button></div></div><div class="ac-body" id="ac-body"><div class="ac-msg ac-msg-agent">Hi, I'm Simon's digital twin. Ask me anything about architecture, AI, career, or things I've written.</div></div><div class="ac-input-wrap"><textarea class="ac-input" id="ac-input" rows="1" placeholder="Ask me anything..."></textarea><button class="ac-send" id="ac-send" aria-label="Send"><svg viewBox="0 0 24 24"><path fill="oklch(10% 0.012 55)" d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg></button></div>`;
 
   document.body.appendChild(bubble);
   document.body.appendChild(panel);
 
-  // ─── Element refs ─────────────────────────────────────────
-  const bodyEl    = document.getElementById('ac-body');
-  const inputEl   = document.getElementById('ac-input');
-  const sendBtn   = document.getElementById('ac-send');
-  const closeBtn  = document.getElementById('ac-close');
-  const clearBtn  = document.getElementById('ac-clear');
-  const statusEl  = document.getElementById('ac-status');
-  const dotEl     = document.getElementById('ac-dot');
+  const bodyEl = document.getElementById('ac-body');
+  const inputEl = document.getElementById('ac-input');
+  const sendBtn = document.getElementById('ac-send');
+  const closeBtn = document.getElementById('ac-close');
+  const clearBtn = document.getElementById('ac-clear');
+  const statusEl = document.getElementById('ac-status');
+  const dotEl = document.getElementById('ac-dot');
 
-  let isOpen      = false;
-  let isStreaming = false;
+  let isOpen = false, isStreaming = false;
+
+  // ─── Markdown Renderer ────────────────────────────────────
+
+  function escapeHtml(str) {
+    const d = document.createElement('div');
+    d.textContent = str;
+    return d.innerHTML;
+  }
+
+  /**
+   * Lightweight Markdown → HTML.
+   * `inlineOnly: true` = only bold/italic/code/link (safe during streaming).
+   * `inlineOnly: false` = full render (headings, lists, code blocks, etc.).
+   */
+  function renderMarkdown(text, inlineOnly) {
+    // ── Step 1: Extract fenced code blocks before escaping ──
+    const codeBlocks = [];
+    let html = text.replace(/```(\w*)\n([\s\S]*?)```/g, function (_, lang, code) {
+      const id = codeBlocks.length;
+      codeBlocks.push({ lang: lang || '', code: code.trimEnd() });
+      return '\x00CODE' + id + '\x00';
+    });
+
+    // ── Step 2: Escape remaining HTML ──
+    html = escapeHtml(html);
+
+    // ── Step 3: Restore code blocks as <pre><code> ──
+    html = html.replace(/\x00CODE(\d+)\x00/g, function (_, id) {
+      const cb = codeBlocks[parseInt(id)];
+      return '<pre><code>' + cb.code + '</code></pre>';
+    });
+
+    // ── Step 4: Inline formatting ──
+    html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+    html = html.replace(/__(.+?)__/g, '<strong>$1</strong>');
+    html = html.replace(/\*(.+?)\*/g, '<em>$1</em>');
+    html = html.replace(/_(.+?)_/g, '<em>$1</em>');
+    html = html.replace(/`([^`\n]+)`/g, '<code>$1</code>');
+    html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>');
+
+    if (inlineOnly) return html;
+
+    // ── Step 5: Block-level formatting ──
+    // Blockquotes
+    html = html.replace(/^&gt;\s?(.*)$/gm, '<blockquote>$1</blockquote>');
+    html = html.replace(/<\/blockquote>\n<blockquote>/g, '<br>');
+
+    // Horizontal rules
+    html = html.replace(/^(---|\*\*\*|___)$/gm, '<hr>');
+
+    // Headings (must be after blockquote to avoid matching > inside)
+    html = html.replace(/^### (.+)$/gm, '<h3>$1</h3>');
+    html = html.replace(/^## (.+)$/gm, '<h2>$1</h2>');
+    html = html.replace(/^# (.+)$/gm, '<h1>$1</h1>');
+
+    // Unordered lists — group consecutive <li> into <ul>
+    html = html.replace(/^[-*] (.+)$/gm, '<li>$1</li>');
+    html = html.replace(/((?:<li>.*<\/li>\n?)+)/g, '<ul>$1</ul>');
+
+    // Ordered lists
+    html = html.replace(/^\d+\. (.+)$/gm, '<li>$1</li>');
+
+    // Paragraphs: double newlines → paragraph breaks
+    html = html.replace(/\n\n+/g, '</p><p>');
+    html = '<p>' + html + '</p>';
+    // Clean empty paragraphs
+    html = html.replace(/<p>\s*<\/p>/g, '');
+
+    return html;
+  }
 
   // ─── Helpers ──────────────────────────────────────────────
 
@@ -409,36 +239,17 @@
   }
 
   function appendToolCard(toolName, toolArgs, iteration) {
-    const icons = {
-      list_directory: '📂', read_file: '📄', search_content: '🔎',
-      read_index: '📋', get_metadata: 'ℹ️',
-    };
-    const verbs = {
-      list_directory: 'Browsing', read_file: 'Reading',
-      search_content: 'Searching', read_index: 'Index',
-      get_metadata: 'Metadata',
-    };
-    const icon = icons[toolName] || '⚙';
-    const verb = verbs[toolName] || toolName;
+    const icons = { list_directory:'📂', read_file:'📄', search_content:'🔎', read_index:'📋', get_metadata:'ℹ️' };
+    const verbs = { list_directory:'Browsing', read_file:'Reading', search_content:'Searching', read_index:'Index', get_metadata:'Metadata' };
     const target = toolArgs && toolArgs.path ? toolArgs.path
-      : (toolArgs && toolArgs.pattern ? `"${toolArgs.pattern}"` : '');
+      : (toolArgs && toolArgs.pattern ? '"' + toolArgs.pattern + '"' : '');
 
     const card = document.createElement('div');
     card.className = 'ac-tool-card';
-    card.innerHTML = `
-      <div class="ac-tool-card-header">
-        <span class="ac-tool-icon">${icon}</span>
-        <span class="ac-tool-label">${verb}${target ? ': ' + target : ''}</span>
-        <span class="ac-tool-chevron">▼</span>
-      </div>
-      <div class="ac-tool-card-body" id="ac-tool-result-${iteration}"></div>
-    `;
-
-    // Toggle expand on header click
+    card.innerHTML = `<div class="ac-tool-card-header"><span class="ac-tool-icon">${icons[toolName]||'⚙'}</span><span class="ac-tool-label">${verbs[toolName]||toolName}${target?': '+target:''}</span><span class="ac-tool-chevron">▼</span></div><div class="ac-tool-card-body" id="ac-tool-result-${iteration}"></div>`;
     card.querySelector('.ac-tool-card-header').addEventListener('click', function () {
       card.classList.toggle('expanded');
     });
-
     bodyEl.appendChild(card);
     scrollBottom();
     return card;
@@ -447,45 +258,27 @@
   function fillToolResult(iteration, resultText) {
     const body = document.getElementById('ac-tool-result-' + iteration);
     if (!body) return;
-
-    // Try to parse structured info from the result
-    const matchCount = extractMatchCount(resultText);
+    const cnt = extractMatchCount(resultText);
     let html = '';
-
-    if (matchCount !== null) {
-      html += `<div class="ac-match-count">Found ${matchCount} items</div>`;
-    }
-
-    // Show truncated result
+    if (cnt !== null) html += `<div class="ac-match-count">Found ${cnt} items</div>`;
     const lines = resultText.split('\n').filter(l => l.trim());
     const preview = lines.slice(0, 10);
-    html += preview.map(l => `<div class="ac-result-line">${escapeHtml(l.slice(0, 200))}</div>`).join('');
-
-    if (lines.length > 10) {
-      html += `<div class="ac-truncated">+ ${lines.length - 10} more lines</div>`;
-    }
-
+    html += preview.map(l => `<div class="ac-result-line">${escapeHtml(l.slice(0,200))}</div>`).join('');
+    if (lines.length > 10) html += `<div class="ac-truncated">+ ${lines.length - 10} more lines</div>`;
     body.innerHTML = html;
   }
 
   function extractMatchCount(text) {
-    // Try common patterns: "Found X matches", "X articles", etc.
-    const m1 = text.match(/Found\s+(\d+)\s+match/i);
-    if (m1) return parseInt(m1[1]);
-    const m2 = text.match(/(\d+)\s+(?:articles?|files?|items?|results?)/i);
-    if (m2) return parseInt(m2[1]);
-    const m3 = text.match(/total:\s*(\d+)/i);
-    if (m3) return parseInt(m3[1]);
-    return null;
+    return ((text.match(/Found\s+(\d+)\s+match/i) ||
+             text.match(/(\d+)\s+(?:articles?|files?|items?|results?)/i) ||
+             text.match(/total:\s*(\d+)/i)) || [])[1] | 0 || null;
   }
 
   function showTyping() {
     const div = document.createElement('div');
-    div.className = 'ac-typing';
-    div.id = 'ac-typing';
+    div.className = 'ac-typing'; div.id = 'ac-typing';
     div.innerHTML = '<span></span><span></span><span></span>';
-    bodyEl.appendChild(div);
-    scrollBottom();
+    bodyEl.appendChild(div); scrollBottom();
   }
 
   function hideTyping() {
@@ -500,54 +293,54 @@
     isStreaming = true;
     sendBtn.disabled = true;
     inputEl.disabled = true;
-
-    // Visual: start thinking state
     dotEl.classList.add('thinking');
     setStatus('ANALYZING...', 'active');
 
-    // Show user message
     appendMessage('user', escapeHtml(query));
     history.push({ role: 'user', content: query });
 
-    // Show typing indicator while waiting for first SSE event
     showTyping();
 
-    let agentMsgDiv   = null;
-    let agentContent  = '';
-    let toolCount     = 0;
-    let iteration     = 0;      // which agent loop iteration
-    let firstEvent    = false;
-    let lastThought   = '';     // last thought shown (avoid duplicates)
+    let agentMsgDiv = null;
+    let agentText = '';
+    let toolCount = 0, iteration = 0, firstEvent = false, lastThought = '';
 
     try {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 120000);
-
       const resp = await fetch(BACKEND + '/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          query: query,
-          history: history.slice(-MAX_HISTORY),
-          model: 'default',
-        }),
+        body: JSON.stringify({ query, history: history.slice(-MAX_HISTORY), model: 'default' }),
         signal: controller.signal,
       });
-
       clearTimeout(timeoutId);
-
-      if (!resp.ok) {
-        throw new Error(`Server responded ${resp.status}`);
-      }
+      if (!resp.ok) throw new Error(`Server responded ${resp.status}`);
 
       const reader = resp.body.getReader();
       const decoder = new TextDecoder();
       let buffer = '';
+      // Use requestAnimationFrame to batch DOM updates for smoother streaming
+      let rafPending = false;
+
+      function renderStreamingAgent() {
+        if (!agentMsgDiv) return;
+        // During streaming: only inline markdown (bold/italic/code)
+        agentMsgDiv.innerHTML = renderMarkdown(agentText, true);
+        scrollBottom();
+        rafPending = false;
+      }
+
+      function scheduleRender() {
+        if (!rafPending) {
+          rafPending = true;
+          requestAnimationFrame(renderStreamingAgent);
+        }
+      }
 
       while (true) {
         const { done, value } = await reader.read();
         if (done) break;
-
         buffer += decoder.decode(value, { stream: true });
         const lines = buffer.split('\n');
         buffer = lines.pop() || '';
@@ -565,36 +358,31 @@
         }
       }
 
-      // Process remaining
+      // Process remaining buffer
       if (buffer.trim()) {
-        const lastLines = buffer.split('\n');
         let currentEvent = '';
-        for (const line of lastLines) {
-          if (line.startsWith('event: ')) {
-            currentEvent = line.slice(7).trim();
-          } else if (line.startsWith('data: ')) {
-            try {
-              const data = JSON.parse(line.slice(6));
-              handleSSEEvent(currentEvent, data);
-            } catch { /* skip */ }
+        for (const line of buffer.split('\n')) {
+          if (line.startsWith('event: ')) currentEvent = line.slice(7).trim();
+          else if (line.startsWith('data: ')) {
+            try { handleSSEEvent(currentEvent, JSON.parse(line.slice(6))); } catch { /* skip */ }
           }
         }
       }
 
-      // Final state
+      // ── DONE: apply full Markdown render ──
+      if (agentMsgDiv && agentText.trim()) {
+        agentMsgDiv.innerHTML = renderMarkdown(agentText, false);
+        agentMsgDiv.classList.remove('ac-msg-streaming');
+      }
+
       dotEl.classList.remove('thinking');
       setStatus('Ready', '');
 
     } catch (err) {
       dotEl.classList.remove('thinking');
       hideTyping();
-      if (err.name === 'AbortError') {
-        setStatus('TIMEOUT', 'error');
-        appendMessage('system', '⏱ Request timed out.');
-      } else {
-        setStatus('ERROR', 'error');
-        appendMessage('system', '⚠ Connection lost.');
-      }
+      setStatus(err.name === 'AbortError' ? 'TIMEOUT' : 'ERROR', 'error');
+      appendMessage('system', err.name === 'AbortError' ? '⏱ Request timed out.' : '⚠ Connection lost.');
       console.error('[agent-chat]', err);
     } finally {
       hideTyping();
@@ -602,70 +390,50 @@
       sendBtn.disabled = false;
       inputEl.disabled = false;
       inputEl.focus();
-
-      if (agentContent.trim()) {
-        history.push({ role: 'assistant', content: agentContent });
-        if (history.length > MAX_HISTORY) {
-          history = history.slice(-MAX_HISTORY);
-        }
+      if (agentText.trim()) {
+        history.push({ role: 'assistant', content: agentText });
+        if (history.length > MAX_HISTORY) history = history.slice(-MAX_HISTORY);
       }
     }
 
-    // ─── SSE event router ────────────────────────────────────
-
     function handleSSEEvent(event, data) {
-      // Remove typing indicator on first real event
-      if (!firstEvent) {
-        firstEvent = true;
-        hideTyping();
-      }
+      if (!firstEvent) { firstEvent = true; hideTyping(); }
 
       switch (event) {
         case 'thought': {
-          const thought = (data.content || '').trim();
-          if (thought && thought !== lastThought) {
-            lastThought = thought;
+          const t = (data.content || '').trim();
+          if (t && t !== lastThought) {
+            lastThought = t;
             iteration++;
-            appendThought('💭 ' + thought);
-            setStatus(`ROUND ${iteration}/8`, 'active');
+            appendThought('💭 ' + t);
+            setStatus('ROUND ' + iteration + '/8', 'active');
           }
           break;
         }
 
-        case 'tool_call': {
+        case 'tool_call':
           toolCount++;
-          const card = appendToolCard(data.name, data.arguments, toolCount);
-          setStatus(`ROUND ${iteration}/8 · TOOL ${toolCount}`, 'active');
+          appendToolCard(data.name, data.arguments, toolCount);
+          setStatus('ROUND ' + iteration + '/8 · SEARCHING', 'active');
           break;
-        }
 
-        case 'tool_result': {
-          const resultStr = typeof data.result === 'string' ? data.result
-            : JSON.stringify(data.result || '');
-          fillToolResult(toolCount, resultStr);
-          setStatus(`ROUND ${iteration}/8 · ANALYZING`, 'active');
+        case 'tool_result':
+          fillToolResult(toolCount, typeof data.result === 'string' ? data.result : JSON.stringify(data.result || ''));
+          setStatus('ROUND ' + iteration + '/8 · ANALYZING', 'active');
           break;
-        }
 
-        case 'chunk': {
+        case 'chunk':
           if (!agentMsgDiv) {
             agentMsgDiv = appendMessage('agent', '');
             agentMsgDiv.classList.add('ac-msg-streaming');
             setStatus('WRITING...', 'active');
           }
-          agentContent += data.content || '';
-          agentMsgDiv.innerHTML = escapeHtml(agentContent);
-          scrollBottom();
+          agentText += data.content || '';
+          scheduleRender();   // rAF-batched Markdown render
           break;
-        }
 
         case 'done':
-          dotEl.classList.remove('thinking');
-          setStatus('Ready', '');
-          if (agentMsgDiv) {
-            agentMsgDiv.classList.remove('ac-msg-streaming');
-          }
-          break;
+          break;  // full Markdown applied in outer block
 
         case 'error':
           dotEl.classList.remove('thinking');
@@ -676,62 +444,30 @@
     }
   }
 
-  function escapeHtml(str) {
-    const div = document.createElement('div');
-    div.textContent = str;
-    return div.innerHTML;
-  }
+  // ─── UI Events ────────────────────────────────────────────
 
-  // ─── UI Event Handlers ────────────────────────────────────
-
-  function openPanel() {
-    isOpen = true;
-    bubble.classList.add('ac-open');
-    panel.classList.add('ac-open');
-    inputEl.focus();
-  }
-
-  function closePanel() {
-    isOpen = false;
-    bubble.classList.remove('ac-open');
-    panel.classList.remove('ac-open');
-  }
-
-  function togglePanel() {
-    isOpen ? closePanel() : openPanel();
-  }
-
+  function openPanel() { isOpen = true; bubble.classList.add('ac-open'); panel.classList.add('ac-open'); inputEl.focus(); }
+  function closePanel() { isOpen = false; bubble.classList.remove('ac-open'); panel.classList.remove('ac-open'); }
+  function togglePanel() { isOpen ? closePanel() : openPanel(); }
   function clearChat() {
     history = [];
-    bodyEl.innerHTML = `
-      <div class="ac-msg ac-msg-agent">
-        Hi, I'm Simon's digital twin. Ask me anything about architecture, AI, career, or things I've written.
-      </div>
-    `;
+    bodyEl.innerHTML = '<div class="ac-msg ac-msg-agent">Hi, I\'m Simon\'s digital twin. Ask me anything about architecture, AI, career, or things I\'ve written.</div>';
     setStatus('Ready', '');
   }
-
-  // ─── Event Bindings ───────────────────────────────────────
 
   bubble.addEventListener('click', togglePanel);
   closeBtn.addEventListener('click', closePanel);
   clearBtn.addEventListener('click', clearChat);
 
   document.addEventListener('keydown', function (e) {
-    if (e.key === 'Escape' && isOpen) {
-      closePanel();
-    }
+    if (e.key === 'Escape' && isOpen) closePanel();
   });
 
   inputEl.addEventListener('keydown', function (e) {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
-      const text = inputEl.value.trim();
-      if (text && !isStreaming) {
-        inputEl.value = '';
-        inputEl.style.height = 'auto';
-        sendMessage(text);
-      }
+      const t = inputEl.value.trim();
+      if (t && !isStreaming) { inputEl.value = ''; inputEl.style.height = 'auto'; sendMessage(t); }
     }
   });
 
@@ -741,30 +477,18 @@
   });
 
   sendBtn.addEventListener('click', function () {
-    const text = inputEl.value.trim();
-    if (text && !isStreaming) {
-      inputEl.value = '';
-      inputEl.style.height = 'auto';
-      sendMessage(text);
-    }
+    const t = inputEl.value.trim();
+    if (t && !isStreaming) { inputEl.value = ''; inputEl.style.height = 'auto'; sendMessage(t); }
   });
 
   // ─── Health check ─────────────────────────────────────────
 
-  (async function healthCheck() {
+  (async function () {
     try {
       const resp = await fetch(BACKEND + '/health', { signal: AbortSignal.timeout(5000) });
-      if (resp.ok) {
-        const h = await resp.json();
-        console.log('[agent-chat] Backend healthy:', h);
-        setStatus('Ready', '');
-      } else {
-        setStatus('OFFLINE', 'error');
-      }
-    } catch {
-      setStatus('OFFLINE', 'error');
-      console.warn('[agent-chat] Backend unreachable at', BACKEND);
-    }
+      if (resp.ok) { const h = await resp.json(); console.log('[agent-chat] healthy:', h); setStatus('Ready', ''); }
+      else setStatus('OFFLINE', 'error');
+    } catch { setStatus('OFFLINE', 'error'); console.warn('[agent-chat] unreachable:', BACKEND); }
   })();
 
 })();
