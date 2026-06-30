@@ -13,7 +13,7 @@
   'use strict';
 
   // ─── Config ───────────────────────────────────────────────
-  const WIDGET_VERSION = '0.1.12';
+  const WIDGET_VERSION = '0.1.13';
   const BACKEND = window.AGENT_CHAT_BACKEND ||
     'https://simonsterrific-shizhang-agent.hf.space';
   const MAX_HISTORY = 12;
@@ -30,10 +30,11 @@
     .ac-bubble.ac-open{opacity:0;pointer-events:none}
     @keyframes ac-pulse{0%,100%{box-shadow:0 0 24px oklch(72% 0.20 240/0.35)}50%{box-shadow:0 0 36px oklch(72% 0.20 240/0.50)}}
 
-    .ac-panel{position:fixed;bottom:28px;right:28px;z-index:7999;width:420px;min-width:320px;max-width:calc(100vw - 16px);height:600px;min-height:380px;max-height:calc(100vh - 16px);background:oklch(12% 0.01 55);border:1px solid oklch(25% 0.008 55);border-radius:12px;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 16px 48px oklch(0% 0 0/0.55);transform:translateY(12px) scale(.96);opacity:0;pointer-events:none;transition:transform .3s cubic-bezier(.16,1,.3,1),opacity .25s}
+    .ac-panel{position:fixed;bottom:28px;right:28px;z-index:7999;width:420px;min-width:320px;max-width:calc(100vw - 16px);height:600px;min-height:380px;max-height:calc(100vh - 16px);background:oklch(12% 0.01 55/0.8);-webkit-backdrop-filter:blur(40px) saturate(180%);backdrop-filter:blur(40px) saturate(180%);border:1px solid oklch(100% 0 0/0.1);border-radius:12px;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 16px 48px oklch(0% 0 0/0.45),inset 0 1px 0 oklch(100% 0 0/0.06);transform:translateY(12px) scale(.96);opacity:0;pointer-events:none;transition:transform .3s cubic-bezier(.16,1,.3,1),opacity .25s;-webkit-font-smoothing:antialiased}
     .ac-panel.ac-open{transform:translateY(0) scale(1);opacity:1;pointer-events:all}
+    @supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){.ac-panel{background:oklch(12% 0.01 55/0.92)}}
 
-    .ac-header{flex:0 0 auto;display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid oklch(25% 0.008 55);cursor:move;user-select:none}
+    .ac-header{flex:0 0 auto;display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid oklch(25% 0.008 55/0.55);cursor:move;user-select:none}
     .ac-header-title{font-family:var(--font-display,'Bebas Neue',sans-serif);font-size:20px;letter-spacing:.04em;color:var(--fg,oklch(95% 0.008 80));display:flex;align-items:center;gap:8px}
     .ac-header-dot{width:8px;height:8px;border-radius:50%;background:var(--accent,oklch(72% 0.20 240));transition:background .3s}
     .ac-header-dot.thinking{animation:ac-pulse-dot .8s ease-in-out infinite}
@@ -48,11 +49,11 @@
     .ac-body{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding:16px 18px;display:flex;flex-direction:column;gap:10px;scroll-behavior:smooth;scrollbar-width:none;-ms-overflow-style:none}
     .ac-body::-webkit-scrollbar{display:none}
 
-    /* Messages */
-    .ac-msg{flex:0 0 auto;max-width:88%;font-size:12px;line-height:1.7;font-family:var(--font-body,'DM Mono',monospace);padding:10px 14px;border-radius:8px;animation:ac-fade-in .3s ease;word-break:break-word;scrollbar-width:none;-ms-overflow-style:none}
+    /* Messages — solid 100% opaque bubbles over frosted panel */
+    .ac-msg{flex:0 0 auto;max-width:88%;font-size:12px;line-height:1.7;font-family:var(--font-body,'DM Mono',monospace);padding:10px 14px;border-radius:8px;animation:ac-fade-in .3s ease;word-break:break-word;scrollbar-width:none;-ms-overflow-style:none;opacity:1;isolation:isolate}
     .ac-msg::-webkit-scrollbar{display:none}
     .ac-msg-user{align-self:flex-end;background:var(--accent,oklch(72% 0.20 240));color:oklch(10% 0.012 55);font-weight:500;border-bottom-right-radius:2px}
-    .ac-msg-agent{align-self:flex-start;background:oklch(18% 0.01 55);color:var(--fg,oklch(95% 0.008 80));border-bottom-left-radius:2px;border:1px solid oklch(25% 0.008 55);overflow:auto;max-width:min(88%,100%);max-height:min(65vh,520px)}
+    .ac-msg-agent{align-self:flex-start;background:oklch(18% 0.01 55);color:var(--fg,oklch(95% 0.008 80));border-bottom-left-radius:2px;border:1px solid oklch(25% 0.008 55);overflow:auto;max-width:min(88%,100%);max-height:min(65vh,520px);box-shadow:0 2px 8px oklch(0% 0 0/0.18)}
     .ac-msg-agent.ac-msg-streaming{border-left:2px solid var(--accent,oklch(72% 0.20 240))}
     .ac-msg-agent::-webkit-scrollbar{display:none}
 
@@ -122,8 +123,8 @@
     @keyframes ac-fade-in{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
 
     /* Input */
-    .ac-disclaimer{flex:0 0 auto;padding:6px 18px 0;font-family:var(--font-body,'DM Mono',monospace);font-size:8px;line-height:1.45;color:oklch(45% 0.006 80);text-align:center;border-top:1px solid oklch(20% 0.006 55)}
-    .ac-input-wrap{flex:0 0 auto;display:flex;align-items:center;gap:10px;padding:12px 18px;border-top:1px solid oklch(25% 0.008 55)}
+    .ac-disclaimer{flex:0 0 auto;padding:6px 18px 0;font-family:var(--font-body,'DM Mono',monospace);font-size:8px;line-height:1.45;color:oklch(45% 0.006 80);text-align:center;border-top:1px solid oklch(25% 0.008 55/0.45)}
+    .ac-input-wrap{flex:0 0 auto;display:flex;align-items:center;gap:10px;padding:12px 18px;border-top:1px solid oklch(25% 0.008 55/0.55)}
     .ac-input{flex:1 1 auto;background:oklch(16% 0.01 55);border:1px solid oklch(25% 0.008 55);border-radius:6px;padding:10px 12px;font-family:var(--font-body,'DM Mono',monospace);font-size:12px;color:var(--fg,oklch(95% 0.008 80));outline:none;resize:none;line-height:1.5;max-height:80px;transition:border-color .2s}
     .ac-input:focus{border-color:var(--accent,oklch(72% 0.20 240))}
     .ac-input::placeholder{color:oklch(40% 0.006 80)}
@@ -139,7 +140,22 @@
     .ac-resize-ne,.ac-resize-nw,.ac-resize-se,.ac-resize-sw{width:16px;height:16px}
     .ac-resize-ne{right:0;top:0;cursor:nesw-resize}.ac-resize-nw{left:0;top:0;cursor:nwse-resize}.ac-resize-se{right:0;bottom:0;cursor:nwse-resize}.ac-resize-sw{left:0;bottom:0;cursor:nesw-resize}
 
-    @media(max-width:480px){.ac-panel{width:calc(100vw - 20px);right:10px;bottom:10px;height:calc(100vh - 60px);max-height:none;border-radius:10px}.ac-bubble{bottom:16px;right:16px}}
+    @media(max-width:480px){
+      .ac-panel{left:8px;right:8px;width:auto;min-width:0;max-width:none;bottom:max(8px,env(safe-area-inset-bottom));height:calc(100dvh - 16px - env(safe-area-inset-top) - env(safe-area-inset-bottom));max-height:none;border-radius:16px}
+      .ac-bubble{bottom:max(16px,env(safe-area-inset-bottom));right:max(16px,env(safe-area-inset-right))}
+      .ac-resize-handle{display:none}
+      .ac-header{cursor:default;padding:12px 14px;touch-action:pan-y}
+      .ac-body{padding:12px 14px;gap:8px;-webkit-overflow-scrolling:touch}
+      .ac-msg{max-width:92%;font-size:11px}
+      .ac-msg-agent{max-height:min(50dvh,420px)}
+      .ac-input-wrap{padding:10px 14px max(10px,env(safe-area-inset-bottom))}
+      .ac-disclaimer{padding:6px 14px 0;font-size:7px}
+      .ac-header-title{font-size:18px}
+      .ac-btn{padding:6px 10px}
+    }
+    @supports not (height:100dvh){
+      @media(max-width:480px){.ac-panel{height:calc(100vh - 16px - env(safe-area-inset-top) - env(safe-area-inset-bottom))}}
+    }
   `;
 
   const styleEl = document.createElement('style');
@@ -149,12 +165,12 @@
   // ─── Build DOM ────────────────────────────────────────────
   const bubble = document.createElement('button');
   bubble.className = 'ac-bubble';
-  bubble.setAttribute('aria-label', 'Chat with Simon');
+  bubble.setAttribute('aria-label', "Chat with Simon's digital twin");
   bubble.innerHTML = `<svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>`;
 
   const panel = document.createElement('div');
   panel.className = 'ac-panel';
-  panel.innerHTML = `<div class="ac-header"><div class="ac-header-title"><span class="ac-header-dot" id="ac-dot"></span>Ask Simon</div><div class="ac-header-actions"><span class="ac-status" id="ac-status">Ready</span><button class="ac-btn" id="ac-save">Save</button><button class="ac-btn" id="ac-clear">Clear</button><button class="ac-btn" id="ac-close">✕</button></div></div><div class="ac-body" id="ac-body"><div class="ac-msg ac-msg-agent">Hi, I'm Simon's digital twin. Ask me anything about architecture, AI, career, or things I've written.</div></div><div class="ac-disclaimer">Simon could be wrong or make mistakes, please perform fact check before using the context. / Simon 可能出错，请在使用相关内容前自行核查事实。</div><div class="ac-input-wrap"><textarea class="ac-input" id="ac-input" rows="1" placeholder="Ask me anything..."></textarea><button class="ac-send" id="ac-send" aria-label="Send"><svg viewBox="0 0 24 24"><path fill="oklch(10% 0.012 55)" d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg></button></div>`;
+  panel.innerHTML = `<div class="ac-header"><div class="ac-header-title"><span class="ac-header-dot" id="ac-dot"></span>Simon's Digital Twin</div><div class="ac-header-actions"><span class="ac-status" id="ac-status">Ready</span><button class="ac-btn" id="ac-save">Save</button><button class="ac-btn" id="ac-clear">Clear</button><button class="ac-btn" id="ac-close">✕</button></div></div><div class="ac-body" id="ac-body"><div class="ac-msg ac-msg-agent">Hi, I'm Simon's digital twin, not Simon himself. Ask me about architecture, AI, career, or Simon's past work.</div></div><div class="ac-disclaimer">This digital twin only answers from Simon's past work and may be inaccurate. It does not speak for Simon. / 此数字分身仅基于 Simon 过去的产出回答，不代表 Simon 本人，请自行核查事实。</div><div class="ac-input-wrap"><textarea class="ac-input" id="ac-input" rows="1" placeholder="Ask about Simon's past work..."></textarea><button class="ac-send" id="ac-send" aria-label="Send"><svg viewBox="0 0 24 24"><path fill="oklch(10% 0.012 55)" d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg></button></div>`;
 
   ['n', 's', 'e', 'w', 'ne', 'nw', 'se', 'sw'].forEach(function (dir) {
     const handle = document.createElement('div');
@@ -326,8 +342,18 @@
     setPanelGeometry(rect.left, rect.top, rect.width, rect.height);
   }
 
+  function isMobileLayout() {
+    return window.matchMedia('(max-width: 480px)').matches;
+  }
+
+  function setMobileScrollLock(locked) {
+    if (!isMobileLayout()) return;
+    document.documentElement.style.overflow = locked ? 'hidden' : '';
+    document.body.style.overflow = locked ? 'hidden' : '';
+  }
+
   function startPanelDrag(e) {
-    if (e.button !== 0 || e.target.closest('.ac-header-actions')) return;
+    if (e.button !== 0 || e.target.closest('.ac-header-actions') || isMobileLayout()) return;
     e.preventDefault();
     freezePanelGeometry();
     const rect = panel.getBoundingClientRect();
@@ -977,8 +1003,19 @@
 
   // ─── UI Events ────────────────────────────────────────────
 
-  function openPanel() { isOpen = true; bubble.classList.add('ac-open'); panel.classList.add('ac-open'); inputEl.focus(); }
-  function closePanel() { isOpen = false; bubble.classList.remove('ac-open'); panel.classList.remove('ac-open'); }
+  function openPanel() {
+    isOpen = true;
+    bubble.classList.add('ac-open');
+    panel.classList.add('ac-open');
+    setMobileScrollLock(true);
+    inputEl.focus({ preventScroll: true });
+  }
+  function closePanel() {
+    isOpen = false;
+    bubble.classList.remove('ac-open');
+    panel.classList.remove('ac-open');
+    setMobileScrollLock(false);
+  }
   function togglePanel() { isOpen ? closePanel() : openPanel(); }
   function formatTimestamp(date) {
     const pad = n => String(n).padStart(2, '0');
@@ -999,17 +1036,17 @@
     }
 
     const lines = [
-      '# Ask Simon Chat Export',
+      "# Simon's Digital Twin Chat Export",
       '',
       '- Exported: ' + now.toLocaleString(),
-      '- Source: Ask Simon',
+      "- Source: Simon's Digital Twin",
       '',
       '---',
       '',
     ];
 
     turns.forEach(function (m) {
-      lines.push('## ' + (m.role === 'user' ? 'User' : 'Simon'));
+      lines.push('## ' + (m.role === 'user' ? 'User' : "Simon's Digital Twin"));
       lines.push('');
       lines.push(m.content.trim());
       lines.push('');
@@ -1029,7 +1066,7 @@
   }
   function clearChat() {
     history = [];
-    bodyEl.innerHTML = '<div class="ac-msg ac-msg-agent">Hi, I\'m Simon\'s digital twin. Ask me anything about architecture, AI, career, or things I\'ve written.</div>';
+    bodyEl.innerHTML = '<div class="ac-msg ac-msg-agent">Hi, I\'m Simon\'s digital twin, not Simon himself. Ask me about architecture, AI, career, or Simon\'s past work.</div>';
     setStatus('Ready', '');
   }
 
