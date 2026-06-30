@@ -84,22 +84,24 @@ nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; j
 .nav-links a:hover { opacity: 1; }
 .nav-links a:hover::after { width: 100%; }
 /* HERO */
-#hero { display: flex; flex-direction: column; justify-content: flex-end; padding: 140px 48px 80px; position: relative; overflow: hidden; }
-.hero-bg-line { position: absolute; top: 0; bottom: 0; width: 1px; background: var(--fg); opacity: 0.04; }
-.hero-eyebrow { font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); margin-bottom: 24px; opacity: 0; transform: translateY(20px); transition: opacity 0.8s, transform 0.8s; }
+#hero { display: flex; flex-direction: column; justify-content: flex-end; padding: 140px 48px 80px; position: relative; overflow: hidden; min-height: 100svh; }
+.hero-bg-line { position: absolute; top: 0; bottom: 0; width: 1px; background: var(--fg); opacity: 0.04; z-index: 0; }
+.hero-fluid { position: absolute; right: 0; top: 0; width: min(62%, 780px); height: 100%; pointer-events: none; z-index: 0; -webkit-mask-image: linear-gradient(to left, #000 30%, transparent 94%); mask-image: linear-gradient(to left, #000 30%, transparent 94%); }
+.hero-fluid canvas { width: 100%; height: 100%; display: block; }
+.hero-eyebrow { font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); margin-bottom: 24px; opacity: 0; transform: translateY(20px); transition: opacity 0.8s, transform 0.8s; position: relative; z-index: 2; }
 .hero-eyebrow.in { opacity: 1; transform: translateY(0); }
-.hero-title { font-family: var(--font-display); font-size: clamp(72px, 11vw, 168px); line-height: 0.9; position: relative; z-index: 1; }
+.hero-title { font-family: var(--font-display); font-size: clamp(72px, 11vw, 168px); line-height: 0.9; position: relative; z-index: 2; }
 .hero-title-line { display: block; overflow: hidden; }
 .hero-title-inner { display: block; transform: translateY(110%); transition: transform 0.9s cubic-bezier(0.16,1,0.3,1); }
 .hero-title-inner.in { transform: translateY(0); }
 .hero-title em { font-style: normal; color: var(--accent); }
 .hero-title .outline { -webkit-text-stroke: 1px var(--fg); color: transparent; }
-.hero-bottom { display: flex; justify-content: space-between; align-items: flex-end; margin-top: 60px; opacity: 0; transform: translateY(20px); transition: opacity 0.8s, transform 0.8s; }
+.hero-bottom { display: flex; justify-content: space-between; align-items: flex-end; margin-top: 60px; opacity: 0; transform: translateY(20px); transition: opacity 0.8s, transform 0.8s; position: relative; z-index: 2; }
 .hero-bottom.in { opacity: 1; transform: translateY(0); }
 .hero-desc { max-width: 340px; font-size: 13px; color: var(--fg-dim); line-height: 1.8; }
 .hero-scroll { display: flex; align-items: center; gap: 12px; font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--fg-dim); }
 .hero-scroll-line { width: 48px; height: 1px; background: var(--fg-dim); }
-.hero-tag { position: absolute; top: 48%; right: 48px; font-size: 11px; color: var(--fg-dim); letter-spacing: 0.12em; writing-mode: vertical-rl; opacity: 0; transition: opacity 1s; }
+.hero-tag { position: absolute; top: 48%; right: 48px; font-size: 11px; color: var(--fg-dim); letter-spacing: 0.12em; writing-mode: vertical-rl; opacity: 0; transition: opacity 1s; z-index: 2; }
 .hero-tag.in { opacity: 1; }
 /* MARQUEE */
 .marquee-wrap { border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 20px 0; overflow: hidden; white-space: nowrap; }
@@ -352,6 +354,10 @@ footer { border-top: 1px solid var(--border); padding: 24px 48px; display: flex;
 .reader-body li { margin-bottom: 0.5em; }
 .reader-body a { color: var(--accent); text-decoration: none; border-bottom: 1px solid transparent; transition: border-color 0.2s; }
 .reader-body a:hover { border-color: var(--accent); }
+@media (max-width: 768px) {
+  #hero { min-height: 88svh; padding-top: 120px; }
+  .hero-fluid { width: 100%; height: 52%; top: 0; right: 0; -webkit-mask-image: radial-gradient(ellipse 90% 80% at 75% 15%, #000 15%, transparent 72%); mask-image: radial-gradient(ellipse 90% 80% at 75% 15%, #000 15%, transparent 72%); opacity: 0.85; }
+}
 @media (max-width: 600px) {
   #blog-reader { padding: 72px 16px 96px; }
   .reader-title { font-size: clamp(32px, 9vw, 56px); }
@@ -387,6 +393,9 @@ footer { border-top: 1px solid var(--border); padding: 24px 48px; display: flex;
   <div class="hero-bg-line" style="left:25%"></div>
   <div class="hero-bg-line" style="left:50%"></div>
   <div class="hero-bg-line" style="left:75%"></div>
+  <div class="hero-fluid" id="hero-fluid" aria-hidden="true">
+    <canvas id="hero-fluid-canvas"></canvas>
+  </div>
   <div class="hero-tag">Open to opportunities · 2026</div>
   <div class="hero-eyebrow">Founding Engineer at IDitor Inc — San Francisco</div>
   <h1 class="hero-title" id="hero-title">
@@ -1008,8 +1017,9 @@ window.addEventListener('message', e => {
 window.parent.postMessage({type:'__edit_mode_available'},'*');
 </script>
 
+<script src="js/hero-fluid.js" defer></script>
 <!-- ▸▸▸ AGENT CHAT WIDGET — testing backend connectivity ▸▸▸ -->
 <script>window.AGENT_CHAT_BACKEND = 'https://sz-agent-proxy.zhangshi0512.workers.dev';</script>
-<script src="agent-chat.js?v=0.1.13"></script>
+<script src="agent-chat.js?v=0.1.14"></script>
 </body>
 </html>

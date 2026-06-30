@@ -13,7 +13,7 @@
   'use strict';
 
   // ─── Config ───────────────────────────────────────────────
-  const WIDGET_VERSION = '0.1.13';
+  const WIDGET_VERSION = '0.1.14';
   const BACKEND = window.AGENT_CHAT_BACKEND ||
     'https://simonsterrific-shizhang-agent.hf.space';
   const MAX_HISTORY = 12;
@@ -30,9 +30,11 @@
     .ac-bubble.ac-open{opacity:0;pointer-events:none}
     @keyframes ac-pulse{0%,100%{box-shadow:0 0 24px oklch(72% 0.20 240/0.35)}50%{box-shadow:0 0 36px oklch(72% 0.20 240/0.50)}}
 
-    .ac-panel{position:fixed;bottom:28px;right:28px;z-index:7999;width:420px;min-width:320px;max-width:calc(100vw - 16px);height:600px;min-height:380px;max-height:calc(100vh - 16px);background:oklch(12% 0.01 55/0.8);-webkit-backdrop-filter:blur(40px) saturate(180%);backdrop-filter:blur(40px) saturate(180%);border:1px solid oklch(100% 0 0/0.1);border-radius:12px;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 16px 48px oklch(0% 0 0/0.45),inset 0 1px 0 oklch(100% 0 0/0.06);transform:translateY(12px) scale(.96);opacity:0;pointer-events:none;transition:transform .3s cubic-bezier(.16,1,.3,1),opacity .25s;-webkit-font-smoothing:antialiased}
-    .ac-panel.ac-open{transform:translateY(0) scale(1);opacity:1;pointer-events:all}
-    @supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){.ac-panel{background:oklch(12% 0.01 55/0.92)}}
+    .ac-panel{position:fixed;bottom:28px;right:28px;z-index:7999;width:420px;min-width:320px;max-width:calc(100vw - 16px);height:600px;min-height:380px;max-height:calc(100vh - 16px);background:transparent;border:1px solid oklch(100% 0 0/0.14);border-radius:12px;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 16px 48px oklch(0% 0 0/0.45);transform:translateY(12px) scale(.96);visibility:hidden;pointer-events:none;transition:transform .3s cubic-bezier(.16,1,.3,1),visibility 0s linear .3s;-webkit-font-smoothing:antialiased;isolation:isolate}
+    .ac-panel.ac-open{transform:translateY(0) scale(1);visibility:visible;pointer-events:all;transition:transform .3s cubic-bezier(.16,1,.3,1),visibility 0s}
+    .ac-panel-glass{position:absolute;inset:0;z-index:0;border-radius:inherit;pointer-events:none;background:oklch(12% 0.01 55/0.8);-webkit-backdrop-filter:blur(50px) saturate(200%) brightness(1.12);backdrop-filter:blur(50px) saturate(200%) brightness(1.12);box-shadow:inset 0 1px 0 oklch(100% 0 0/0.1),inset 0 -1px 0 oklch(0% 0 0/0.18)}
+    @supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){.ac-panel-glass{background:oklch(12% 0.01 55/0.92);box-shadow:inset 0 1px 0 oklch(100% 0 0/0.06)}}
+    .ac-panel>.ac-header,.ac-panel>.ac-body,.ac-panel>.ac-disclaimer,.ac-panel>.ac-input-wrap{position:relative;z-index:1;background:transparent}
 
     .ac-header{flex:0 0 auto;display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid oklch(25% 0.008 55/0.55);cursor:move;user-select:none}
     .ac-header-title{font-family:var(--font-display,'Bebas Neue',sans-serif);font-size:20px;letter-spacing:.04em;color:var(--fg,oklch(95% 0.008 80));display:flex;align-items:center;gap:8px}
@@ -132,7 +134,7 @@
     .ac-send:hover{opacity:.8}
     .ac-send:disabled{opacity:.35;pointer-events:none}
     .ac-send svg{width:16px;height:16px}
-    .ac-resize-handle{position:absolute;z-index:3;background:transparent}
+    .ac-resize-handle{position:absolute;z-index:4;background:transparent}
     .ac-resize-n,.ac-resize-s{left:12px;right:12px;height:8px;cursor:ns-resize}
     .ac-resize-n{top:0}.ac-resize-s{bottom:0}
     .ac-resize-e,.ac-resize-w{top:12px;bottom:12px;width:8px;cursor:ew-resize}
@@ -170,7 +172,7 @@
 
   const panel = document.createElement('div');
   panel.className = 'ac-panel';
-  panel.innerHTML = `<div class="ac-header"><div class="ac-header-title"><span class="ac-header-dot" id="ac-dot"></span>Simon's Digital Twin</div><div class="ac-header-actions"><span class="ac-status" id="ac-status">Ready</span><button class="ac-btn" id="ac-save">Save</button><button class="ac-btn" id="ac-clear">Clear</button><button class="ac-btn" id="ac-close">✕</button></div></div><div class="ac-body" id="ac-body"><div class="ac-msg ac-msg-agent">Hi, I'm Simon's digital twin, not Simon himself. Ask me about architecture, AI, career, or Simon's past work.</div></div><div class="ac-disclaimer">This digital twin only answers from Simon's past work and may be inaccurate. It does not speak for Simon. / 此数字分身仅基于 Simon 过去的产出回答，不代表 Simon 本人，请自行核查事实。</div><div class="ac-input-wrap"><textarea class="ac-input" id="ac-input" rows="1" placeholder="Ask about Simon's past work..."></textarea><button class="ac-send" id="ac-send" aria-label="Send"><svg viewBox="0 0 24 24"><path fill="oklch(10% 0.012 55)" d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg></button></div>`;
+  panel.innerHTML = `<div class="ac-panel-glass" aria-hidden="true"></div><div class="ac-header"><div class="ac-header-title"><span class="ac-header-dot" id="ac-dot"></span>Simon's Digital Twin</div><div class="ac-header-actions"><span class="ac-status" id="ac-status">Ready</span><button class="ac-btn" id="ac-save">Save</button><button class="ac-btn" id="ac-clear">Clear</button><button class="ac-btn" id="ac-close">✕</button></div></div><div class="ac-body" id="ac-body"><div class="ac-msg ac-msg-agent">Hi, I'm Simon's digital twin, not Simon himself. Ask me about architecture, AI, career, or Simon's past work.</div></div><div class="ac-disclaimer">This digital twin only answers from Simon's past work and may be inaccurate. It does not speak for Simon. / 此数字分身仅基于 Simon 过去的产出回答，不代表 Simon 本人，请自行核查事实。</div><div class="ac-input-wrap"><textarea class="ac-input" id="ac-input" rows="1" placeholder="Ask about Simon's past work..."></textarea><button class="ac-send" id="ac-send" aria-label="Send"><svg viewBox="0 0 24 24"><path fill="oklch(10% 0.012 55)" d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg></button></div>`;
 
   ['n', 's', 'e', 'w', 'ne', 'nw', 'se', 'sw'].forEach(function (dir) {
     const handle = document.createElement('div');
