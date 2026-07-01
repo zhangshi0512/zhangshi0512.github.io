@@ -47,6 +47,12 @@
     .ac-status{font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--fg-dim,oklch(55% 0.006 80))}
     .ac-status.active{color:var(--accent,oklch(72% 0.20 240))}
     .ac-status.error{color:oklch(72% 0.20 30)}
+    .ac-debug{padding:12px 18px 0;border-top:1px solid oklch(100% 0 0/0.04);display:grid;gap:8px}
+    .ac-debug-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+    .ac-debug-label{font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--fg-dim,oklch(55% 0.006 80))}
+    .ac-debug-chip{font-size:10px;line-height:1.35;padding:4px 8px;border-radius:999px;border:1px solid oklch(30% 0.008 55);background:oklch(100% 0 0/0.03);color:var(--fg,oklch(95% 0.008 80))}
+    .ac-debug-chip.dim{color:var(--fg-dim,oklch(55% 0.006 80))}
+    .ac-debug-note{font-size:9px;line-height:1.45;color:var(--fg-dim,oklch(55% 0.006 80))}
 
     .ac-body{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding:16px 18px;display:flex;flex-direction:column;gap:10px;scroll-behavior:smooth;scrollbar-width:none;-ms-overflow-style:none}
     .ac-body::-webkit-scrollbar{display:none}
@@ -172,7 +178,7 @@
 
   const panel = document.createElement('div');
   panel.className = 'ac-panel';
-  panel.innerHTML = `<div class="ac-panel-glass" aria-hidden="true"></div><div class="ac-header"><div class="ac-header-title"><span class="ac-header-dot" id="ac-dot"></span>Simon's Digital Twin</div><div class="ac-header-actions"><span class="ac-status" id="ac-status">Ready</span><button class="ac-btn" id="ac-save">Save</button><button class="ac-btn" id="ac-clear">Clear</button><button class="ac-btn" id="ac-close">✕</button></div></div><div class="ac-body" id="ac-body"><div class="ac-msg ac-msg-agent">Hi, I'm Simon's digital twin, not Simon himself. Ask me about architecture, AI, career, or Simon's past work.</div></div><div class="ac-disclaimer">This digital twin only answers from Simon's past work and may be inaccurate. It does not speak for Simon. / 此数字分身仅基于 Simon 过去的产出回答，不代表 Simon 本人，请自行核查事实。</div><div class="ac-input-wrap"><textarea class="ac-input" id="ac-input" rows="1" placeholder="Ask about Simon's past work..."></textarea><button class="ac-send" id="ac-send" aria-label="Send"><svg viewBox="0 0 24 24"><path fill="oklch(10% 0.012 55)" d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg></button></div>`;
+  panel.innerHTML = `<div class="ac-panel-glass" aria-hidden="true"></div><div class="ac-header"><div class="ac-header-title"><span class="ac-header-dot" id="ac-dot"></span>Simon's Digital Twin</div><div class="ac-header-actions"><span class="ac-status" id="ac-status">Ready</span><button class="ac-btn" id="ac-save">Save</button><button class="ac-btn" id="ac-clear">Clear</button><button class="ac-btn" id="ac-close">✕</button></div></div><div class="ac-debug" id="ac-debug"><div class="ac-debug-row"><span class="ac-debug-label">Temporal</span><span class="ac-debug-chip dim" id="ac-debug-state">No temporal window yet</span></div><div class="ac-debug-row"><span class="ac-debug-chip" id="ac-debug-reference">Reference time: pending</span><span class="ac-debug-chip" id="ac-debug-window">Resolved window: pending</span></div><div class="ac-debug-note" id="ac-debug-note">The backend resolves relative hints like “去年” or “past three years” into a request-scoped publication-time window.</div></div><div class="ac-body" id="ac-body"><div class="ac-msg ac-msg-agent">Hi, I'm Simon's digital twin, not Simon himself. Ask me about architecture, AI, career, or Simon's past work.</div></div><div class="ac-disclaimer">This digital twin only answers from Simon's past work and may be inaccurate. It does not speak for Simon. / 此数字分身仅基于 Simon 过去的产出回答，不代表 Simon 本人，请自行核查事实。</div><div class="ac-input-wrap"><textarea class="ac-input" id="ac-input" rows="1" placeholder="Ask about Simon's past work..."></textarea><button class="ac-send" id="ac-send" aria-label="Send"><svg viewBox="0 0 24 24"><path fill="oklch(10% 0.012 55)" d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg></button></div>`;
 
   ['n', 's', 'e', 'w', 'ne', 'nw', 'se', 'sw'].forEach(function (dir) {
     const handle = document.createElement('div');
@@ -193,8 +199,13 @@
   const saveBtn = document.getElementById('ac-save');
   const statusEl = document.getElementById('ac-status');
   const dotEl = document.getElementById('ac-dot');
+  const debugStateEl = document.getElementById('ac-debug-state');
+  const debugReferenceEl = document.getElementById('ac-debug-reference');
+  const debugWindowEl = document.getElementById('ac-debug-window');
+  const debugNoteEl = document.getElementById('ac-debug-note');
 
   let isOpen = false, isStreaming = false;
+  resetTemporalDebugPanel();
 
   // ─── Markdown Renderer ────────────────────────────────────
 
@@ -427,6 +438,67 @@
     statusEl.className = 'ac-status' + (cls ? ' ' + cls : '');
   }
 
+  function formatTemporalDateTime(value) {
+    if (!value) return 'pending';
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return String(value);
+    return new Intl.DateTimeFormat(undefined, {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: false,
+      timeZoneName: 'short',
+    }).format(date);
+  }
+
+  function formatTemporalRange(constraint) {
+    if (!constraint) return 'No temporal window yet';
+    const start = constraint.start ? formatTemporalDateTime(constraint.start) : 'unknown';
+    const end = constraint.end ? formatTemporalDateTime(constraint.end) : 'unknown';
+    return start + ' → ' + end;
+  }
+
+  function updateTemporalDebugPanel(payload) {
+    const constraint = payload && payload.temporal_constraint ? payload.temporal_constraint : null;
+    const applied = payload && payload.applied ? payload.applied : false;
+    const referenceTime = payload && payload.reference_time ? payload.reference_time : null;
+    const searchQuery = payload && payload.search_query ? payload.search_query : '';
+    const source = constraint ? (constraint.matched_text || constraint.kind || 'temporal hint') : 'none';
+
+    if (debugStateEl) {
+      debugStateEl.textContent = constraint
+        ? (constraint.mode === 'hard' ? 'Temporal window active' : 'Temporal window soft')
+        : 'No temporal window yet';
+    }
+    if (debugReferenceEl) {
+      debugReferenceEl.textContent = 'Reference time: ' + formatTemporalDateTime(referenceTime);
+    }
+    if (debugWindowEl) {
+      debugWindowEl.textContent = 'Resolved window: ' + formatTemporalRange(constraint);
+      debugWindowEl.className = 'ac-debug-chip' + (applied ? '' : ' dim');
+    }
+    if (debugNoteEl) {
+      const queryText = searchQuery ? (' Query: ' + searchQuery) : '';
+      debugNoteEl.textContent = source === 'none'
+        ? 'The backend did not detect an explicit time hint in this query.'
+      : 'Matched hint: ' + source + '. ' + (applied
+          ? 'The output KB search is already filtered by this window.'
+          : 'The backend parsed a temporal window but has not applied it yet.') + queryText;
+    }
+  }
+
+  function resetTemporalDebugPanel() {
+    updateTemporalDebugPanel({
+      reference_time: null,
+      temporal_constraint: null,
+      applied: false,
+      search_query: '',
+    });
+  }
+
   function appendMessage(role, html) {
     const div = document.createElement('div');
     div.className = 'ac-msg ac-msg-' + role;
@@ -543,6 +615,7 @@
   async function sendMessage(query) {
     if (isStreaming) return;
     isStreaming = true;
+    resetTemporalDebugPanel();
     sendBtn.disabled = true;
     inputEl.disabled = true;
     dotEl.classList.add('thinking');
@@ -925,6 +998,33 @@
       if (!firstEvent) { firstEvent = true; hideTyping(); }
 
       switch (event) {
+        case 'request_started':
+          updateTemporalDebugPanel({
+            reference_time: data.reference_time || null,
+            temporal_constraint: null,
+            applied: false,
+            search_query: '',
+          });
+          break;
+
+        case 'route_selected':
+          updateTemporalDebugPanel({
+            reference_time: data.reference_time || null,
+            temporal_constraint: data.temporal_constraint || null,
+            applied: false,
+            search_query: data.search_query || data.effective_query || '',
+          });
+          break;
+
+        case 'context_ready':
+          if (data.input_retrieval_status) {
+            const current = debugStateEl ? debugStateEl.textContent : '';
+            if (current && current.indexOf('Temporal') === -1 && current.indexOf('No temporal') === -1) {
+              break;
+            }
+          }
+          break;
+
         case 'thought': {
           const t = (data.content || '').trim();
           if (!realOutputStarted) {
@@ -984,6 +1084,12 @@
           break;
 
         case 'done':
+          updateTemporalDebugPanel({
+            reference_time: data.retrieval && data.retrieval.reference_time ? data.retrieval.reference_time : null,
+            temporal_constraint: data.retrieval && data.retrieval.temporal_filter ? data.retrieval.temporal_filter : null,
+            applied: !!(data.retrieval && data.retrieval.temporal_filter_applied),
+            search_query: data.retrieval && data.retrieval.search_query ? data.retrieval.search_query : '',
+          });
           break;  // full Markdown applied in outer block
 
         case 'heartbeat':
@@ -1069,6 +1175,7 @@
   function clearChat() {
     history = [];
     bodyEl.innerHTML = '<div class="ac-msg ac-msg-agent">Hi, I\'m Simon\'s digital twin, not Simon himself. Ask me about architecture, AI, career, or Simon\'s past work.</div>';
+    resetTemporalDebugPanel();
     setStatus('Ready', '');
   }
 
