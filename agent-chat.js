@@ -34,7 +34,7 @@
     .ac-panel.ac-open{transform:translateY(0) scale(1);visibility:visible;pointer-events:all;transition:transform .3s cubic-bezier(.16,1,.3,1),visibility 0s}
     .ac-panel-glass{position:absolute;inset:0;z-index:0;border-radius:inherit;pointer-events:none;background:oklch(12% 0.01 55/0.8);-webkit-backdrop-filter:blur(50px) saturate(200%) brightness(1.12);backdrop-filter:blur(50px) saturate(200%) brightness(1.12);box-shadow:inset 0 1px 0 oklch(100% 0 0/0.1),inset 0 -1px 0 oklch(0% 0 0/0.18)}
     @supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){.ac-panel-glass{background:oklch(12% 0.01 55/0.92);box-shadow:inset 0 1px 0 oklch(100% 0 0/0.06)}}
-    .ac-panel>.ac-header,.ac-panel>.ac-body,.ac-panel>.ac-disclaimer,.ac-panel>.ac-input-wrap{position:relative;z-index:1;background:transparent}
+    .ac-panel>.ac-header,.ac-panel>.ac-debug,.ac-panel>.ac-body,.ac-panel>.ac-disclaimer,.ac-panel>.ac-input-wrap{position:relative;z-index:1;background:transparent}
 
     .ac-header{flex:0 0 auto;display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid oklch(25% 0.008 55/0.55);cursor:move;user-select:none}
     .ac-header-title{font-family:var(--font-display,'Bebas Neue',sans-serif);font-size:20px;letter-spacing:.04em;color:var(--fg,oklch(95% 0.008 80));display:flex;align-items:center;gap:8px}
