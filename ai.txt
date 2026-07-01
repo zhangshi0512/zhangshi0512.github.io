@@ -1,0 +1,7 @@
+# ai.txt — AI Training Opt-Out
+# This file declares that content on this domain is NOT authorized for AI training.
+#
+# Supported by Spawning.ai network (Hugging Face, Stability AI, etc.)
+# Contact: zhangshi0512@gmail.com
+
+*:no-training

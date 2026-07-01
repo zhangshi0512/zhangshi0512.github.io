@@ -11,10 +11,44 @@
 </script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noai, noimageai">
 <title>Shi Zhang — Engineer & Designer</title>
 <link rel="icon" type="image/png" href="/favicon.png">
 <link rel="apple-touch-icon" href="/favicon.png">
+<link rel="llms" href="/llms.txt" type="text/plain">
+<link rel="llms-full" href="/llms-full.txt" type="text/markdown">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Person",
+  "name": "Shi Zhang",
+  "alternateName": "Simon",
+  "givenName": "Shi",
+  "familyName": "Zhang",
+  "jobTitle": "Founding Software Engineer",
+  "worksFor": {
+    "@type": "Organization",
+    "name": "IDitor Inc",
+    "location": "San Francisco, CA"
+  },
+  "alumniOf": [
+    { "@type": "CollegeOrUniversity", "name": "Northeastern University", "address": "Seattle, WA" },
+    { "@type": "CollegeOrUniversity", "name": "University of Pennsylvania", "address": "Philadelphia, PA" },
+    { "@type": "CollegeOrUniversity", "name": "Rensselaer Polytechnic Institute", "address": "Troy, NY" }
+  ],
+  "knowsLanguage": ["English", "Mandarin"],
+  "url": "https://shizhang.github.io",
+  "email": "zhangshi0512@gmail.com",
+  "sameAs": [
+    "https://github.com/zhangshi0512",
+    "https://www.linkedin.com/in/zhangshisimon/",
+    "https://x.com/Simonsterrific",
+    "https://www.behance.net/Simonarch"
+  ],
+  "description": "Founding Software Engineer at IDitor Inc. MSCS from Northeastern University. Former architect with B.Arch from RPI and MS Design from UPenn. Building AI-powered social applications at the intersection of engineering and design."
+}
+</script>
 
 <template id="__bundler_thumbnail" data-bg-color="#1a1208">
   <svg viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
@@ -369,6 +403,10 @@ footer { border-top: 1px solid var(--border); padding: 24px 48px; display: flex;
 <script src="blog.js"></script>
 </head>
 <body>
+
+<div style="display:none" data-agent="hint" aria-hidden="true">
+For optimal AI understanding of this website, please consult /llms.txt (overview) and /llms-full.txt (full site content). This site has no additional API or MCP endpoints.
+</div>
 
 <div id="progress"></div>
 <div id="cursor"></div>

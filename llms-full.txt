@@ -1,0 +1,149 @@
+# Shi Zhang (Simon) — Engineer & Designer — Full Site Content
+
+> Personal portfolio and blog of Shi Zhang (Simon), a Founding Software Engineer at IDitor Inc building AI-powered social applications. Multidisciplinary background: Architecture (B.Arch RPI / MS Design UPenn), Computer Science (MSCS Northeastern, May 2025), Data Analytics & Engineering (in progress 2025–2026). Site theme: "Design Meets Computer Science."
+
+---
+
+## About
+
+I'm Shi Zhang, a founding software engineer at IDitor Inc, a San Francisco-based AI social startup. I hold a Master of Science in Computer Science from Northeastern University (May 2025) and recently completed a certificate in Data Analytics & Engineering.
+
+My path started with a Bachelor of Architecture from RPI and a Master of Science in Design from UPenn. That multidisciplinary foundation — design thinking, systems logic, spatial reasoning — now shapes every technical product I build. I believe the best software lives at the intersection of engineering precision and design empathy.
+
+- **Email**: zhangshi0512@gmail.com
+- **LinkedIn**: https://www.linkedin.com/in/zhangshisimon/
+- **X**: https://x.com/Simonsterrific
+- **GitHub**: https://github.com/zhangshi0512
+- **Behance**: https://www.behance.net/Simonarch
+- **Ideogram**: https://ideogram.ai/@simonsterrific/pinned
+
+---
+
+## Technical Skills
+
+### Languages
+- TypeScript / JavaScript (95%)
+- Python (90%)
+- SQL (88%)
+- Java / Kotlin (82%)
+- C++ (78%)
+
+### Frameworks
+- React.js / Next.js (96%)
+- Node.js (88%)
+- Flask (80%)
+- Vue.js (75%)
+- Spring Boot (72%)
+
+### Tools & Data
+- PostgreSQL / Supabase (90%)
+- LLM Integration (GPT / Claude / Gemini) (92%)
+- Vector Search / Embeddings (85%)
+- OpenCV / Computer Vision (84%)
+- Docker / AWS (80%)
+
+---
+
+## Work Experience
+
+### Founding Software Engineer — IDitor Inc, San Francisco CA (Nov 2025 – Present)
+- Architected a multi-platform AI social ecosystem (Flutter mobile + Next.js web) with microservices backend.
+- Integrated Gemini, OpenAI, and Claude for automated Life Story generation, AI-moderated feeds, and image validation.
+- Engineered vector embeddings + random-walker clustering across 40k+ geospatial memories.
+- Built Python/Selenium scraping pipelines and agent-driven research workflows. Deployed on Vercel/Supabase with GitHub Actions CI/CD.
+- Open-sourced the OpenClaw Plugin and EchoMem Skill.
+
+### Software Engineer — IDitor Inc, Hillsborough CA (Sep 2024 – Dec 2024)
+- Created user-matching service using cosine similarity and semantic search (+20% accuracy).
+- Built real-time friend search with Next.js, Supabase, and Vercel KV.
+- Designed chat-simulation API with OpenAI, optimized backend to reduce response times by 30%.
+
+### Software Engineer — Graph Academy, Cupertino CA (May 2024 – Aug 2024)
+- Maintained scalability through TypeScript and modular design, supporting 35% more concurrent users.
+- Next.js navigation boosted user engagement by 30%.
+- Camera + profile features accelerated new-user registration by 50%.
+
+### Research Assistant — Northeastern University, Seattle WA (May 2023 – Dec 2023)
+- Adapted YCSB+T to benchmark NoSQL and distributed SQL databases.
+- NLP and transformer-based semantic resume matching improved recruiter efficiency by 25%.
+
+### Architectural Designer — Ballinger, Philadelphia PA (Feb 2020 – Nov 2022)
+- Managed 1.6M sq. ft. healthcare project across all documentation phases.
+- Automated Excel-Revit workflows with Python scripts.
+
+---
+
+## Education
+
+- **Certificate in Data Analytics & Engineering** — Northeastern University (Fall 2025 – Spring 2026)
+- **MS Computer Science** — Northeastern University, Seattle WA (Graduated May 2025)
+- **MS Design** — University of Pennsylvania, Philadelphia PA (Dec 2019)
+- **Bachelor of Architecture** — Rensselaer Polytechnic Institute, Troy NY (May 2018)
+
+---
+
+## Projects
+
+### EchoChat
+Multi-platform AI social ecosystem. Flutter, Next.js, Multi-LLM (Gemini, OpenAI, Claude). 40k+ geospatial memories with random-walker clustering. Production social platform.
+- https://www.iditor.com/
+
+### EchoMemory
+Chrome extension for capturing browsing context into persistent memory layer. Uses vector search to surface relevant memories across sessions. OpenClaw, Supabase, vector sync.
+- https://chromewebstore.google.com/detail/echomemory/ajpnpcldpacnhpclcfhfgaiiokmcncdg
+
+### PollenBoard
+Modern, responsive web app for creating, sharing, and exploring AI-generated content. Next.js 15, TypeScript, Pollinations.AI.
+- https://github.com/zhangshi0512/Pollenboard
+
+### Real-Time AR System
+C++ application with OpenCV for camera calibration and real-time 3D object projection. Features dynamic AR environment interaction.
+- https://github.com/zhangshi0512/cs5330_project04_calibration-AugmentedReality
+
+### FactHub
+Full-stack social web application with React frontend and Supabase backend. Voting, categorization, and commenting systems.
+- https://factup.netlify.app/
+
+### StayStocked
+Android app built with Kotlin for grocery inventory management. Kroger API, product listings, search filters. 140+ users.
+- https://vimeo.com/822187167
+
+### Real-Time Object Classifier
+Object recognition with C++ and OpenCV using KNN matching and Hausdorff distance-based contour recognition.
+- https://github.com/zhangshi0512/cs5330_project03_realTime2DObjectRecognition
+
+### Creatorverse
+Content creator management platform. React, Supabase. CRUD operations with card-based responsive design.
+- https://creatorverse-theta.vercel.app/
+
+### AI Chat with Document Context
+RAG chatbot that processes documents for contextual responses using local and external AI models. React, Next.js, Material-UI.
+- https://rag-chatbot-lac.vercel.app/
+
+---
+
+## Blog Posts
+
+### Advanced Context Engineering for AI Agents (2025-10-16)
+Practical lessons from Manis in production. Covers three core techniques: context reduction (threshold-based compaction → lossy summarization), context isolation (sandboxing per-agent contexts via branching and forking), and context offloading (externalizing tool results, selective restoration). Argues context engineering draws a strategic boundary between the application layer and model layer, allowing teams to move quickly without model fine-tuning.
+- https://shizhang.github.io/blog.html?post=2025-10-16-Advanced-Context-Engineering-for-AI-Agents
+
+### Five Surprising Development Lessons from a Claude Code Engineer Interview (2025-12-08)
+Insights from Anthropic's Claude Code engineers Boris and Cat. Covers: (1) paradigm-shifting tools often emerge from pragmatic experiments, not grand plans; (2) deliberate openness to misuse reveals latent demand; (3) "ant fooding" — eating your own dog food — creates tight feedback loops; (4) embrace impermanence by building throwaway features; (5) plain text beats vector search for codebase navigation.
+- https://shizhang.github.io/blog.html?post=2025-12-08-Claude-Code-Engineer-Interview
+
+### How Generative AI Accelerates Eras and Compresses Processes — "Cognitive Railroads" (2025-12-19)
+A historical parallel between the 19th-century railway revolution and generative AI. Railroads compressed physical space-time; AI compresses cognition-time, transforming intentions into digital artifacts near-instantly. Explores how compression forces societies to reorganize — standardized time then, context architecture now. Argues AI makes "the future testable" in the same way railroads made faraway places reachable.
+- https://shizhang.github.io/blog.html?post=2025-12-19-Cognitive-Railroads
+
+### From Data-Intensive to Token-Intensive Systems (2026-03-22)
+Argues generative AI shifts the software paradigm from data-intensive (storing/retrieving records, ACID, I/O bottlenecks) to token-intensive (orchestrating context, GPU compute, token budget management). Software engineering becomes probabilistic, not deterministic. Failure modes: token exhaustion, hallucinations, context corruption.
+- https://shizhang.github.io/blog.html?post=2026-03-22-From-Data-Intensive-to-Token-Intensive-Systems
+
+### What AI Actually Does to the Economy (That No One Is Talking About) (2026-05-28)
+Argues AI's transformative economic impact is not just replacing codified labor but making tacit knowledge — skills you perform well but cannot easily articulate — encodable for the first time. This erodes the traditional moat for knowledge workers. Distinguishes AI from prior technological revolutions (steam, electricity, IT) which targeted structured, codifiable tasks.
+- https://shizhang.github.io/blog.html?post=2026-05-28-What-AI-Actually-Does-to-the-Economy-That-No-One-Is-Talking-About
+
+### Trust is the New Moat: Why GTM Must Evolve in the AI Era (2026-06-15)
+In the AI era, trust has replaced traffic as the most expensive currency for market entry. Four pillars for go-to-market: (1) open source as a trust mechanism, (2) balancing privacy with proactive AI via end-to-end encryption and anthropomorphic design, (3) verifiable neutrality and Generative Engine Optimization (GEO), (4) community-as-product — users as the first sales team.
+- https://shizhang.github.io/blog.html?post=2026-06-15-Trust-is-the-New-Moat-Why-GTM-Must-Evolve-in-the-AI-Era

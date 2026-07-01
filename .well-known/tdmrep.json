@@ -1,0 +1,9 @@
+{
+  "@context": "http://www.w3.org/ns/tdmrep",
+  "payload": [
+    {
+      "profile": "http://www.w3.org/ns/tdmrep#TDMReservation",
+      "claim": "http://www.w3.org/ns/tdmrep#ReservationClaimed"
+    }
+  ]
+}

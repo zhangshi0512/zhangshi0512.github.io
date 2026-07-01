@@ -1,0 +1,32 @@
+# robots.txt for shizhang.github.io
+# AI crawler controls + standard search engine rules
+
+# --- AI Training Crawlers (disallowed for training purposes) ---
+User-agent: GPTBot
+Disallow: /
+
+User-agent: ClaudeBot
+Disallow: /
+
+User-agent: Claude-Web
+Disallow: /
+
+User-agent: Google-Extended
+Disallow: /
+
+User-agent: PerplexityBot
+Disallow: /
+
+User-agent: CCBot
+Disallow: /
+
+User-agent: FacebookBot
+Disallow: /
+
+# --- Standard Search Engines (allowed) ---
+User-agent: *
+Allow: /
+Crawl-delay: 10
+
+# --- Sitemap ---
+Sitemap: https://shizhang.github.io/sitemap.xml
