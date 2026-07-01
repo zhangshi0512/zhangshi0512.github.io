@@ -47,7 +47,8 @@
     .ac-status{font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--fg-dim,oklch(55% 0.006 80))}
     .ac-status.active{color:var(--accent,oklch(72% 0.20 240))}
     .ac-status.error{color:oklch(72% 0.20 30)}
-    .ac-debug{padding:12px 18px 0;border-top:1px solid oklch(100% 0 0/0.04);display:grid;gap:8px}
+    .ac-debug{padding:0 18px;border-top:1px solid oklch(25% 0.008 55/0);display:grid;gap:0;max-height:0;overflow:hidden;opacity:0;transition:padding .25s ease,gap .25s ease,max-height .25s ease,opacity .2s ease,border-color .2s ease}
+   .ac-debug.ac-debug-active{padding:12px 18px 0;gap:8px;max-height:320px;opacity:1;border-top-color:oklch(100% 0 0/0.04)}
     .ac-debug-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
     .ac-debug-label{font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--fg-dim,oklch(55% 0.006 80))}
     .ac-debug-chip{font-size:10px;line-height:1.35;padding:4px 8px;border-radius:999px;border:1px solid oklch(30% 0.008 55);background:oklch(100% 0 0/0.03);color:var(--fg,oklch(95% 0.008 80))}
@@ -616,6 +617,8 @@
     if (isStreaming) return;
     isStreaming = true;
     resetTemporalDebugPanel();
+    const debugEl = document.getElementById('ac-debug');
+    if (debugEl) debugEl.classList.add('ac-debug-active');
     sendBtn.disabled = true;
     inputEl.disabled = true;
     dotEl.classList.add('thinking');
@@ -824,6 +827,8 @@
 
     function stopTransientStatus() {
       realOutputStarted = true;
+      const debugPanel = document.getElementById('ac-debug');
+      if (debugPanel) debugPanel.classList.remove('ac-debug-active');
       if (transientTimer !== null) {
         clearInterval(transientTimer);
         transientTimer = null;
@@ -1175,6 +1180,8 @@
   function clearChat() {
     history = [];
     bodyEl.innerHTML = '<div class="ac-msg ac-msg-agent">Hi, I\'m Simon\'s digital twin, not Simon himself. Ask me about architecture, AI, career, or Simon\'s past work.</div>';
+    const debugEl = document.getElementById('ac-debug');
+    if (debugEl) debugEl.classList.remove('ac-debug-active');
     resetTemporalDebugPanel();
     setStatus('Ready', '');
   }
