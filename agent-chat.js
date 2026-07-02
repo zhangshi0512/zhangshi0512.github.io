@@ -13,7 +13,7 @@
   'use strict';
 
   // ─── Config ───────────────────────────────────────────────
-  const WIDGET_VERSION = '0.1.14';
+  const WIDGET_VERSION = '0.1.15';
   const BACKEND = window.AGENT_CHAT_BACKEND ||
     'https://simonsterrific-shizhang-agent.hf.space';
   const MAX_HISTORY = 12;
@@ -77,8 +77,8 @@
     .ac-msg-agent pre{background:oklch(14% 0.01 55);border:1px solid oklch(22% 0.008 55);border-radius:6px;padding:10px 14px;overflow:auto;font-size:11px;line-height:1.6;margin:8px 0;scrollbar-width:none;-ms-overflow-style:none}
     .ac-msg-agent pre::-webkit-scrollbar{display:none}
     .ac-msg-agent pre code{background:none;color:var(--fg,oklch(95% 0.008 80));padding:0;font-size:inherit}
-    .ac-msg-agent ul,.ac-msg-agent ol{margin:4px 0;padding-left:18px}
-    .ac-msg-agent li{margin:2px 0;line-height:1.6}
+    .ac-msg-agent ul,.ac-msg-agent ol{margin:6px 0;padding:0 6px 0 1.35em;list-style-position:inside}
+    .ac-msg-agent li{margin:3px 0;padding-left:2px;line-height:1.6}
     .ac-msg-agent li::marker{color:var(--accent,oklch(72% 0.20 240))}
     .ac-msg-agent a{color:var(--accent,oklch(72% 0.20 240));text-decoration:underline;text-underline-offset:2px}
     .ac-msg-agent a:hover{opacity:.8}
@@ -104,6 +104,8 @@
     .ac-transient-item.old-2{opacity:.5}
     .ac-transient-item.old-3{opacity:.34}
     .ac-transient-item.old-4{opacity:.22}
+    .ac-transient-item.temporal{color:oklch(72% 0.16 240)}
+    .ac-transient-item.temporal.current{color:oklch(78% 0.14 240)}
     @keyframes ac-timeline-in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 
     /* Tool Card */
@@ -310,11 +312,21 @@
     // Ordered lists
     html = html.replace(/^\d+\. (.+)$/gm, '<li>$1</li>');
 
-    // Paragraphs: double newlines → paragraph breaks
-    html = html.replace(/\n\n+/g, '</p><p>');
-    html = '<p>' + html + '</p>';
-    // Clean empty paragraphs
-    html = html.replace(/<p>\s*<\/p>/g, '');
+    // Paragraphs: wrap text blocks only — keep lists/headings outside <p>
+    html = html.split(/\n\n+/).map(function (chunk) {
+      const trimmed = chunk.trim();
+      if (!trimmed) return '';
+      if (/^<(ul|ol|h[1-3]|pre|table|blockquote|hr)\b/.test(trimmed)) return trimmed;
+      if (/<(ul|ol|h[1-3]|pre|table|blockquote|hr)\b/.test(trimmed)) {
+        return trimmed.split(/\n(?=<(?:ul|ol|h[1-3]|pre|table|blockquote|hr)\b)/).map(function (part) {
+          part = part.trim();
+          if (!part) return '';
+          if (/^<(ul|ol|h[1-3]|pre|table|blockquote|hr)\b/.test(part)) return part;
+          return '<p>' + part.replace(/\n/g, '<br>') + '</p>';
+        }).filter(Boolean).join('\n');
+      }
+      return '<p>' + trimmed.replace(/\n/g, '<br>') + '</p>';
+    }).filter(Boolean).join('\n');
 
     return html;
   }
@@ -462,12 +474,44 @@
     return start + ' → ' + end;
   }
 
+  function formatTemporalDateShort(value) {
+    if (!value) return 'unknown';
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return String(value);
+    return new Intl.DateTimeFormat(undefined, {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+    }).format(date);
+  }
+
+  function formatTemporalTransientMessage(payload, isZh) {
+    const constraint = payload && payload.temporal_constraint ? payload.temporal_constraint : null;
+    if (!constraint) return null;
+    const start = constraint.start ? formatTemporalDateShort(constraint.start) : 'unknown';
+    const end = constraint.end ? formatTemporalDateShort(constraint.end) : 'unknown';
+    const hint = constraint.matched_text || constraint.kind || '';
+    if (isZh) {
+      return hint
+        ? '检索范围：' + start + ' 至 ' + end + '（匹配「' + hint + '」）'
+        : '检索范围：' + start + ' 至 ' + end;
+    }
+    return hint
+      ? 'Scoping search to ' + start + ' – ' + end + ' (matched “' + hint + '”)'
+      : 'Scoping search to ' + start + ' – ' + end;
+  }
+
+  function isDebugMode() {
+    return !!window.AGENT_CHAT_DEBUG;
+  }
+
   function updateTemporalDebugPanel(payload) {
     const constraint = payload && payload.temporal_constraint ? payload.temporal_constraint : null;
     const applied = payload && payload.applied ? payload.applied : false;
     const referenceTime = payload && payload.reference_time ? payload.reference_time : null;
     const searchQuery = payload && payload.search_query ? payload.search_query : '';
     const source = constraint ? (constraint.matched_text || constraint.kind || 'temporal hint') : 'none';
+    const debugEl = document.getElementById('ac-debug');
 
     if (debugStateEl) {
       debugStateEl.textContent = constraint
@@ -488,6 +532,10 @@
       : 'Matched hint: ' + source + '. ' + (applied
           ? 'The output KB search is already filtered by this window.'
           : 'The backend parsed a temporal window but has not applied it yet.') + queryText;
+    }
+    if (debugEl) {
+      if (isDebugMode() && constraint) debugEl.classList.add('ac-debug-active');
+      else debugEl.classList.remove('ac-debug-active');
     }
   }
 
@@ -617,8 +665,6 @@
     if (isStreaming) return;
     isStreaming = true;
     resetTemporalDebugPanel();
-    const debugEl = document.getElementById('ac-debug');
-    if (debugEl) debugEl.classList.add('ac-debug-active');
     sendBtn.disabled = true;
     inputEl.disabled = true;
     dotEl.classList.add('thinking');
@@ -767,10 +813,12 @@
         '把笔记折成一条连贯路径',
       ],
     };
-    const transientMessages = /[\u4e00-\u9fff]/.test(query)
+    const isZhQuery = /[\u4e00-\u9fff]/.test(query);
+    const transientMessages = isZhQuery
       ? transientMessageSets.zh
       : transientMessageSets.en;
     let transientQueue = [];
+    let temporalTransientShown = false;
 
     function shuffleMessages(messages) {
       const shuffled = messages.slice();
@@ -812,10 +860,10 @@
       scrollBottom();
     }
 
-    function updateTransientStatus(text) {
+    function updateTransientStatus(text, opts) {
       if (!transientTextEl || realOutputStarted) return;
       const item = document.createElement('div');
-      item.className = 'ac-transient-item current';
+      item.className = 'ac-transient-item current' + (opts && opts.temporal ? ' temporal' : '');
       item.textContent = text;
       transientTextEl.appendChild(item);
       while (transientTextEl.children.length > 5) {
@@ -825,10 +873,19 @@
       scrollBottom();
     }
 
+    function maybeShowTemporalTransient(payload) {
+      if (temporalTransientShown || !payload || !payload.temporal_constraint) return;
+      const msg = formatTemporalTransientMessage(payload, isZhQuery);
+      if (!msg) return;
+      temporalTransientShown = true;
+      updateTransientStatus(msg, { temporal: true });
+      if (isDebugMode()) updateTemporalDebugPanel(payload);
+    }
+
     function stopTransientStatus() {
       realOutputStarted = true;
       const debugPanel = document.getElementById('ac-debug');
-      if (debugPanel) debugPanel.classList.remove('ac-debug-active');
+      if (debugPanel && !isDebugMode()) debugPanel.classList.remove('ac-debug-active');
       if (transientTimer !== null) {
         clearInterval(transientTimer);
         transientTimer = null;
@@ -1004,16 +1061,18 @@
 
       switch (event) {
         case 'request_started':
-          updateTemporalDebugPanel({
-            reference_time: data.reference_time || null,
-            temporal_constraint: null,
-            applied: false,
-            search_query: '',
-          });
+          if (isDebugMode()) {
+            updateTemporalDebugPanel({
+              reference_time: data.reference_time || null,
+              temporal_constraint: null,
+              applied: false,
+              search_query: '',
+            });
+          }
           break;
 
         case 'route_selected':
-          updateTemporalDebugPanel({
+          maybeShowTemporalTransient({
             reference_time: data.reference_time || null,
             temporal_constraint: data.temporal_constraint || null,
             applied: false,
@@ -1089,7 +1148,7 @@
           break;
 
         case 'done':
-          updateTemporalDebugPanel({
+          maybeShowTemporalTransient({
             reference_time: data.retrieval && data.retrieval.reference_time ? data.retrieval.reference_time : null,
             temporal_constraint: data.retrieval && data.retrieval.temporal_filter ? data.retrieval.temporal_filter : null,
             applied: !!(data.retrieval && data.retrieval.temporal_filter_applied),
