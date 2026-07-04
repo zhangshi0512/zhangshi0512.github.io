@@ -11,7 +11,7 @@
   'use strict';
 
   // ─── Config ───────────────────────────────────────────────
-  const WIDGET_VERSION = '0.2.0';
+  const WIDGET_VERSION = '0.2.1';
   const BACKEND = window.AGENT_CHAT_BACKEND ||
     'https://simonsterrific-shizhang-agent.hf.space';
   const MAX_HISTORY = 12;
@@ -26,6 +26,7 @@
     .ac-scrim.ac-open{opacity:1;pointer-events:all}
 
     .ac-fluid-hit{position:absolute;inset:0;z-index:2;background:transparent;border:none;padding:0;cursor:none}
+    body.fluid-zone .hero-fluid{z-index:3}
     .ac-fluid-tap-hint{position:absolute;right:10%;top:42%;z-index:3;font-family:var(--font-display,'Bebas Neue',sans-serif);font-size:11px;letter-spacing:.2em;color:var(--accent,oklch(72% 0.20 240));opacity:.65;pointer-events:none;animation:ac-hint-pulse 2.5s ease-in-out infinite}
     .ac-fluid-tap-hint.ac-hidden{display:none}
     @keyframes ac-hint-pulse{0%,100%{opacity:.4}50%{opacity:.85}}
@@ -362,6 +363,14 @@
     document.body.style.overflow = locked ? 'hidden' : '';
   }
 
+  function pointInFluid(clientX, clientY) {
+    const host = document.getElementById('hero-fluid');
+    if (!host) return false;
+    const rect = host.getBoundingClientRect();
+    return clientX >= rect.left && clientX <= rect.right &&
+      clientY >= rect.top && clientY <= rect.bottom;
+  }
+
   function setFluidAttract(clientX, clientY, active) {
     const host = document.getElementById('hero-fluid');
     if (!host || !window.__heroFluid) return;
@@ -376,9 +385,7 @@
   function updateFluidZone(clientX, clientY) {
     const host = document.getElementById('hero-fluid');
     if (!host || !finePointerMq.matches) return;
-    const rect = host.getBoundingClientRect();
-    const inside = clientX >= rect.left && clientX <= rect.right &&
-      clientY >= rect.top && clientY <= rect.bottom;
+    const inside = pointInFluid(clientX, clientY);
     if (inside === inFluidZone && inside) {
       setFluidAttract(clientX, clientY, !isOpen);
       return;
@@ -409,6 +416,12 @@
     try { localStorage.setItem('ac-tap-hint-dismissed', '1'); } catch (_) { /* ignore */ }
   }
 
+  function openFromFluidField(clientX, clientY) {
+    hideTapHint();
+    showClickRipple(clientX, clientY);
+    openPanel();
+  }
+
   function initFluidEntry() {
     const host = document.getElementById('hero-fluid');
     if (!host || host.querySelector('.ac-fluid-hit')) return;
@@ -430,10 +443,9 @@
     host.appendChild(fluidHitEl);
 
     fluidHitEl.addEventListener('click', function (e) {
+      e.preventDefault();
       e.stopPropagation();
-      hideTapHint();
-      showClickRipple(e.clientX, e.clientY);
-      openPanel();
+      openFromFluidField(e.clientX, e.clientY);
     });
 
     host.addEventListener('mouseenter', function () {
@@ -1278,6 +1290,14 @@
     document.addEventListener('mousemove', function (e) {
       updateFluidZone(e.clientX, e.clientY);
     }, { passive: true });
+
+    document.addEventListener('click', function (e) {
+      if (isOpen || !inFluidZone) return;
+      if (e.target.closest('.ac-drawer, .ac-scrim, nav, .ac-strip, .ac-mobile-strip, #tweaks-panel, #blog-modal, #blog-reader')) return;
+      if (!pointInFluid(e.clientX, e.clientY)) return;
+      e.preventDefault();
+      openFromFluidField(e.clientX, e.clientY);
+    });
   }
 
   stripBtn.addEventListener('click', openPanel);
