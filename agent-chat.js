@@ -1,8 +1,6 @@
 /**
- * agent-chat.js — Floating chat bubble + SSE streaming panel
- * for shizhang-agent backend (HF Spaces).
- *
- * v2 — adds Markdown rendering, transparent agent reasoning display.
+ * agent-chat.js — C+E entry (fluid zone + drawer) + SSE streaming panel
+ * for shizhang-agent backend.
  *
  * Backend URL is read from the global AGENT_CHAT_BACKEND or defaults below.
  *   <script>window.AGENT_CHAT_BACKEND = 'https://xxx.workers.dev';</script>
@@ -13,7 +11,7 @@
   'use strict';
 
   // ─── Config ───────────────────────────────────────────────
-  const WIDGET_VERSION = '0.1.15';
+  const WIDGET_VERSION = '0.2.0';
   const BACKEND = window.AGENT_CHAT_BACKEND ||
     'https://simonsterrific-shizhang-agent.hf.space';
   const MAX_HISTORY = 12;
@@ -24,19 +22,29 @@
 
   // ─── Inject Styles ────────────────────────────────────────
   const STYLE = /*css*/`
-    .ac-bubble{position:fixed;bottom:28px;right:28px;z-index:8000;width:52px;height:52px;border-radius:50%;background:var(--accent,oklch(72% 0.20 240));border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 0 24px oklch(72% 0.20 240/0.35);transition:transform .25s,box-shadow .25s,opacity .25s;animation:ac-pulse 3s ease-in-out infinite}
-    .ac-bubble:hover{transform:scale(1.12);box-shadow:0 0 36px oklch(72% 0.20 240/0.55)}
-    .ac-bubble svg{width:24px;height:24px;fill:oklch(10% 0.012 55)}
-    .ac-bubble.ac-open{opacity:0;pointer-events:none}
-    @keyframes ac-pulse{0%,100%{box-shadow:0 0 24px oklch(72% 0.20 240/0.35)}50%{box-shadow:0 0 36px oklch(72% 0.20 240/0.50)}}
+    .ac-scrim{position:fixed;inset:0;z-index:8500;background:oklch(0% 0 0/0.12);opacity:0;pointer-events:none;transition:opacity .5s cubic-bezier(.16,1,.3,1)}
+    .ac-scrim.ac-open{opacity:1;pointer-events:all}
 
-    .ac-panel{position:fixed;bottom:28px;right:28px;z-index:7999;width:420px;min-width:320px;max-width:calc(100vw - 16px);height:600px;min-height:380px;max-height:calc(100vh - 16px);background:transparent;border:1px solid oklch(100% 0 0/0.14);border-radius:12px;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 16px 48px oklch(0% 0 0/0.45);transform:translateY(12px) scale(.96);visibility:hidden;pointer-events:none;transition:transform .3s cubic-bezier(.16,1,.3,1),visibility 0s linear .3s;-webkit-font-smoothing:antialiased;isolation:isolate}
-    .ac-panel.ac-open{transform:translateY(0) scale(1);visibility:visible;pointer-events:all;transition:transform .3s cubic-bezier(.16,1,.3,1),visibility 0s}
-    .ac-panel-glass{position:absolute;inset:0;z-index:0;border-radius:inherit;pointer-events:none;background:oklch(12% 0.01 55/0.8);-webkit-backdrop-filter:blur(50px) saturate(200%) brightness(1.12);backdrop-filter:blur(50px) saturate(200%) brightness(1.12);box-shadow:inset 0 1px 0 oklch(100% 0 0/0.1),inset 0 -1px 0 oklch(0% 0 0/0.18)}
-    @supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){.ac-panel-glass{background:oklch(12% 0.01 55/0.92);box-shadow:inset 0 1px 0 oklch(100% 0 0/0.06)}}
-    .ac-panel>.ac-header,.ac-panel>.ac-debug,.ac-panel>.ac-body,.ac-panel>.ac-disclaimer,.ac-panel>.ac-input-wrap{position:relative;z-index:1;background:transparent}
+    .ac-fluid-hit{position:absolute;inset:0;z-index:2;background:transparent;border:none;padding:0;cursor:none}
+    .ac-fluid-tap-hint{position:absolute;right:10%;top:42%;z-index:3;font-family:var(--font-display,'Bebas Neue',sans-serif);font-size:11px;letter-spacing:.2em;color:var(--accent,oklch(72% 0.20 240));opacity:.65;pointer-events:none;animation:ac-hint-pulse 2.5s ease-in-out infinite}
+    .ac-fluid-tap-hint.ac-hidden{display:none}
+    @keyframes ac-hint-pulse{0%,100%{opacity:.4}50%{opacity:.85}}
 
-    .ac-header{flex:0 0 auto;display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid oklch(25% 0.008 55/0.55);cursor:move;user-select:none}
+    .ac-strip{position:fixed;right:0;top:0;bottom:0;z-index:7000;width:3px;background:var(--accent,oklch(72% 0.20 240));border:none;padding:0;opacity:.35;cursor:pointer;transition:width .3s cubic-bezier(.16,1,.3,1),opacity .3s;box-shadow:0 0 20px var(--accent-dim,oklch(72% 0.20 240/0.12))}
+    .ac-strip:hover,.ac-strip:focus-visible{width:5px;opacity:.85;outline:none}
+    body.ac-drawer-open .ac-strip{opacity:0;pointer-events:none}
+
+    .ac-mobile-strip{display:none;position:fixed;left:0;right:0;bottom:0;z-index:7000;min-height:44px;padding:10px 16px calc(10px + env(safe-area-inset-bottom));background:oklch(12% 0.01 55/0.94);border-top:2px solid var(--accent,oklch(72% 0.20 240));font-family:var(--font-display,'Bebas Neue',sans-serif);font-size:12px;letter-spacing:.22em;color:var(--accent,oklch(72% 0.20 240));cursor:pointer;align-items:center;justify-content:center;gap:10px;backdrop-filter:blur(12px);border-left:none;border-right:none;border-bottom:none}
+    .ac-mobile-strip::before{content:'◆';font-size:8px}
+    body.ac-drawer-open .ac-mobile-strip{opacity:0;pointer-events:none}
+
+    .ac-drawer{position:fixed;top:0;right:0;bottom:0;z-index:9000;width:min(420px,100vw);display:flex;flex-direction:column;overflow:hidden;border-left:1px solid oklch(100% 0 0/0.14);box-shadow:-24px 0 60px oklch(0% 0 0/0.45),0 0 60px var(--accent-dim,oklch(72% 0.20 240/0.12));transform:translateX(100%);transition:transform .65s cubic-bezier(.16,1,.3,1);-webkit-font-smoothing:antialiased;isolation:isolate}
+    .ac-drawer.ac-open{transform:translateX(0)}
+    .ac-drawer-glass{position:absolute;inset:0;z-index:0;pointer-events:none;background:oklch(12% 0.01 55/0.85);-webkit-backdrop-filter:blur(50px) saturate(200%) brightness(1.1);backdrop-filter:blur(50px) saturate(200%) brightness(1.1);box-shadow:inset 0 1px 0 oklch(100% 0 0/0.1)}
+    @supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){.ac-drawer-glass{background:oklch(12% 0.01 55/0.94)}}
+    .ac-drawer>.ac-header,.ac-drawer>.ac-debug,.ac-drawer>.ac-body,.ac-drawer>.ac-disclaimer,.ac-drawer>.ac-input-wrap{position:relative;z-index:1;background:transparent}
+
+    .ac-header{flex:0 0 auto;display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid oklch(25% 0.008 55/0.55);user-select:none}
     .ac-header-title{font-family:var(--font-display,'Bebas Neue',sans-serif);font-size:20px;letter-spacing:.04em;color:var(--fg,oklch(95% 0.008 80));display:flex;align-items:center;gap:8px}
     .ac-header-dot{width:8px;height:8px;border-radius:50%;background:var(--accent,oklch(72% 0.20 240));transition:background .3s}
     .ac-header-dot.thinking{animation:ac-pulse-dot .8s ease-in-out infinite}
@@ -143,19 +151,18 @@
     .ac-send:hover{opacity:.8}
     .ac-send:disabled{opacity:.35;pointer-events:none}
     .ac-send svg{width:16px;height:16px}
-    .ac-resize-handle{position:absolute;z-index:4;background:transparent}
-    .ac-resize-n,.ac-resize-s{left:12px;right:12px;height:8px;cursor:ns-resize}
-    .ac-resize-n{top:0}.ac-resize-s{bottom:0}
-    .ac-resize-e,.ac-resize-w{top:12px;bottom:12px;width:8px;cursor:ew-resize}
-    .ac-resize-e{right:0}.ac-resize-w{left:0}
-    .ac-resize-ne,.ac-resize-nw,.ac-resize-se,.ac-resize-sw{width:16px;height:16px}
-    .ac-resize-ne{right:0;top:0;cursor:nesw-resize}.ac-resize-nw{left:0;top:0;cursor:nwse-resize}.ac-resize-se{right:0;bottom:0;cursor:nwse-resize}.ac-resize-sw{left:0;bottom:0;cursor:nesw-resize}
 
+    .ac-click-ripple{position:fixed;width:8px;height:8px;border-radius:50%;border:2px solid var(--accent,oklch(72% 0.20 240));pointer-events:none;z-index:8999;transform:translate(-50%,-50%);animation:ac-ripple .6s cubic-bezier(.16,1,.3,1) forwards}
+    @keyframes ac-ripple{to{width:120px;height:120px;opacity:0;border-width:1px}}
+
+    @media(hover:none),(pointer:coarse){
+      .ac-fluid-hit{cursor:pointer}
+      .ac-mobile-strip{display:flex}
+      .ac-strip{display:none}
+    }
     @media(max-width:480px){
-      .ac-panel{left:8px;right:8px;width:auto;min-width:0;max-width:none;bottom:max(8px,env(safe-area-inset-bottom));height:calc(100dvh - 16px - env(safe-area-inset-top) - env(safe-area-inset-bottom));max-height:none;border-radius:16px}
-      .ac-bubble{bottom:max(16px,env(safe-area-inset-bottom));right:max(16px,env(safe-area-inset-right))}
-      .ac-resize-handle{display:none}
-      .ac-header{cursor:default;padding:12px 14px;touch-action:pan-y}
+      .ac-drawer{width:100vw}
+      .ac-header{padding:12px 14px;touch-action:pan-y}
       .ac-body{padding:12px 14px;gap:8px;-webkit-overflow-scrolling:touch}
       .ac-msg{max-width:92%;font-size:11px}
       .ac-msg-agent{max-height:min(50dvh,420px)}
@@ -164,9 +171,6 @@
       .ac-header-title{font-size:18px}
       .ac-btn{padding:6px 10px}
     }
-    @supports not (height:100dvh){
-      @media(max-width:480px){.ac-panel{height:calc(100vh - 16px - env(safe-area-inset-top) - env(safe-area-inset-bottom))}}
-    }
   `;
 
   const styleEl = document.createElement('style');
@@ -174,29 +178,33 @@
   document.head.appendChild(styleEl);
 
   // ─── Build DOM ────────────────────────────────────────────
-  const bubble = document.createElement('button');
-  bubble.className = 'ac-bubble';
-  bubble.setAttribute('aria-label', "Chat with Simon's digital twin");
-  bubble.innerHTML = `<svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>`;
+  const scrim = document.createElement('div');
+  scrim.className = 'ac-scrim';
+  scrim.setAttribute('aria-hidden', 'true');
+
+  const stripBtn = document.createElement('button');
+  stripBtn.className = 'ac-strip';
+  stripBtn.setAttribute('aria-label', "Ask Simon — open chat");
+
+  const mobileStrip = document.createElement('button');
+  mobileStrip.className = 'ac-mobile-strip';
+  mobileStrip.type = 'button';
+  mobileStrip.textContent = 'Ask Simon';
 
   const panel = document.createElement('div');
-  panel.className = 'ac-panel';
-  panel.innerHTML = `<div class="ac-panel-glass" aria-hidden="true"></div><div class="ac-header"><div class="ac-header-title"><span class="ac-header-dot" id="ac-dot"></span>Ask Simon</div><div class="ac-header-actions"><span class="ac-status" id="ac-status">Ready</span><button class="ac-btn" id="ac-save">Save</button><button class="ac-btn" id="ac-clear">Clear</button><button class="ac-btn" id="ac-close">✕</button></div></div><div class="ac-debug" id="ac-debug"><div class="ac-debug-row"><span class="ac-debug-label">Temporal</span><span class="ac-debug-chip dim" id="ac-debug-state">No temporal window yet</span></div><div class="ac-debug-row"><span class="ac-debug-chip" id="ac-debug-reference">Reference time: pending</span><span class="ac-debug-chip" id="ac-debug-window">Resolved window: pending</span></div><div class="ac-debug-note" id="ac-debug-note">The backend resolves relative hints like “去年” or “past three years” into a request-scoped publication-time window.</div></div><div class="ac-body" id="ac-body"><div class="ac-msg ac-msg-agent">Hi, I'm Simon's digital twin, not Simon himself. Ask me about architecture, AI, career, or Simon's past work.</div></div><div class="ac-disclaimer">This digital twin only answers from Simon's past work and may be inaccurate. It does not speak for Simon. / 此数字分身仅基于 Simon 过去的产出回答，不代表 Simon 本人，请自行核查事实。</div><div class="ac-input-wrap"><textarea class="ac-input" id="ac-input" rows="1" placeholder="Ask about Simon's past work..."></textarea><button class="ac-send" id="ac-send" aria-label="Send"><svg viewBox="0 0 24 24"><path fill="oklch(10% 0.012 55)" d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg></button></div>`;
+  panel.className = 'ac-drawer';
+  panel.setAttribute('role', 'dialog');
+  panel.setAttribute('aria-labelledby', 'ac-drawer-title');
+  panel.innerHTML = `<div class="ac-drawer-glass" aria-hidden="true"></div><div class="ac-header"><div class="ac-header-title" id="ac-drawer-title"><span class="ac-header-dot" id="ac-dot"></span>Ask Simon</div><div class="ac-header-actions"><span class="ac-status" id="ac-status">Ready</span><button class="ac-btn" id="ac-save">Save</button><button class="ac-btn" id="ac-clear">Clear</button><button class="ac-btn" id="ac-close">✕</button></div></div><div class="ac-debug" id="ac-debug"><div class="ac-debug-row"><span class="ac-debug-label">Temporal</span><span class="ac-debug-chip dim" id="ac-debug-state">No temporal window yet</span></div><div class="ac-debug-row"><span class="ac-debug-chip" id="ac-debug-reference">Reference time: pending</span><span class="ac-debug-chip" id="ac-debug-window">Resolved window: pending</span></div><div class="ac-debug-note" id="ac-debug-note">The backend resolves relative hints like “去年” or “past three years” into a request-scoped publication-time window.</div></div><div class="ac-body" id="ac-body"><div class="ac-msg ac-msg-agent">Hi, I'm Simon's digital twin, not Simon himself. Ask me about architecture, AI, career, or Simon's past work.</div></div><div class="ac-disclaimer">This digital twin only answers from Simon's past work and may be inaccurate. It does not speak for Simon. / 此数字分身仅基于 Simon 过去的产出回答，不代表 Simon 本人，请自行核查事实。</div><div class="ac-input-wrap"><textarea class="ac-input" id="ac-input" rows="1" placeholder="Ask about Simon's past work..."></textarea><button class="ac-send" id="ac-send" aria-label="Send"><svg viewBox="0 0 24 24"><path fill="oklch(10% 0.012 55)" d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg></button></div>`;
 
-  ['n', 's', 'e', 'w', 'ne', 'nw', 'se', 'sw'].forEach(function (dir) {
-    const handle = document.createElement('div');
-    handle.className = 'ac-resize-handle ac-resize-' + dir;
-    handle.dataset.resizeDir = dir;
-    panel.appendChild(handle);
-  });
-
-  document.body.appendChild(bubble);
+  document.body.appendChild(scrim);
+  document.body.appendChild(stripBtn);
+  document.body.appendChild(mobileStrip);
   document.body.appendChild(panel);
 
   const bodyEl = document.getElementById('ac-body');
   const inputEl = document.getElementById('ac-input');
   const sendBtn = document.getElementById('ac-send');
-  const headerEl = panel.querySelector('.ac-header');
   const closeBtn = document.getElementById('ac-close');
   const clearBtn = document.getElementById('ac-clear');
   const saveBtn = document.getElementById('ac-save');
@@ -339,34 +347,10 @@
 
   // ─── Helpers ──────────────────────────────────────────────
 
-  const MIN_PANEL_WIDTH = 320;
-  const MIN_PANEL_HEIGHT = 380;
-  const PANEL_MARGIN = 8;
-
-  function clamp(n, min, max) {
-    return Math.min(Math.max(n, min), max);
-  }
-
-  function setPanelGeometry(left, top, width, height) {
-    const maxWidth = Math.max(MIN_PANEL_WIDTH, window.innerWidth - PANEL_MARGIN * 2);
-    const maxHeight = Math.max(MIN_PANEL_HEIGHT, window.innerHeight - PANEL_MARGIN * 2);
-    const nextWidth = clamp(width, MIN_PANEL_WIDTH, maxWidth);
-    const nextHeight = clamp(height, MIN_PANEL_HEIGHT, maxHeight);
-    const nextLeft = clamp(left, PANEL_MARGIN, window.innerWidth - nextWidth - PANEL_MARGIN);
-    const nextTop = clamp(top, PANEL_MARGIN, window.innerHeight - nextHeight - PANEL_MARGIN);
-
-    panel.style.left = nextLeft + 'px';
-    panel.style.top = nextTop + 'px';
-    panel.style.width = nextWidth + 'px';
-    panel.style.height = nextHeight + 'px';
-    panel.style.right = 'auto';
-    panel.style.bottom = 'auto';
-  }
-
-  function freezePanelGeometry() {
-    const rect = panel.getBoundingClientRect();
-    setPanelGeometry(rect.left, rect.top, rect.width, rect.height);
-  }
+  const finePointerMq = window.matchMedia('(hover: hover) and (pointer: fine)');
+  let inFluidZone = false;
+  let fluidHitEl = null;
+  let tapHintEl = null;
 
   function isMobileLayout() {
     return window.matchMedia('(max-width: 480px)').matches;
@@ -378,68 +362,102 @@
     document.body.style.overflow = locked ? 'hidden' : '';
   }
 
-  function startPanelDrag(e) {
-    if (e.button !== 0 || e.target.closest('.ac-header-actions') || isMobileLayout()) return;
-    e.preventDefault();
-    freezePanelGeometry();
-    const rect = panel.getBoundingClientRect();
-    const startX = e.clientX;
-    const startY = e.clientY;
-
-    function move(ev) {
-      setPanelGeometry(rect.left + ev.clientX - startX, rect.top + ev.clientY - startY, rect.width, rect.height);
+  function setFluidAttract(clientX, clientY, active) {
+    const host = document.getElementById('hero-fluid');
+    if (!host || !window.__heroFluid) return;
+    if (!active) {
+      window.__heroFluid.setAttract(0, 0, false);
+      return;
     }
-
-    function up() {
-      window.removeEventListener('pointermove', move);
-      window.removeEventListener('pointerup', up);
-    }
-
-    window.addEventListener('pointermove', move);
-    window.addEventListener('pointerup', up, { once: true });
+    const rect = host.getBoundingClientRect();
+    window.__heroFluid.setAttract(clientX - rect.left, clientY - rect.top, true);
   }
 
-  function startPanelResize(e) {
-    if (e.button !== 0) return;
-    const dir = e.currentTarget.dataset.resizeDir || '';
-    e.preventDefault();
-    e.stopPropagation();
-    freezePanelGeometry();
-    const rect = panel.getBoundingClientRect();
-    const startX = e.clientX;
-    const startY = e.clientY;
-
-    function move(ev) {
-      const dx = ev.clientX - startX;
-      const dy = ev.clientY - startY;
-      let left = rect.left;
-      let top = rect.top;
-      let width = rect.width;
-      let height = rect.height;
-
-      if (dir.includes('e')) width = rect.width + dx;
-      if (dir.includes('s')) height = rect.height + dy;
-      if (dir.includes('w')) {
-        width = rect.width - dx;
-        left = rect.left + dx;
-      }
-      if (dir.includes('n')) {
-        height = rect.height - dy;
-        top = rect.top + dy;
-      }
-
-      if (width < MIN_PANEL_WIDTH && dir.includes('w')) left = rect.right - MIN_PANEL_WIDTH;
-      if (height < MIN_PANEL_HEIGHT && dir.includes('n')) top = rect.bottom - MIN_PANEL_HEIGHT;
-      setPanelGeometry(left, top, width, height);
+  function updateFluidZone(clientX, clientY) {
+    const host = document.getElementById('hero-fluid');
+    if (!host || !finePointerMq.matches) return;
+    const rect = host.getBoundingClientRect();
+    const inside = clientX >= rect.left && clientX <= rect.right &&
+      clientY >= rect.top && clientY <= rect.bottom;
+    if (inside === inFluidZone && inside) {
+      setFluidAttract(clientX, clientY, !isOpen);
+      return;
     }
+    inFluidZone = inside;
+    document.body.classList.toggle('fluid-zone', inside && !isOpen);
+    setFluidAttract(clientX, clientY, inside && !isOpen);
+  }
 
-    function up() {
-      window.removeEventListener('pointermove', move);
-      window.removeEventListener('pointerup', up);
-    }
+  function clearFluidZone() {
+    inFluidZone = false;
+    document.body.classList.remove('fluid-zone');
+    setFluidAttract(0, 0, false);
+  }
 
-    window.addEventListener('pointermove', move);
-    window.addEventListener('pointerup', up, { once: true });
+  function showClickRipple(x, y) {
+    const el = document.createElement('div');
+    el.className = 'ac-click-ripple';
+    el.style.left = x + 'px';
+    el.style.top = y + 'px';
+    document.body.appendChild(el);
+    setTimeout(function () { el.remove(); }, 650);
+  }
+
+  function hideTapHint() {
+    if (!tapHintEl) return;
+    tapHintEl.classList.add('ac-hidden');
+    try { localStorage.setItem('ac-tap-hint-dismissed', '1'); } catch (_) { /* ignore */ }
+  }
+
+  function initFluidEntry() {
+    const host = document.getElementById('hero-fluid');
+    if (!host || host.querySelector('.ac-fluid-hit')) return;
+
+    fluidHitEl = document.createElement('button');
+    fluidHitEl.type = 'button';
+    fluidHitEl.className = 'ac-fluid-hit';
+    fluidHitEl.setAttribute('aria-label', "Ask Simon's digital twin");
+
+    try {
+      if (!localStorage.getItem('ac-tap-hint-dismissed')) {
+        tapHintEl = document.createElement('span');
+        tapHintEl.className = 'ac-fluid-tap-hint';
+        tapHintEl.textContent = 'TAP TO ASK';
+        host.appendChild(tapHintEl);
+      }
+    } catch (_) { /* ignore */ }
+
+    host.appendChild(fluidHitEl);
+
+    fluidHitEl.addEventListener('click', function (e) {
+      e.stopPropagation();
+      hideTapHint();
+      showClickRipple(e.clientX, e.clientY);
+      openPanel();
+    });
+
+    host.addEventListener('mouseenter', function () {
+      if (finePointerMq.matches && !isOpen) document.body.classList.add('fluid-zone');
+    }, { passive: true });
+
+    host.addEventListener('mouseleave', function () {
+      if (!finePointerMq.matches || isOpen) return;
+      clearFluidZone();
+    }, { passive: true });
+  }
+
+  function initContactEntry() {
+    const row = document.querySelector('#contact .contact-row');
+    if (!row || row.querySelector('.ac-contact-entry')) return;
+    const link = document.createElement('a');
+    link.href = '#';
+    link.className = 'contact-link ac-contact-entry';
+    link.textContent = 'Ask Digital Twin';
+    link.addEventListener('click', function (e) {
+      e.preventDefault();
+      openPanel();
+    });
+    row.appendChild(link);
   }
 
   function scrollBottom() {
@@ -1176,19 +1194,26 @@
   // ─── UI Events ────────────────────────────────────────────
 
   function openPanel() {
+    if (isOpen) return;
     isOpen = true;
-    bubble.classList.add('ac-open');
+    hideTapHint();
+    clearFluidZone();
+    scrim.classList.add('ac-open');
     panel.classList.add('ac-open');
+    document.body.classList.add('ac-drawer-open');
     setMobileScrollLock(true);
+    panel.setAttribute('aria-hidden', 'false');
     inputEl.focus({ preventScroll: true });
   }
   function closePanel() {
+    if (!isOpen) return;
     isOpen = false;
-    bubble.classList.remove('ac-open');
+    scrim.classList.remove('ac-open');
     panel.classList.remove('ac-open');
+    document.body.classList.remove('ac-drawer-open');
     setMobileScrollLock(false);
+    panel.setAttribute('aria-hidden', 'true');
   }
-  function togglePanel() { isOpen ? closePanel() : openPanel(); }
   function formatTimestamp(date) {
     const pad = n => String(n).padStart(2, '0');
     return date.getFullYear() + '-' +
@@ -1245,18 +1270,22 @@
     setStatus('Ready', '');
   }
 
-  bubble.addEventListener('click', togglePanel);
-  headerEl.addEventListener('pointerdown', startPanelDrag);
-  panel.querySelectorAll('.ac-resize-handle').forEach(function (handle) {
-    handle.addEventListener('pointerdown', startPanelResize);
-  });
+  initFluidEntry();
+  initContactEntry();
+  panel.setAttribute('aria-hidden', 'true');
+
+  if (finePointerMq.matches) {
+    document.addEventListener('mousemove', function (e) {
+      updateFluidZone(e.clientX, e.clientY);
+    }, { passive: true });
+  }
+
+  stripBtn.addEventListener('click', openPanel);
+  mobileStrip.addEventListener('click', openPanel);
+  scrim.addEventListener('click', closePanel);
   closeBtn.addEventListener('click', closePanel);
   saveBtn.addEventListener('click', saveChatMarkdown);
   clearBtn.addEventListener('click', clearChat);
-
-  window.addEventListener('resize', function () {
-    if (isOpen && panel.style.left && panel.style.top) freezePanelGeometry();
-  });
 
   document.addEventListener('keydown', function (e) {
     if (e.key === 'Escape' && isOpen) closePanel();

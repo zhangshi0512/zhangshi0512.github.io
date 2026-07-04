@@ -14,6 +14,7 @@
   const isMobile = () => window.matchMedia('(max-width: 768px)').matches;
 
   const mouse = { x: 0, y: 0, active: false };
+  const attract = { x: 0, y: 0, active: false };
   let accentRgb = [110, 195, 255];
   let secondaryRgb = [180, 140, 255];
   let width = 0;
@@ -113,8 +114,12 @@
     ctx.globalCompositeOperation = 'lighter';
 
     orbs.forEach(function (o, i) {
-      const x = o.bx + Math.sin(t * o.speed + o.phase) * o.ampX + mx * (0.6 + i * 0.08);
-      const y = o.by + Math.cos(t * o.speed * 1.25 + o.phase * 1.4) * o.ampY + my * (0.5 + i * 0.06);
+      let x = o.bx + Math.sin(t * o.speed + o.phase) * o.ampX + mx * (0.6 + i * 0.08);
+      let y = o.by + Math.cos(t * o.speed * 1.25 + o.phase * 1.4) * o.ampY + my * (0.5 + i * 0.06);
+      if (attract.active) {
+        x += (attract.x - x) * 0.045;
+        y += (attract.y - y) * 0.045;
+      }
       const grad = ctx.createRadialGradient(x, y, 0, x, y, o.r);
       grad.addColorStop(0, rgba(o.color, o.alpha));
       grad.addColorStop(0.45, rgba(o.color, o.alpha * 0.55));
@@ -129,6 +134,12 @@
 
     if (!reducedMotion) {
       particles.forEach(function (p) {
+        if (attract.active) {
+          p.vx += (attract.x - p.x) * 0.003;
+          p.vy += (attract.y - p.y) * 0.003;
+          p.vx *= 0.97;
+          p.vy *= 0.97;
+        }
         p.x += p.vx;
         p.y += p.vy;
         if (p.x < -4) p.x = width + 4;
@@ -199,6 +210,14 @@
     });
   }, { threshold: 0.05 });
   observer.observe(hero);
+
+  window.__heroFluid = {
+    setAttract: function (x, y, active) {
+      attract.x = x;
+      attract.y = y;
+      attract.active = !!active;
+    },
+  };
 
   readAccentColors();
   resize();

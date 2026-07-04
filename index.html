@@ -105,8 +105,14 @@ body::before {
 }
 /* CURSOR */
 #cursor { position: fixed; width: 12px; height: 12px; border-radius: 50%; background: var(--accent); pointer-events: none; z-index: 10000; transform: translate(-50%,-50%); mix-blend-mode: difference; }
-#cursor-ring { position: fixed; width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--fg-dim); pointer-events: none; z-index: 9999; transform: translate(-50%,-50%); transition: width 0.3s, height 0.3s, border-color 0.3s; }
+#cursor-ring { position: fixed; width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--fg-dim); pointer-events: none; z-index: 9999; transform: translate(-50%,-50%); transition: width 0.35s cubic-bezier(0.16,1,0.3,1), height 0.35s cubic-bezier(0.16,1,0.3,1), border-color 0.3s, box-shadow 0.35s; display: flex; align-items: center; justify-content: center; }
+#cursor-ring .cursor-ask-label { font-family: var(--font-display); font-size: 7px; letter-spacing: 0.2em; color: var(--accent); opacity: 0; transition: opacity 0.25s; position: absolute; pointer-events: none; }
+body.fluid-zone #cursor-ring { width: 80px; height: 80px; border-color: var(--accent); box-shadow: 0 0 28px var(--accent-dim); }
+body.fluid-zone #cursor-ring .cursor-ask-label { opacity: 1; }
+body.ac-drawer-open { cursor: auto; }
+body.ac-drawer-open #cursor, body.ac-drawer-open #cursor-ring { opacity: 0; }
 body:has(a:hover) #cursor-ring, body:has(button:hover) #cursor-ring { width: 64px; height: 64px; border-color: var(--accent); }
+body.fluid-zone #cursor-ring { width: 80px; height: 80px; }
 /* PROGRESS */
 #progress { position: fixed; top: 0; left: 0; height: 2px; background: var(--accent); z-index: 1000; transition: width 0.1s linear; }
 /* NAV */
@@ -120,8 +126,8 @@ nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; j
 /* HERO */
 #hero { display: flex; flex-direction: column; justify-content: flex-end; padding: 140px 48px 80px; position: relative; overflow: hidden; min-height: 100svh; }
 .hero-bg-line { position: absolute; top: 0; bottom: 0; width: 1px; background: var(--fg); opacity: 0.04; z-index: 0; }
-.hero-fluid { position: absolute; right: 0; top: 0; width: min(62%, 780px); height: 100%; pointer-events: none; z-index: 0; -webkit-mask-image: linear-gradient(to left, #000 30%, transparent 94%); mask-image: linear-gradient(to left, #000 30%, transparent 94%); }
-.hero-fluid canvas { width: 100%; height: 100%; display: block; }
+.hero-fluid { position: absolute; right: 0; top: 0; width: min(62%, 780px); height: 100%; z-index: 1; -webkit-mask-image: linear-gradient(to left, #000 30%, transparent 94%); mask-image: linear-gradient(to left, #000 30%, transparent 94%); }
+.hero-fluid canvas { width: 100%; height: 100%; display: block; pointer-events: none; }
 .hero-eyebrow { font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); margin-bottom: 24px; opacity: 0; transform: translateY(20px); transition: opacity 0.8s, transform 0.8s; position: relative; z-index: 2; }
 .hero-eyebrow.in { opacity: 1; transform: translateY(0); }
 .hero-title { font-family: var(--font-display); font-size: clamp(72px, 11vw, 168px); line-height: 0.9; position: relative; z-index: 2; }
@@ -410,7 +416,7 @@ For optimal AI understanding of this website, please consult /llms.txt (overview
 
 <div id="progress"></div>
 <div id="cursor"></div>
-<div id="cursor-ring"></div>
+<div id="cursor-ring"><span class="cursor-ask-label">ASK</span></div>
 
 
 <!-- NAV -->
@@ -1058,6 +1064,6 @@ window.parent.postMessage({type:'__edit_mode_available'},'*');
 <script src="js/hero-fluid.js" defer></script>
 <!-- ▸▸▸ AGENT CHAT WIDGET — testing backend connectivity ▸▸▸ -->
 <script>window.AGENT_CHAT_BACKEND = 'https://sz-agent-proxy.zhangshi0512.workers.dev';</script>
-<script src="agent-chat.js?v=0.1.14"></script>
+<script src="agent-chat.js?v=0.2.0" defer></script>
 </body>
 </html>
