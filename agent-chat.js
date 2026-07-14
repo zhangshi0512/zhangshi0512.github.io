@@ -15,9 +15,10 @@
   const BACKEND = window.AGENT_CHAT_BACKEND ||
     'https://simonsterrific-shizhang-agent.hf.space';
   const MAX_HISTORY = 12;
-  const STREAM_FLUSH_MS = 28;
-  const STREAM_CHARS_PER_TICK = 2;
-  const STREAM_RENDER_MS = 90;
+  // Small animation batches prevent visual playback from lagging far behind SSE.
+  const STREAM_FLUSH_MS = 32;
+  const STREAM_CHARS_PER_TICK = 96;
+  const STREAM_RENDER_MS = 50;
   let history = [];
 
   // ─── Inject Styles ────────────────────────────────────────
@@ -969,7 +970,9 @@
       streamFlushTimer = null;
       if (!pendingAgentText) return;
 
-      const nextSize = pendingAgentText[0] === '\n'
+      const nextSize = pendingAgentText.length > 600
+        ? Math.min(480, pendingAgentText.length)
+        : pendingAgentText[0] === '\n'
         ? 1
         : Math.min(STREAM_CHARS_PER_TICK, pendingAgentText.length);
       displayedAgentText += pendingAgentText.slice(0, nextSize);
