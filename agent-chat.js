@@ -11,7 +11,7 @@
   'use strict';
 
   // ─── Config ───────────────────────────────────────────────
-  const WIDGET_VERSION = '0.2.2';
+  const WIDGET_VERSION = '0.2.3';
   const BACKEND = window.AGENT_CHAT_BACKEND ||
     'https://simonsterrific-shizhang-agent.hf.space';
   const MAX_HISTORY = 12;
@@ -1066,9 +1066,16 @@
         if (completionMeta && completionMeta.truncated) {
           const notice = document.createElement('div');
           notice.className = 'ac-truncation-notice';
-          notice.textContent = isZhQuery
-            ? '\u56de\u7b54\u8fbe\u5230\u672c\u6b21\u8f93\u51fa\u957f\u5ea6\u4e0a\u9650\u3002\u4f60\u53ef\u4ee5\u56de\u590d\u201c\u7ee7\u7eed\u201d\u83b7\u53d6\u5269\u4f59\u5185\u5bb9\u3002'
-            : 'This answer reached the output limit. Reply \u201ccontinue\u201d for the rest.';
+          const timedOut = String(completionMeta.finish_reason || '').includes('timeout');
+          if (timedOut) {
+            notice.textContent = isZhQuery
+              ? '\u56de\u7b54\u8fbe\u5230\u672c\u6b21\u751f\u6210\u65f6\u95f4\u4e0a\u9650\u3002\u4f60\u53ef\u4ee5\u56de\u590d\u201c\u7ee7\u7eed\u201d\u83b7\u53d6\u5269\u4f59\u5185\u5bb9\u3002'
+              : 'This answer reached the generation time limit. Reply \u201ccontinue\u201d for the rest.';
+          } else {
+            notice.textContent = isZhQuery
+              ? '\u56de\u7b54\u8fbe\u5230\u672c\u6b21\u8f93\u51fa\u957f\u5ea6\u4e0a\u9650\u3002\u4f60\u53ef\u4ee5\u56de\u590d\u201c\u7ee7\u7eed\u201d\u83b7\u53d6\u5269\u4f59\u5185\u5bb9\u3002'
+              : 'This answer reached the output limit. Reply \u201ccontinue\u201d for the rest.';
+          }
           agentMsgDiv.appendChild(notice);
         }
         agentMsgDiv.classList.remove('ac-msg-streaming');
