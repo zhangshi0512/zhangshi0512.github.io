@@ -11,7 +11,7 @@
   'use strict';
 
   // ─── Config ───────────────────────────────────────────────
-  const WIDGET_VERSION = '0.2.1';
+  const WIDGET_VERSION = '0.2.2';
   const BACKEND = window.AGENT_CHAT_BACKEND ||
     'https://simonsterrific-shizhang-agent.hf.space';
   const MAX_HISTORY = 12;
@@ -101,6 +101,7 @@
     .ac-msg-agent hr{border:none;border-top:1px solid oklch(25% 0.008 55);margin:10px 0}
     .ac-msg-agent p{margin:0 0 6px}
     .ac-msg-agent p:last-child{margin-bottom:0}
+    .ac-truncation-notice{margin-top:10px;padding-top:8px;border-top:1px solid oklch(72% 0.20 30/0.45);color:oklch(72% 0.12 30);font-size:10px;line-height:1.5}
 
     /* Thought */
     .ac-thought{flex:0 0 auto;align-self:flex-start;max-width:92%;font-size:10px;line-height:1.6;font-style:italic;font-family:var(--font-body,'DM Mono',monospace);color:oklch(50% 0.006 80);padding:6px 12px;border-radius:6px;background:oklch(14% 0.005 55);border-left:2px solid oklch(30% 0.008 55);animation:ac-fade-in .25s ease}
@@ -708,6 +709,7 @@
     let agentText = '';
     let displayedAgentText = '';
     let pendingAgentText = '';
+    let completionMeta = null;
     let streamFlushTimer = null;
     let streamRenderTimer = null;
     let lastStreamRenderAt = 0;
@@ -1061,6 +1063,14 @@
       if (agentMsgDiv && agentText.trim()) {
         await drainStreamText();
         agentMsgDiv.innerHTML = renderMarkdown(agentText, false);
+        if (completionMeta && completionMeta.truncated) {
+          const notice = document.createElement('div');
+          notice.className = 'ac-truncation-notice';
+          notice.textContent = isZhQuery
+            ? '\u56de\u7b54\u8fbe\u5230\u672c\u6b21\u8f93\u51fa\u957f\u5ea6\u4e0a\u9650\u3002\u4f60\u53ef\u4ee5\u56de\u590d\u201c\u7ee7\u7eed\u201d\u83b7\u53d6\u5269\u4f59\u5185\u5bb9\u3002'
+            : 'This answer reached the output limit. Reply \u201ccontinue\u201d for the rest.';
+          agentMsgDiv.appendChild(notice);
+        }
         agentMsgDiv.classList.remove('ac-msg-streaming');
       }
 
@@ -1181,6 +1191,7 @@
           break;
 
         case 'done':
+          completionMeta = data;
           maybeShowTemporalTransient({
             reference_time: data.retrieval && data.retrieval.reference_time ? data.retrieval.reference_time : null,
             temporal_constraint: data.retrieval && data.retrieval.temporal_filter ? data.retrieval.temporal_filter : null,
