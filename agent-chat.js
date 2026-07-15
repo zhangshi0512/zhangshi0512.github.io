@@ -11,7 +11,7 @@
   'use strict';
 
   // ─── Config ───────────────────────────────────────────────
-  const WIDGET_VERSION = '0.2.3';
+  const WIDGET_VERSION = '0.2.4';
   const BACKEND = window.AGENT_CHAT_BACKEND ||
     'https://simonsterrific-shizhang-agent.hf.space';
   const MAX_HISTORY = 12;
@@ -598,11 +598,29 @@
     return div;
   }
 
-  function appendToolCard(toolName, toolArgs, toolCallId) {
-    const icons = { list_directory:'📂', read_file:'📄', search_content:'🔎', read_index:'📋', get_metadata:'ℹ️' };
-    const verbs = { list_directory:'Browsing', read_file:'Reading', search_content:'Searching', read_index:'Index', get_metadata:'Metadata' };
-    const target = toolArgs && toolArgs.path !== undefined ? (toolArgs.path || 'root')
-      : (toolArgs && toolArgs.pattern ? '"' + toolArgs.pattern + '"' : '');
+  function appendToolCard(toolName, toolArgs, toolCallId, language) {
+    const icons = {
+      list_directory:'📂', read_file:'📄', search_content:'🔎', read_index:'📋',
+      get_metadata:'ℹ️', search_knowledge:'🔎', read_chunk:'📄'
+    };
+    const verbSets = {
+      en: {
+        list_directory:'Browsing', read_file:'Reading', search_content:'Searching',
+        read_index:'Reading index', get_metadata:'Metadata',
+        search_knowledge:'Searching knowledge', read_chunk:'Reading source'
+      },
+      zh: {
+        list_directory:'浏览目录', read_file:'读取文件', search_content:'搜索内容',
+        read_index:'读取索引', get_metadata:'读取元数据',
+        search_knowledge:'检索知识库', read_chunk:'读取原文'
+      }
+    };
+    const locale = language === 'zh' ? 'zh' : 'en';
+    const verbs = verbSets[locale];
+    const target = toolArgs && toolArgs.path !== undefined ? (toolArgs.path || (locale === 'zh' ? '根目录' : 'root'))
+      : (toolArgs && toolArgs.pattern ? '"' + toolArgs.pattern + '"'
+      : (toolArgs && toolArgs.query ? '"' + toolArgs.query + '"'
+      : (toolArgs && toolArgs.chunk_id ? toolArgs.chunk_id : '')));
 
     const card = document.createElement('div');
     card.className = 'ac-tool-card';
@@ -617,16 +635,17 @@
     return resultBody;
   }
 
-  function fillToolResult(body, resultText) {
+  function fillToolResult(body, resultText, language) {
     if (!body) return;
+    const isZh = language === 'zh';
     const cnt = extractMatchCount(resultText);
     let html = '';
-    if (cnt !== null) html += `<div class="ac-match-count">Found ${cnt} items</div>`;
+    if (cnt !== null) html += `<div class="ac-match-count">${isZh ? '找到' : 'Found'} ${cnt} ${isZh ? '项' : 'items'}</div>`;
     const lines = resultText.split('\n').filter(l => l.trim());
     const preview = lines.slice(0, 10);
     html += preview.map(l => `<div class="ac-result-line">${escapeHtml(l.slice(0,200))}</div>`).join('');
-    if (lines.length > 10) html += `<div class="ac-truncated">+ ${lines.length - 10} more lines</div>`;
-    if (!html) html = '<div class="ac-result-line">No displayable result.</div>';
+    if (lines.length > 10) html += `<div class="ac-truncated">+ ${lines.length - 10} ${isZh ? '行' : 'more lines'}</div>`;
+    if (!html) html = `<div class="ac-result-line">${isZh ? '没有可展示的结果。' : 'No displayable result.'}</div>`;
     body.innerHTML = html;
   }
 
@@ -846,7 +865,10 @@
         '把笔记折成一条连贯路径',
       ],
     };
-    const isZhQuery = /[\u4e00-\u9fff]/.test(query);
+    const cjkCount = (query.match(/[\u4e00-\u9fff]/g) || []).length;
+    const latinCount = (query.match(/[A-Za-z]/g) || []).length;
+    const queryLanguage = cjkCount >= Math.max(1, latinCount * 0.25) ? 'zh' : 'en';
+    const isZhQuery = queryLanguage === 'zh';
     const transientMessages = isZhQuery
       ? transientMessageSets.zh
       : transientMessageSets.en;
@@ -1017,7 +1039,7 @@
       const resp = await fetch(BACKEND + '/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ query, history: history.slice(-MAX_HISTORY), model: 'default' }),
+        body: JSON.stringify({ query, history: history.slice(-MAX_HISTORY), model: 'default', language: queryLanguage }),
         signal: controller.signal,
       });
       clearTimeout(timeoutId);
@@ -1160,7 +1182,7 @@
         case 'tool_call':
           stopTransientStatus();
           toolCount++;
-          lastToolResultBody = appendToolCard(data.tool, data.arguments, data.tool_call_id || String(toolCount));
+          lastToolResultBody = appendToolCard(data.tool, data.arguments, data.tool_call_id || String(toolCount), queryLanguage);
           if (data.tool_call_id) toolResultBodies.set(data.tool_call_id, lastToolResultBody);
           setStatus(iteration ? 'ROUND ' + iteration + '/8 · SEARCHING' : 'SEARCHING', 'active');
           break;
@@ -1169,7 +1191,8 @@
           stopTransientStatus();
           fillToolResult(
             (data.tool_call_id && toolResultBodies.get(data.tool_call_id)) || lastToolResultBody,
-            formatToolResult(data.result)
+            formatToolResult(data.result),
+            queryLanguage
           );
           setStatus(iteration ? 'ROUND ' + iteration + '/8 · ANALYZING' : 'ANALYZING', 'active');
           break;
