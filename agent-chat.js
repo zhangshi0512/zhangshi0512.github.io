@@ -11,7 +11,7 @@
   'use strict';
 
   // ─── Config ───────────────────────────────────────────────
-  const WIDGET_VERSION = '0.2.5';
+  const WIDGET_VERSION = '0.2.6';
   const BACKEND = window.AGENT_CHAT_BACKEND ||
     'https://simonsterrific-shizhang-agent.hf.space';
   const MAX_HISTORY = 12;
@@ -139,6 +139,7 @@
     /* Sources */
     .ac-sources-bar{display:flex;flex-wrap:wrap;align-items:center;justify-content:flex-end;gap:6px;margin-top:10px;padding-top:8px;border-top:1px solid oklch(22% 0.008 55)}
     .ac-sources-label{margin-right:auto;font-family:var(--font-body,'DM Mono',monospace);font-size:9px;letter-spacing:.06em;text-transform:uppercase;color:oklch(45% 0.006 80)}
+    .ac-sources-note{margin-top:6px;font-family:var(--font-body,'DM Mono',monospace);font-size:9px;line-height:1.5;color:oklch(45% 0.006 80);font-style:italic;text-align:right}
     .ac-source-chip{width:22px;height:22px;border-radius:6px;background:oklch(22% 0.01 55);border:1px solid oklch(30% 0.01 55);color:var(--accent,oklch(72% 0.20 240));font-family:var(--font-body,'DM Mono',monospace);font-size:11px;line-height:1;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;padding:0;transition:background .15s,border-color .15s,transform .1s}
     .ac-source-chip:hover{background:oklch(26% 0.012 55);border-color:var(--accent,oklch(72% 0.20 240))}
     .ac-source-chip:active{transform:scale(.92)}
@@ -809,6 +810,7 @@
     let transientTimer = null;
     let realOutputStarted = false;
     let selectedSources = [];
+    let sourcesLowConfidence = false;
     const toolResultBodies = new Map();
     let lastToolResultBody = null;
     let toolCount = 0, iteration = 0, firstEvent = false, lastThought = '';
@@ -1191,6 +1193,14 @@
             bar.appendChild(chip);
           });
           agentMsgDiv.appendChild(bar);
+          if (sourcesLowConfidence) {
+            const note = document.createElement('div');
+            note.className = 'ac-sources-note';
+            note.textContent = isZhQuery
+              ? '检索置信度较低，以上来源仅供参考。'
+              : 'Low retrieval confidence — sources shown for reference only.';
+            agentMsgDiv.appendChild(note);
+          }
         }
         agentMsgDiv.classList.remove('ac-msg-streaming');
       }
@@ -1294,6 +1304,7 @@
             selectedSources = data.sources
               .filter((s) => s && s.title)
               .sort((a, b) => (a.rank || 0) - (b.rank || 0));
+            sourcesLowConfidence = data.answerable === false || data.confidence === 'low';
           }
           break;
 
