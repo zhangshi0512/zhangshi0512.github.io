@@ -11,7 +11,7 @@
   'use strict';
 
   // ─── Config ───────────────────────────────────────────────
-  const WIDGET_VERSION = '0.2.7';
+  const WIDGET_VERSION = '0.2.8';
   const BACKEND = window.AGENT_CHAT_BACKEND ||
     'https://simonsterrific-shizhang-agent.hf.space';
   const MAX_HISTORY = 12;
@@ -852,6 +852,7 @@
     let realOutputStarted = false;
     let selectedSources = [];
     let sourcesLowConfidence = false;
+    let sourcesWebAnswer = false;
     const toolResultBodies = new Map();
     let lastToolResultBody = null;
     let toolCount = 0, iteration = 0, firstEvent = false, lastThought = '';
@@ -1235,7 +1236,14 @@
             bar.appendChild(chip);
           });
           agentMsgDiv.appendChild(bar);
-          if (sourcesLowConfidence) {
+          if (sourcesWebAnswer) {
+            const note = document.createElement('div');
+            note.className = 'ac-sources-note';
+            note.textContent = isZhQuery
+              ? '本回答基于实时网络检索，非 Simon 本人的产出、收藏或观点。'
+              : 'Based on live web search — not Simon\'s own work, collection, or view.';
+            agentMsgDiv.appendChild(note);
+          } else if (sourcesLowConfidence) {
             const note = document.createElement('div');
             note.className = 'ac-sources-note';
             note.textContent = isZhQuery
@@ -1346,6 +1354,7 @@
             // Preserve backend order (grouped by stream: output → input → web).
             selectedSources = data.sources.filter((s) => s && s.title);
             sourcesLowConfidence = data.low_confidence === true;
+            sourcesWebAnswer = data.web_answer === true;
           }
           break;
 
