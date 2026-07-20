@@ -11,7 +11,7 @@
   'use strict';
 
   // ─── Config ───────────────────────────────────────────────
-  const WIDGET_VERSION = '0.2.6';
+  const WIDGET_VERSION = '0.2.7';
   const BACKEND = window.AGENT_CHAT_BACKEND ||
     'https://simonsterrific-shizhang-agent.hf.space';
   const MAX_HISTORY = 12;
@@ -151,6 +151,17 @@
     .ac-source-popup-close:hover{color:var(--fg,oklch(95% 0.008 80))}
     .ac-source-popup-body{padding:12px 14px;overflow-y:auto;font-family:var(--font-body,'DM Mono',monospace);font-size:11px;line-height:1.7;color:oklch(72% 0.006 80);white-space:pre-wrap;word-break:break-word}
     .ac-source-popup-note{margin-top:10px;color:oklch(45% 0.006 80);font-style:italic;font-size:10px}
+    .ac-source-chip-input{color:oklch(75% 0.15 150)}
+    .ac-source-chip-input:hover{border-color:oklch(75% 0.15 150)}
+    .ac-source-chip-web{color:oklch(72% 0.15 300)}
+    .ac-source-chip-web:hover{border-color:oklch(72% 0.15 300)}
+    .ac-source-popup-titlewrap{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:5px}
+    .ac-source-badge{align-self:flex-start;font-family:var(--font-body,'DM Mono',monospace);font-size:8px;letter-spacing:.05em;text-transform:uppercase;padding:2px 6px;border-radius:4px;background:oklch(28% 0.03 240/0.4);color:var(--accent,oklch(72% 0.20 240))}
+    .ac-source-badge-input{background:oklch(28% 0.03 150/0.4);color:oklch(75% 0.15 150)}
+    .ac-source-badge-web{background:oklch(28% 0.03 300/0.4);color:oklch(72% 0.15 300)}
+    .ac-source-popup-meta{font-family:var(--font-body,'DM Mono',monospace);font-size:9px;color:oklch(55% 0.006 80)}
+    .ac-source-popup-link{display:block;padding:10px 14px;border-top:1px solid oklch(22% 0.008 55);font-family:var(--font-body,'DM Mono',monospace);font-size:10px;color:var(--accent,oklch(72% 0.20 240));text-decoration:none;flex:0 0 auto}
+    .ac-source-popup-link:hover{text-decoration:underline}
 
     /* Typing */
     .ac-typing{flex:0 0 auto;align-self:flex-start;display:flex;gap:4px;padding:8px 14px;background:oklch(18% 0.01 55);border-radius:8px;border:1px solid oklch(25% 0.008 55)}
@@ -245,11 +256,18 @@
     return d.innerHTML;
   }
 
+  // Labels for the three evidence streams a source can come from.
+  function sourceKindLabel(kind, zh) {
+    if (kind === 'input') return zh ? '收藏素材' : 'Collected';
+    if (kind === 'web') return zh ? '网络' : 'Web';
+    return zh ? 'Simon 原创' : "Simon's work";
+  }
+
   /**
-   * Source popup: shows a knowledge-base source's public title + retrieved
-   * (truncated) text content. Rendered inside the drawer panel so it stacks
-   * above the drawer's own content without the drawer's z-index/overflow
-   * clipping it. Only one popup is shown at a time.
+   * Source popup: shows a source's title, stream (Output/Input/Web), retrieved
+   * (truncated) text content, and a link when a public URL is available.
+   * Rendered inside the drawer panel so it stacks above the drawer's own content
+   * without the drawer's z-index/overflow clipping it. One popup at a time.
    */
   function openSourcePopup(source, index, zh) {
     const existing = panel.querySelector('.ac-source-popup');
@@ -263,16 +281,30 @@
 
     const header = document.createElement('div');
     header.className = 'ac-source-popup-header';
+    const titleWrap = document.createElement('div');
+    titleWrap.className = 'ac-source-popup-titlewrap';
+    const badge = document.createElement('span');
+    badge.className = 'ac-source-badge ac-source-badge-' + (source.kind || 'output');
+    badge.textContent = sourceKindLabel(source.kind, zh);
     const titleEl = document.createElement('div');
     titleEl.className = 'ac-source-popup-title';
     titleEl.textContent = (index != null ? '[' + index + '] ' : '') +
       (source.title || (zh ? '未命名来源' : 'Untitled source'));
+    const meta = [source.podcast, source.guest].filter(Boolean).join(' · ');
+    titleWrap.appendChild(badge);
+    titleWrap.appendChild(titleEl);
+    if (meta) {
+      const metaEl = document.createElement('div');
+      metaEl.className = 'ac-source-popup-meta';
+      metaEl.textContent = meta;
+      titleWrap.appendChild(metaEl);
+    }
     const closeBtn = document.createElement('button');
     closeBtn.className = 'ac-source-popup-close';
     closeBtn.type = 'button';
     closeBtn.setAttribute('aria-label', zh ? '关闭' : 'Close');
     closeBtn.textContent = '✕';
-    header.appendChild(titleEl);
+    header.appendChild(titleWrap);
     header.appendChild(closeBtn);
 
     const body = document.createElement('div');
@@ -289,6 +321,15 @@
 
     card.appendChild(header);
     card.appendChild(body);
+    if (source.url) {
+      const link = document.createElement('a');
+      link.className = 'ac-source-popup-link';
+      link.href = source.url;
+      link.target = '_blank';
+      link.rel = 'noopener noreferrer';
+      link.textContent = zh ? '查看原始来源 ↗' : 'View original source ↗';
+      card.appendChild(link);
+    }
     overlay.appendChild(card);
     panel.appendChild(overlay);
 
@@ -1184,11 +1225,12 @@
           bar.appendChild(label);
           selectedSources.forEach((s, i) => {
             const chip = document.createElement('button');
-            chip.className = 'ac-source-chip';
+            chip.className = 'ac-source-chip ac-source-chip-' + (s.kind || 'output');
             chip.type = 'button';
             chip.textContent = String(i + 1);
-            chip.title = s.title;
-            chip.setAttribute('aria-label', (isZhQuery ? '来源 ' : 'Source ') + (i + 1) + ': ' + s.title);
+            chip.title = sourceKindLabel(s.kind, isZhQuery) + ' · ' + s.title;
+            chip.setAttribute('aria-label', (isZhQuery ? '来源 ' : 'Source ') + (i + 1) + ': ' +
+              sourceKindLabel(s.kind, isZhQuery) + ' · ' + s.title);
             chip.addEventListener('click', () => openSourcePopup(s, i + 1, isZhQuery));
             bar.appendChild(chip);
           });
@@ -1301,10 +1343,9 @@
 
         case 'evidence_selected':
           if (Array.isArray(data.sources)) {
-            selectedSources = data.sources
-              .filter((s) => s && s.title)
-              .sort((a, b) => (a.rank || 0) - (b.rank || 0));
-            sourcesLowConfidence = data.answerable === false || data.confidence === 'low';
+            // Preserve backend order (grouped by stream: output → input → web).
+            selectedSources = data.sources.filter((s) => s && s.title);
+            sourcesLowConfidence = data.low_confidence === true;
           }
           break;
 
