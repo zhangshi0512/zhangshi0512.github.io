@@ -11,7 +11,7 @@
   'use strict';
 
   // ─── Config ───────────────────────────────────────────────
-  const WIDGET_VERSION = '0.2.4';
+  const WIDGET_VERSION = '0.2.5';
   const BACKEND = window.AGENT_CHAT_BACKEND ||
     'https://simonsterrific-shizhang-agent.hf.space';
   const MAX_HISTORY = 12;
@@ -136,6 +136,21 @@
     .ac-tool-card-body .ac-result-line:last-child{border-bottom:none}
     .ac-tool-card-body .ac-truncated{color:oklch(45% 0.006 80);margin-top:4px;font-style:italic}
 
+    /* Sources */
+    .ac-sources-bar{display:flex;flex-wrap:wrap;align-items:center;justify-content:flex-end;gap:6px;margin-top:10px;padding-top:8px;border-top:1px solid oklch(22% 0.008 55)}
+    .ac-sources-label{margin-right:auto;font-family:var(--font-body,'DM Mono',monospace);font-size:9px;letter-spacing:.06em;text-transform:uppercase;color:oklch(45% 0.006 80)}
+    .ac-source-chip{width:22px;height:22px;border-radius:6px;background:oklch(22% 0.01 55);border:1px solid oklch(30% 0.01 55);color:var(--accent,oklch(72% 0.20 240));font-family:var(--font-body,'DM Mono',monospace);font-size:11px;line-height:1;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;padding:0;transition:background .15s,border-color .15s,transform .1s}
+    .ac-source-chip:hover{background:oklch(26% 0.012 55);border-color:var(--accent,oklch(72% 0.20 240))}
+    .ac-source-chip:active{transform:scale(.92)}
+    .ac-source-popup{position:absolute;inset:0;z-index:10;display:flex;align-items:center;justify-content:center;padding:20px;background:oklch(8% 0.01 55/0.55);animation:ac-fade-in .18s ease}
+    .ac-source-popup-card{display:flex;flex-direction:column;width:100%;max-width:100%;max-height:80%;background:oklch(15% 0.01 55);border:1px solid oklch(30% 0.01 55);border-radius:10px;box-shadow:0 18px 50px oklch(0% 0 0/0.5);overflow:hidden}
+    .ac-source-popup-header{display:flex;align-items:flex-start;gap:10px;padding:12px 14px;border-bottom:1px solid oklch(22% 0.008 55)}
+    .ac-source-popup-title{flex:1 1 auto;min-width:0;font-family:var(--font-body,'DM Mono',monospace);font-size:12px;line-height:1.4;color:var(--fg,oklch(95% 0.008 80));word-break:break-word}
+    .ac-source-popup-close{flex:0 0 auto;background:none;border:none;color:oklch(55% 0.006 80);font-size:16px;line-height:1;cursor:pointer;padding:2px 4px;transition:color .15s}
+    .ac-source-popup-close:hover{color:var(--fg,oklch(95% 0.008 80))}
+    .ac-source-popup-body{padding:12px 14px;overflow-y:auto;font-family:var(--font-body,'DM Mono',monospace);font-size:11px;line-height:1.7;color:oklch(72% 0.006 80);white-space:pre-wrap;word-break:break-word}
+    .ac-source-popup-note{margin-top:10px;color:oklch(45% 0.006 80);font-style:italic;font-size:10px}
+
     /* Typing */
     .ac-typing{flex:0 0 auto;align-self:flex-start;display:flex;gap:4px;padding:8px 14px;background:oklch(18% 0.01 55);border-radius:8px;border:1px solid oklch(25% 0.008 55)}
     .ac-typing span{width:6px;height:6px;border-radius:50%;background:var(--fg-dim,oklch(55% 0.006 80));animation:ac-blink 1.4s infinite both}
@@ -227,6 +242,63 @@
     const d = document.createElement('div');
     d.textContent = str;
     return d.innerHTML;
+  }
+
+  /**
+   * Source popup: shows a knowledge-base source's public title + retrieved
+   * (truncated) text content. Rendered inside the drawer panel so it stacks
+   * above the drawer's own content without the drawer's z-index/overflow
+   * clipping it. Only one popup is shown at a time.
+   */
+  function openSourcePopup(source, index, zh) {
+    const existing = panel.querySelector('.ac-source-popup');
+    if (existing) existing.remove();
+
+    const overlay = document.createElement('div');
+    overlay.className = 'ac-source-popup';
+
+    const card = document.createElement('div');
+    card.className = 'ac-source-popup-card';
+
+    const header = document.createElement('div');
+    header.className = 'ac-source-popup-header';
+    const titleEl = document.createElement('div');
+    titleEl.className = 'ac-source-popup-title';
+    titleEl.textContent = (index != null ? '[' + index + '] ' : '') +
+      (source.title || (zh ? '未命名来源' : 'Untitled source'));
+    const closeBtn = document.createElement('button');
+    closeBtn.className = 'ac-source-popup-close';
+    closeBtn.type = 'button';
+    closeBtn.setAttribute('aria-label', zh ? '关闭' : 'Close');
+    closeBtn.textContent = '✕';
+    header.appendChild(titleEl);
+    header.appendChild(closeBtn);
+
+    const body = document.createElement('div');
+    body.className = 'ac-source-popup-body';
+    body.textContent = (source.content && String(source.content).trim())
+      ? source.content
+      : (zh ? '该来源没有可显示的文本内容。' : 'No text content available for this source.');
+    if (source.truncated) {
+      const note = document.createElement('div');
+      note.className = 'ac-source-popup-note';
+      note.textContent = zh ? '内容已截断。' : 'Content truncated.';
+      body.appendChild(note);
+    }
+
+    card.appendChild(header);
+    card.appendChild(body);
+    overlay.appendChild(card);
+    panel.appendChild(overlay);
+
+    function close() {
+      overlay.remove();
+      document.removeEventListener('keydown', onKey);
+    }
+    function onKey(e) { if (e.key === 'Escape') close(); }
+    closeBtn.addEventListener('click', close);
+    overlay.addEventListener('click', (e) => { if (e.target === overlay) close(); });
+    document.addEventListener('keydown', onKey);
   }
 
   /**
@@ -736,6 +808,7 @@
     let transientTextEl = null;
     let transientTimer = null;
     let realOutputStarted = false;
+    let selectedSources = [];
     const toolResultBodies = new Map();
     let lastToolResultBody = null;
     let toolCount = 0, iteration = 0, firstEvent = false, lastThought = '';
@@ -1100,6 +1173,25 @@
           }
           agentMsgDiv.appendChild(notice);
         }
+        if (selectedSources.length) {
+          const bar = document.createElement('div');
+          bar.className = 'ac-sources-bar';
+          const label = document.createElement('span');
+          label.className = 'ac-sources-label';
+          label.textContent = isZhQuery ? '来源' : 'Sources';
+          bar.appendChild(label);
+          selectedSources.forEach((s, i) => {
+            const chip = document.createElement('button');
+            chip.className = 'ac-source-chip';
+            chip.type = 'button';
+            chip.textContent = String(i + 1);
+            chip.title = s.title;
+            chip.setAttribute('aria-label', (isZhQuery ? '来源 ' : 'Source ') + (i + 1) + ': ' + s.title);
+            chip.addEventListener('click', () => openSourcePopup(s, i + 1, isZhQuery));
+            bar.appendChild(chip);
+          });
+          agentMsgDiv.appendChild(bar);
+        }
         agentMsgDiv.classList.remove('ac-msg-streaming');
       }
 
@@ -1195,6 +1287,14 @@
             queryLanguage
           );
           setStatus(iteration ? 'ROUND ' + iteration + '/8 · ANALYZING' : 'ANALYZING', 'active');
+          break;
+
+        case 'evidence_selected':
+          if (Array.isArray(data.sources)) {
+            selectedSources = data.sources
+              .filter((s) => s && s.title)
+              .sort((a, b) => (a.rank || 0) - (b.rank || 0));
+          }
           break;
 
         case 'chunk':
