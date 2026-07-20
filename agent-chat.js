@@ -11,7 +11,7 @@
   'use strict';
 
   // ─── Config ───────────────────────────────────────────────
-  const WIDGET_VERSION = '0.2.9';
+  const WIDGET_VERSION = '0.3.1';
   const BACKEND = window.AGENT_CHAT_BACKEND ||
     'https://simonsterrific-shizhang-agent.hf.space';
   const MAX_HISTORY = 12;
@@ -77,30 +77,37 @@
     .ac-msg-agent::-webkit-scrollbar{display:none}
 
     /* Markdown inside agent messages */
-    .ac-msg-agent h1,.ac-msg-agent h2,.ac-msg-agent h3{font-family:var(--font-display,'Bebas Neue',sans-serif);font-weight:400;margin:8px 0 4px;line-height:1.3;color:var(--fg,oklch(95% 0.008 80))}
-    .ac-msg-agent h1{font-size:17px;letter-spacing:.04em}
-    .ac-msg-agent h2{font-size:15px;letter-spacing:.03em}
-    .ac-msg-agent h3{font-size:13px;letter-spacing:.02em}
-    .ac-msg-agent strong{color:var(--accent,oklch(72% 0.20 240));font-weight:600}
-    .ac-msg-agent em{color:oklch(85% 0.008 80);font-style:italic}
-    .ac-msg-agent code{background:oklch(22% 0.01 55);color:var(--accent,oklch(72% 0.20 240));padding:1px 5px;border-radius:3px;font-family:var(--font-body,'DM Mono',monospace);font-size:11px}
-    .ac-msg-agent pre{background:oklch(14% 0.01 55);border:1px solid oklch(22% 0.008 55);border-radius:6px;padding:10px 14px;overflow:auto;font-size:11px;line-height:1.6;margin:8px 0;scrollbar-width:none;-ms-overflow-style:none}
-    .ac-msg-agent pre::-webkit-scrollbar{display:none}
-    .ac-msg-agent pre code{background:none;color:var(--fg,oklch(95% 0.008 80));padding:0;font-size:inherit}
-    .ac-msg-agent ul,.ac-msg-agent ol{margin:6px 0;padding:0 6px 0 1.35em;list-style-position:inside}
-    .ac-msg-agent li{margin:3px 0;padding-left:2px;line-height:1.6}
-    .ac-msg-agent li::marker{color:var(--accent,oklch(72% 0.20 240))}
-    .ac-msg-agent a{color:var(--accent,oklch(72% 0.20 240));text-decoration:underline;text-underline-offset:2px}
-    .ac-msg-agent a:hover{opacity:.8}
-    .ac-msg-agent blockquote{border-left:3px solid var(--accent,oklch(72% 0.20 240));padding:4px 0 4px 12px;margin:6px 0;color:oklch(60% 0.006 80);font-style:italic}
-    .ac-msg-agent table{width:max-content;min-width:100%;border-collapse:collapse;margin:8px 0;font-size:11px;line-height:1.5}
-    .ac-msg-agent th,.ac-msg-agent td{border:1px solid oklch(25% 0.008 55);padding:6px 10px;text-align:left;vertical-align:top}
-    .ac-msg-agent th{background:oklch(18% 0.01 55);color:var(--accent,oklch(72% 0.20 240));font-weight:600;white-space:nowrap}
-    .ac-msg-agent td{color:var(--fg-dim,oklch(80% 0.006 80))}
-    .ac-msg-agent tr:nth-child(even) td{background:oklch(15% 0.008 55)}
-    .ac-msg-agent hr{border:none;border-top:1px solid oklch(25% 0.008 55);margin:10px 0}
-    .ac-msg-agent p{margin:0 0 6px}
-    .ac-msg-agent p:last-child{margin-bottom:0}
+    .ac-md h1,.ac-md h2,.ac-md h3,.ac-md h4,.ac-md h5,.ac-md h6{font-family:var(--font-display,'Bebas Neue',sans-serif);font-weight:400;margin:8px 0 4px;line-height:1.3;color:var(--fg,oklch(95% 0.008 80))}
+    .ac-md h1{font-size:17px;letter-spacing:.04em}
+    .ac-md h2{font-size:15px;letter-spacing:.03em}
+    .ac-md h3{font-size:13px;letter-spacing:.02em}
+    .ac-md h4{font-size:12px;letter-spacing:.02em}
+    .ac-md h5,.ac-md h6{font-size:11px;letter-spacing:.01em;color:var(--fg-dim,oklch(80% 0.006 80))}
+    .ac-md strong{color:var(--accent,oklch(72% 0.20 240));font-weight:600}
+    .ac-md em{color:oklch(85% 0.008 80);font-style:italic}
+    .ac-md del{color:oklch(55% 0.006 80);text-decoration:line-through}
+    .ac-md img{max-width:100%;height:auto;border-radius:6px;margin:6px 0;display:block}
+    .ac-md li.ac-task-item{list-style:none;margin-left:-1.1em}
+    .ac-md .ac-task{color:oklch(55% 0.006 80);margin-right:2px}
+    .ac-md .ac-task-done{color:var(--accent,oklch(72% 0.20 240))}
+    .ac-md code{background:oklch(22% 0.01 55);color:var(--accent,oklch(72% 0.20 240));padding:1px 5px;border-radius:3px;font-family:var(--font-body,'DM Mono',monospace);font-size:11px}
+    .ac-md pre{background:oklch(14% 0.01 55);border:1px solid oklch(22% 0.008 55);border-radius:6px;padding:10px 14px;overflow:auto;font-size:11px;line-height:1.6;margin:8px 0;scrollbar-width:none;-ms-overflow-style:none}
+    .ac-md pre::-webkit-scrollbar{display:none}
+    .ac-md pre code{background:none;color:var(--fg,oklch(95% 0.008 80));padding:0;font-size:inherit}
+    .ac-md ul,.ac-md ol{margin:6px 0;padding:0 6px 0 1.35em;list-style-position:inside}
+    .ac-md li{margin:3px 0;padding-left:2px;line-height:1.6}
+    .ac-md li::marker{color:var(--accent,oklch(72% 0.20 240))}
+    .ac-md a{color:var(--accent,oklch(72% 0.20 240));text-decoration:underline;text-underline-offset:2px}
+    .ac-md a:hover{opacity:.8}
+    .ac-md blockquote{border-left:3px solid var(--accent,oklch(72% 0.20 240));padding:4px 0 4px 12px;margin:6px 0;color:oklch(60% 0.006 80);font-style:italic}
+    .ac-md table{width:max-content;min-width:100%;border-collapse:collapse;margin:8px 0;font-size:11px;line-height:1.5}
+    .ac-md th,.ac-md td{border:1px solid oklch(25% 0.008 55);padding:6px 10px;text-align:left;vertical-align:top}
+    .ac-md th{background:oklch(18% 0.01 55);color:var(--accent,oklch(72% 0.20 240));font-weight:600;white-space:nowrap}
+    .ac-md td{color:var(--fg-dim,oklch(80% 0.006 80))}
+    .ac-md tr:nth-child(even) td{background:oklch(15% 0.008 55)}
+    .ac-md hr{border:none;border-top:1px solid oklch(25% 0.008 55);margin:10px 0}
+    .ac-md p{margin:0 0 6px}
+    .ac-md p:last-child{margin-bottom:0}
     .ac-truncation-notice{margin-top:10px;padding-top:8px;border-top:1px solid oklch(72% 0.20 30/0.45);color:oklch(72% 0.12 30);font-size:10px;line-height:1.5}
 
     /* Thought */
@@ -149,7 +156,7 @@
     .ac-source-popup-title{flex:1 1 auto;min-width:0;font-family:var(--font-body,'DM Mono',monospace);font-size:12px;line-height:1.4;color:var(--fg,oklch(95% 0.008 80));word-break:break-word}
     .ac-source-popup-close{flex:0 0 auto;background:none;border:none;color:oklch(55% 0.006 80);font-size:16px;line-height:1;cursor:pointer;padding:2px 4px;transition:color .15s}
     .ac-source-popup-close:hover{color:var(--fg,oklch(95% 0.008 80))}
-    .ac-source-popup-body{padding:12px 14px;overflow-y:auto;font-family:var(--font-body,'DM Mono',monospace);font-size:11px;line-height:1.7;color:oklch(72% 0.006 80);white-space:pre-wrap;word-break:break-word;scrollbar-width:none;-ms-overflow-style:none}
+    .ac-source-popup-body{padding:12px 14px;overflow-y:auto;font-family:var(--font-body,'DM Mono',monospace);font-size:11px;line-height:1.7;color:oklch(72% 0.006 80);word-break:break-word;scrollbar-width:none;-ms-overflow-style:none}
     .ac-source-popup-body::-webkit-scrollbar{display:none}
     .ac-source-popup-note{margin-top:10px;color:oklch(45% 0.006 80);font-style:italic;font-size:10px}
     .ac-source-chip-input{color:oklch(75% 0.15 150)}
@@ -257,6 +264,17 @@
     return d.innerHTML;
   }
 
+  // Allow only safe URL schemes in rendered markdown. Rejects javascript:/data:
+  // and attribute-breaking characters — important because source-popup content
+  // can be untrusted web/Input text, not just Simon's own material.
+  function mdUrl(raw) {
+    const u = String(raw).trim();
+    if (/["'`\s]/.test(u)) return '';
+    if (/^(https?:\/\/|mailto:)/i.test(u)) return u;
+    if (/^(#|\/|\.\.?\/)/.test(u)) return u;
+    return '';
+  }
+
   // Labels for the three evidence streams a source can come from.
   function sourceKindLabel(kind, zh) {
     if (kind === 'input') return zh ? '收藏素材' : 'Collected';
@@ -309,10 +327,15 @@
     header.appendChild(closeBtn);
 
     const body = document.createElement('div');
-    body.className = 'ac-source-popup-body';
-    body.textContent = (source.content && String(source.content).trim())
-      ? source.content
-      : (zh ? '该来源没有可显示的文本内容。' : 'No text content available for this source.');
+    body.className = 'ac-source-popup-body ac-md';
+    if (source.content && String(source.content).trim()) {
+      // Render the retrieved text as markdown, same as chat messages. Content
+      // can be untrusted (web/Input) — renderMarkdown escapes HTML and mdUrl
+      // blocks unsafe link/image schemes.
+      body.innerHTML = renderMarkdown(String(source.content), false);
+    } else {
+      body.textContent = zh ? '该来源没有可显示的文本内容。' : 'No text content available for this source.';
+    }
     if (source.truncated) {
       const note = document.createElement('div');
       note.className = 'ac-source-popup-note';
@@ -345,6 +368,54 @@
   }
 
   /**
+   * Line-based list builder: unordered + ordered lists, indent-based nesting,
+   * and task items (`- [ ]` / `- [x]`). Operates on already-inline-formatted
+   * text; non-list lines pass through untouched.
+   */
+  function buildLists(src) {
+    const lines = src.split('\n');
+    const out = [];
+    const stack = []; // { type: 'ul'|'ol', indent: number }
+    function closeToLen(len) {
+      while (stack.length > len) out.push('</li></' + stack.pop().type + '>');
+    }
+    const listRe = /^(\s*)([-*+]|\d+[.)])\s+(.*)$/;
+    for (const line of lines) {
+      const m = line.match(listRe);
+      if (!m) { closeToLen(0); out.push(line); continue; }
+      const indent = m[1].replace(/\t/g, '  ').length;
+      const type = /\d/.test(m[2]) ? 'ol' : 'ul';
+      let content = m[3];
+      const task = /^[-*+]/.test(m[2]) ? content.match(/^\[([ xX])\]\s+(.*)$/) : null;
+      let liOpen = '<li>';
+      if (task) {
+        const done = task[1].toLowerCase() === 'x';
+        liOpen = '<li class="ac-task-item">';
+        content = '<span class="ac-task' + (done ? ' ac-task-done' : '') + '">' +
+          (done ? '☑' : '☐') + '</span> ' + task[2];
+      }
+      while (stack.length && indent < stack[stack.length - 1].indent) {
+        out.push('</li></' + stack.pop().type + '>');
+      }
+      if (!stack.length || indent > stack[stack.length - 1].indent) {
+        out.push('<' + type + '>');
+        stack.push({ type: type, indent: indent });
+        out.push(liOpen + content);
+      } else if (stack[stack.length - 1].type !== type) {
+        out.push('</li></' + stack.pop().type + '>');
+        out.push('<' + type + '>');
+        stack.push({ type: type, indent: indent });
+        out.push(liOpen + content);
+      } else {
+        out.push('</li>' + liOpen + content);
+      }
+    }
+    closeToLen(0);
+    // Drop newlines sitting purely between list structural tags for clean HTML.
+    return out.join('\n').replace(/\n(?=<\/?(?:ul|ol|li)\b)/g, '');
+  }
+
+  /**
    * Lightweight Markdown → HTML.
    * `inlineOnly: true` = only bold/italic/code/link (safe during streaming).
    * `inlineOnly: false` = full render (headings, lists, code blocks, etc.).
@@ -370,10 +441,20 @@
     // ── Step 4: Inline formatting ──
     html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
     html = html.replace(/__(.+?)__/g, '<strong>$1</strong>');
+    html = html.replace(/~~(.+?)~~/g, '<del>$1</del>');
     html = html.replace(/\*(.+?)\*/g, '<em>$1</em>');
-    html = html.replace(/_(.+?)_/g, '<em>$1</em>');
+    // Underscore emphasis only at word boundaries, so snake_case is left intact.
+    html = html.replace(/(^|[^\w`])_(?=\S)(.+?)_(?=$|[^\w`])/g, '$1<em>$2</em>');
     html = html.replace(/`([^`\n]+)`/g, '<code>$1</code>');
-    html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>');
+    // Images before links so ![alt](url) is not consumed by the link rule.
+    html = html.replace(/!\[([^\]]*)\]\(([^)\s]+)\)/g, function (m, alt, url) {
+      const safe = mdUrl(url);
+      return safe ? '<img src="' + safe + '" alt="' + alt + '" loading="lazy">' : escapeHtml('![' + alt + '](' + url + ')');
+    });
+    html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, function (m, txt, url) {
+      const safe = mdUrl(url);
+      return safe ? '<a href="' + safe + '" target="_blank" rel="noopener">' + txt + '</a>' : txt;
+    });
 
     if (inlineOnly) return html;
 
@@ -427,27 +508,26 @@
     html = html.replace(/^(---|\*\*\*|___)$/gm, '<hr>');
 
     // Headings (must be after blockquote to avoid matching > inside)
+    html = html.replace(/^###### (.+)$/gm, '<h6>$1</h6>');
+    html = html.replace(/^##### (.+)$/gm, '<h5>$1</h5>');
+    html = html.replace(/^#### (.+)$/gm, '<h4>$1</h4>');
     html = html.replace(/^### (.+)$/gm, '<h3>$1</h3>');
     html = html.replace(/^## (.+)$/gm, '<h2>$1</h2>');
     html = html.replace(/^# (.+)$/gm, '<h1>$1</h1>');
 
-    // Unordered lists — group consecutive <li> into <ul>
-    html = html.replace(/^[-*] (.+)$/gm, '<li>$1</li>');
-    html = html.replace(/((?:<li>.*<\/li>\n?)+)/g, '<ul>$1</ul>');
-
-    // Ordered lists
-    html = html.replace(/^\d+\. (.+)$/gm, '<li>$1</li>');
+    // Lists — ordered + unordered + indent nesting + task items.
+    html = buildLists(html);
 
     // Paragraphs: wrap text blocks only — keep lists/headings outside <p>
     html = html.split(/\n\n+/).map(function (chunk) {
       const trimmed = chunk.trim();
       if (!trimmed) return '';
-      if (/^<(ul|ol|h[1-3]|pre|table|blockquote|hr)\b/.test(trimmed)) return trimmed;
-      if (/<(ul|ol|h[1-3]|pre|table|blockquote|hr)\b/.test(trimmed)) {
-        return trimmed.split(/\n(?=<(?:ul|ol|h[1-3]|pre|table|blockquote|hr)\b)/).map(function (part) {
+      if (/^<(ul|ol|h[1-6]|pre|table|blockquote|hr)\b/.test(trimmed)) return trimmed;
+      if (/<(ul|ol|h[1-6]|pre|table|blockquote|hr)\b/.test(trimmed)) {
+        return trimmed.split(/\n(?=<(?:ul|ol|h[1-6]|pre|table|blockquote|hr)\b)/).map(function (part) {
           part = part.trim();
           if (!part) return '';
-          if (/^<(ul|ol|h[1-3]|pre|table|blockquote|hr)\b/.test(part)) return part;
+          if (/^<(ul|ol|h[1-6]|pre|table|blockquote|hr)\b/.test(part)) return part;
           return '<p>' + part.replace(/\n/g, '<br>') + '</p>';
         }).filter(Boolean).join('\n');
       }
@@ -697,7 +777,7 @@
 
   function appendMessage(role, html) {
     const div = document.createElement('div');
-    div.className = 'ac-msg ac-msg-' + role;
+    div.className = 'ac-msg ac-msg-' + role + (role === 'agent' ? ' ac-md' : '');
     div.innerHTML = html;
     bodyEl.appendChild(div);
     scrollBottom();
@@ -1481,7 +1561,7 @@
   }
   function clearChat() {
     history = [];
-    bodyEl.innerHTML = '<div class="ac-msg ac-msg-agent">Hi, I\'m Simon\'s digital twin, not Simon himself. Ask me about architecture, AI, career, or Simon\'s past work.</div>';
+    bodyEl.innerHTML = '<div class="ac-msg ac-msg-agent ac-md">Hi, I\'m Simon\'s digital twin, not Simon himself. Ask me about architecture, AI, career, or Simon\'s past work.</div>';
     const debugEl = document.getElementById('ac-debug');
     if (debugEl) debugEl.classList.remove('ac-debug-active');
     resetTemporalDebugPanel();
