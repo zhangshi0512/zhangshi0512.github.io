@@ -11,7 +11,7 @@
   'use strict';
 
   // ─── Config ───────────────────────────────────────────────
-  const WIDGET_VERSION = '0.2.8';
+  const WIDGET_VERSION = '0.2.9';
   const BACKEND = window.AGENT_CHAT_BACKEND ||
     'https://simonsterrific-shizhang-agent.hf.space';
   const MAX_HISTORY = 12;
@@ -149,7 +149,8 @@
     .ac-source-popup-title{flex:1 1 auto;min-width:0;font-family:var(--font-body,'DM Mono',monospace);font-size:12px;line-height:1.4;color:var(--fg,oklch(95% 0.008 80));word-break:break-word}
     .ac-source-popup-close{flex:0 0 auto;background:none;border:none;color:oklch(55% 0.006 80);font-size:16px;line-height:1;cursor:pointer;padding:2px 4px;transition:color .15s}
     .ac-source-popup-close:hover{color:var(--fg,oklch(95% 0.008 80))}
-    .ac-source-popup-body{padding:12px 14px;overflow-y:auto;font-family:var(--font-body,'DM Mono',monospace);font-size:11px;line-height:1.7;color:oklch(72% 0.006 80);white-space:pre-wrap;word-break:break-word}
+    .ac-source-popup-body{padding:12px 14px;overflow-y:auto;font-family:var(--font-body,'DM Mono',monospace);font-size:11px;line-height:1.7;color:oklch(72% 0.006 80);white-space:pre-wrap;word-break:break-word;scrollbar-width:none;-ms-overflow-style:none}
+    .ac-source-popup-body::-webkit-scrollbar{display:none}
     .ac-source-popup-note{margin-top:10px;color:oklch(45% 0.006 80);font-style:italic;font-size:10px}
     .ac-source-chip-input{color:oklch(75% 0.15 150)}
     .ac-source-chip-input:hover{border-color:oklch(75% 0.15 150)}
