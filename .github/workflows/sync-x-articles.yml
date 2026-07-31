@@ -38,11 +38,14 @@ jobs:
           MAX_PAGES: 5
         run: python scripts/sync-x-articles.py
 
+      - name: Generate static blog index
+        run: python scripts/generate-blog-index.py
+
       - name: Commit and push changes
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add _posts/ .x-sync/ assets/x-articles/
+          git add _posts/ .x-sync/ assets/x-articles/ posts.json
           if git diff --staged --quiet; then
             echo "No changes to commit."
           else

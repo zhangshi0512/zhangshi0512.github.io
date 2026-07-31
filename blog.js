@@ -1,6 +1,7 @@
 /** Shared blog list + reader for index preview and blog.html archive. */
 (function () {
-  const CONFIG = { owner: 'zhangshi0512', repo: 'shizhang.github.io', path: '_posts' };
+  const CONFIG = { postsUrl: 'posts.json' };
+  let postsIndexPromise = null;
 
   if (typeof marked !== 'undefined') {
     const mermaidRenderer = new marked.Renderer();
@@ -65,6 +66,38 @@
     return { file, title, date, excerpt, readTime, wordCount, tags };
   }
 
+  function loadPostsIndex() {
+    if (!postsIndexPromise) {
+      postsIndexPromise = fetch(CONFIG.postsUrl, { cache: 'no-store' })
+        .then((response) => {
+          if (!response.ok) throw new Error('Failed to load posts index');
+          return response.json();
+        })
+        .then((payload) => {
+          if (payload.version !== 1 || !Array.isArray(payload.posts)) {
+            throw new Error('Invalid posts index');
+          }
+
+          return payload.posts
+            .filter(
+              (post) =>
+                post &&
+                typeof post.filename === 'string' &&
+                post.filename.endsWith('.md') &&
+                typeof post.content === 'string'
+            )
+            .map((post) => ({ name: post.filename, content: post.content }))
+            .sort((a, b) => b.name.localeCompare(a.name));
+        })
+        .catch((error) => {
+          postsIndexPromise = null;
+          throw error;
+        });
+    }
+
+    return postsIndexPromise;
+  }
+
   function renderCard(post, index, onOpen) {
     const card = document.createElement('div');
     card.className = 'blog-card reveal visible';
@@ -92,36 +125,14 @@
     if (!blogGrid) return;
 
     try {
-      const response = await fetch(
-        `https://api.github.com/repos/${CONFIG.owner}/${CONFIG.repo}/contents/${CONFIG.path}`
-      );
-      if (!response.ok) throw new Error('Failed to load posts');
-      const files = await response.json();
-
-      const postFiles = files
-        .filter((f) => f.name.endsWith('.md'))
-        .sort((a, b) => b.name.localeCompare(a.name));
+      const postFiles = await loadPostsIndex();
 
       if (postFiles.length === 0) {
         blogGrid.innerHTML = '<div class="blog-empty">No published posts yet.</div>';
         return;
       }
 
-      const postsData = (
-        await Promise.all(
-          postFiles.map(async (file) => {
-            try {
-              const res = await fetch(
-                `https://raw.githubusercontent.com/${CONFIG.owner}/${CONFIG.repo}/main/${CONFIG.path}/${file.name}`
-              );
-              const text = await res.text();
-              return parsePostFile(file, text);
-            } catch {
-              return null;
-            }
-          })
-        )
-      ).filter(Boolean);
+      const postsData = postFiles.map((file) => parsePostFile(file, file.content));
 
       const viewAllBtn = viewAllId ? document.getElementById(viewAllId) : null;
       if (viewAllBtn) {
@@ -192,11 +203,10 @@
     document.body.style.overflow = 'hidden';
 
     try {
-      const response = await fetch(
-        `https://raw.githubusercontent.com/${CONFIG.owner}/${CONFIG.repo}/main/${CONFIG.path}/${filename}`
-      );
-      if (!response.ok) throw new Error('Post not found');
-      const text = await response.text();
+      const postFiles = await loadPostsIndex();
+      const postFile = postFiles.find((file) => file.name === filename);
+      if (!postFile) throw new Error('Post not found');
+      const text = postFile.content;
 
       let content = text;
       let title = filename.substring(11).replace(/-/g, ' ').replace('.md', '');
