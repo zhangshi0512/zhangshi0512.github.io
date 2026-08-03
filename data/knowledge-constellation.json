@@ -1,0 +1,243 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-08-03T00:00:00Z",
+  "source": {
+    "knowledgeRoot": "shizhang-agent/knowledge",
+    "indexSchemaVersion": 2,
+    "articleCount": 1204
+  },
+  "nodes": [
+    {
+      "id": "architecture",
+      "kind": "domain",
+      "label": "Architecture",
+      "summary": "Theory, history, education, and design practice.",
+      "articleCount": 432,
+      "weight": 1,
+      "layout": { "x": 0.58, "y": 0.27 },
+      "query": "What are Simon's perspectives on architecture, design education, and practice?"
+    },
+    {
+      "id": "ai-engineering",
+      "kind": "domain",
+      "label": "AI Engineering",
+      "summary": "AI agents, RAG systems, and software development practice.",
+      "articleCount": 221,
+      "weight": 0.92,
+      "layout": { "x": 0.77, "y": 0.16 },
+      "query": "Ask Simon about building reliable AI agent and RAG systems."
+    },
+    {
+      "id": "industry",
+      "kind": "domain",
+      "label": "Industry",
+      "summary": "Design-industry analysis and technology-industry observation.",
+      "articleCount": 181,
+      "weight": 0.78,
+      "layout": { "x": 0.77, "y": 0.48 },
+      "query": "How does Simon connect technology shifts with the design industry?"
+    },
+    {
+      "id": "career",
+      "kind": "domain",
+      "label": "Career",
+      "summary": "Study abroad, career transitions, and global job hunting.",
+      "articleCount": 159,
+      "weight": 0.72,
+      "layout": { "x": 0.55, "y": 0.7 },
+      "query": "What has Simon written about moving from architecture into engineering?"
+    },
+    {
+      "id": "miscellaneous",
+      "kind": "domain",
+      "label": "Archive",
+      "summary": "Other questions and observations from Simon's writing archive.",
+      "articleCount": 130,
+      "weight": 0.42,
+      "layout": { "x": 0.92, "y": 0.32 },
+      "query": "Explore other topics in Simon's writing archive."
+    },
+    {
+      "id": "fiction",
+      "kind": "domain",
+      "label": "Fiction",
+      "summary": "Writing craft, original works, and world-building.",
+      "articleCount": 48,
+      "weight": 0.46,
+      "layout": { "x": 0.57, "y": 0.49 },
+      "query": "Ask about Simon's approach to fiction, writing craft, and world-building."
+    },
+    {
+      "id": "essays",
+      "kind": "domain",
+      "label": "Essays",
+      "summary": "Long-form thinking on agent systems, data, and the economy.",
+      "articleCount": 32,
+      "weight": 0.5,
+      "layout": { "x": 0.76, "y": 0.78 },
+      "query": "Show Simon's long-form thinking on agent systems, data, and technology."
+    },
+    {
+      "id": "personal",
+      "kind": "domain",
+      "label": "Profile",
+      "summary": "Simon’s background, current work, and multidisciplinary path.",
+      "articleCount": 1,
+      "weight": 0.38,
+      "layout": { "x": 0.92, "y": 0.67 },
+      "query": "What is Simon's background and current work?"
+    },
+    {
+      "id": "architecture-theory",
+      "kind": "subtopic",
+      "label": "Theory",
+      "summary": "Architecture theory and criticism.",
+      "articleCount": 345,
+      "layout": { "x": 0.47, "y": 0.18 },
+      "query": "What are Simon's views on architecture theory and criticism?"
+    },
+    {
+      "id": "architecture-practice",
+      "kind": "subtopic",
+      "label": "Practice",
+      "summary": "Design practice and projects.",
+      "articleCount": 55,
+      "layout": { "x": 0.46, "y": 0.38 },
+      "query": "Ask Simon about architectural design practice and projects."
+    },
+    {
+      "id": "architecture-education",
+      "kind": "subtopic",
+      "label": "Education",
+      "summary": "Architecture education and study abroad.",
+      "articleCount": 12,
+      "layout": { "x": 0.66, "y": 0.37 },
+      "query": "What has Simon written about architecture education and studying abroad?"
+    },
+    {
+      "id": "ai-agents",
+      "kind": "subtopic",
+      "label": "AI Agents",
+      "summary": "LLM applications and agent systems.",
+      "articleCount": 146,
+      "layout": { "x": 0.68, "y": 0.07 },
+      "query": "Ask Simon about practical AI agent systems and LLM applications."
+    },
+    {
+      "id": "rag-systems",
+      "kind": "subtopic",
+      "label": "RAG Systems",
+      "summary": "Retrieval and knowledge systems.",
+      "articleCount": 9,
+      "layout": { "x": 0.82, "y": 0.1 },
+      "query": "Ask Simon about RAG systems and retrieval design."
+    },
+    {
+      "id": "software-development",
+      "kind": "subtopic",
+      "label": "Software",
+      "summary": "Software development practice.",
+      "articleCount": 66,
+      "layout": { "x": 0.68, "y": 0.3 },
+      "query": "What are Simon's views on modern software development practice?"
+    },
+    {
+      "id": "architecture-industry",
+      "kind": "subtopic",
+      "label": "Design Industry",
+      "summary": "Architecture and design-industry analysis.",
+      "articleCount": 156,
+      "layout": { "x": 0.92, "y": 0.47 },
+      "query": "Ask Simon about the architecture and design industry."
+    },
+    {
+      "id": "tech-industry",
+      "kind": "subtopic",
+      "label": "Tech Industry",
+      "summary": "Technology-industry observations.",
+      "articleCount": 25,
+      "layout": { "x": 0.72, "y": 0.6 },
+      "query": "What has Simon written about the technology industry?"
+    },
+    {
+      "id": "career-transition",
+      "kind": "subtopic",
+      "label": "Transition",
+      "summary": "Career transitions across disciplines.",
+      "articleCount": 84,
+      "layout": { "x": 0.46, "y": 0.62 },
+      "query": "Ask Simon about navigating a career transition across disciplines."
+    },
+    {
+      "id": "study-abroad",
+      "kind": "subtopic",
+      "label": "Study Abroad",
+      "summary": "Study-abroad applications and choices.",
+      "articleCount": 66,
+      "layout": { "x": 0.43, "y": 0.82 },
+      "query": "What has Simon written about study abroad and architecture education?"
+    },
+    {
+      "id": "job-hunting",
+      "kind": "subtopic",
+      "label": "Job Hunting",
+      "summary": "Global job-hunting experiences.",
+      "articleCount": 9,
+      "layout": { "x": 0.65, "y": 0.86 },
+      "query": "Ask Simon about job hunting and building a career internationally."
+    },
+    {
+      "id": "agent-systems",
+      "kind": "subtopic",
+      "label": "Agent Systems",
+      "summary": "Long-form writing on AI agent systems.",
+      "articleCount": 12,
+      "layout": { "x": 0.65, "y": 0.66 },
+      "query": "Show Simon's long-form thinking on AI agent systems."
+    },
+    {
+      "id": "economy",
+      "kind": "subtopic",
+      "label": "Economy",
+      "summary": "Economic observation and commentary.",
+      "articleCount": 9,
+      "layout": { "x": 0.8, "y": 0.91 },
+      "query": "What has Simon written about economic change and technology?"
+    },
+    {
+      "id": "writing-craft",
+      "kind": "subtopic",
+      "label": "Writing Craft",
+      "summary": "Writing methods and creative craft.",
+      "articleCount": 31,
+      "layout": { "x": 0.5, "y": 0.57 },
+      "query": "Ask Simon about fiction writing craft and creative process."
+    },
+    {
+      "id": "fiction-works",
+      "kind": "subtopic",
+      "label": "Works",
+      "summary": "Original works and world-building.",
+      "articleCount": 17,
+      "layout": { "x": 0.49, "y": 0.43 },
+      "query": "Ask Simon about his fiction works and world-building."
+    }
+  ],
+  "edges": [
+    { "source": "architecture", "target": "architecture-theory", "kind": "taxonomy", "strength": 1 },
+    { "source": "architecture", "target": "architecture-practice", "kind": "taxonomy", "strength": 0.7 },
+    { "source": "architecture", "target": "architecture-education", "kind": "taxonomy", "strength": 0.5 },
+    { "source": "ai-engineering", "target": "ai-agents", "kind": "taxonomy", "strength": 1 },
+    { "source": "ai-engineering", "target": "rag-systems", "kind": "taxonomy", "strength": 0.4 },
+    { "source": "ai-engineering", "target": "software-development", "kind": "taxonomy", "strength": 0.6 },
+    { "source": "industry", "target": "architecture-industry", "kind": "taxonomy", "strength": 1 },
+    { "source": "industry", "target": "tech-industry", "kind": "taxonomy", "strength": 0.5 },
+    { "source": "career", "target": "career-transition", "kind": "taxonomy", "strength": 0.8 },
+    { "source": "career", "target": "study-abroad", "kind": "taxonomy", "strength": 0.7 },
+    { "source": "career", "target": "job-hunting", "kind": "taxonomy", "strength": 0.4 },
+    { "source": "essays", "target": "agent-systems", "kind": "taxonomy", "strength": 0.7 },
+    { "source": "essays", "target": "economy", "kind": "taxonomy", "strength": 0.5 },
+    { "source": "fiction", "target": "writing-craft", "kind": "taxonomy", "strength": 0.8 },
+    { "source": "fiction", "target": "fiction-works", "kind": "taxonomy", "strength": 0.6 }
+  ]
+}

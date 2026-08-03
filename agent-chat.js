@@ -11,7 +11,7 @@
   'use strict';
 
   // ─── Config ───────────────────────────────────────────────
-  const WIDGET_VERSION = '0.3.1';
+  const WIDGET_VERSION = '0.4.0';
   const BACKEND = window.AGENT_CHAT_BACKEND ||
     'https://simonsterrific-shizhang-agent.hf.space';
   const MAX_HISTORY = 12;
@@ -254,6 +254,7 @@
   const debugNoteEl = document.getElementById('ac-debug-note');
 
   let isOpen = false, isStreaming = false;
+  let pendingEntryContext = null;
   resetTemporalDebugPanel();
 
   // ─── Markdown Renderer ────────────────────────────────────
@@ -632,7 +633,7 @@
       if (!localStorage.getItem('ac-tap-hint-dismissed')) {
         tapHintEl = document.createElement('span');
         tapHintEl.className = 'ac-fluid-tap-hint';
-        tapHintEl.textContent = 'TAP TO ASK';
+        tapHintEl.textContent = document.getElementById('knowledge-constellation-controls') ? 'EXPLORE TOPICS' : 'TAP TO ASK';
         host.appendChild(tapHintEl);
       }
     } catch (_) { /* ignore */ }
@@ -909,6 +910,15 @@
 
   async function sendMessage(query) {
     if (isStreaming) return;
+    if (pendingEntryContext) {
+      if (typeof window.gtag === 'function') {
+        window.gtag('event', 'chat_first_send', {
+          entry_source: pendingEntryContext.source,
+          node_id: pendingEntryContext.nodeId || undefined,
+        });
+      }
+      pendingEntryContext = null;
+    }
     isStreaming = true;
     resetTemporalDebugPanel();
     sendBtn.disabled = true;
@@ -1491,8 +1501,26 @@
 
   // ─── UI Events ────────────────────────────────────────────
 
-  function openPanel() {
-    if (isOpen) return;
+  function applyInitialQuery(initialQuery) {
+    if (typeof initialQuery !== 'string' || !initialQuery.trim()) return;
+    inputEl.value = initialQuery.trim().slice(0, 1000);
+    inputEl.style.height = 'auto';
+    inputEl.style.height = Math.min(inputEl.scrollHeight, 80) + 'px';
+  }
+
+  function openPanel(options) {
+    const opts = options && typeof options === 'object' ? options : {};
+    applyInitialQuery(opts.initialQuery);
+    if (opts.source) {
+      pendingEntryContext = {
+        source: String(opts.source).slice(0, 80),
+        nodeId: typeof opts.nodeId === 'string' ? opts.nodeId.slice(0, 80) : null,
+      };
+    }
+    if (isOpen) {
+      inputEl.focus({ preventScroll: true });
+      return;
+    }
     isOpen = true;
     hideTapHint();
     clearFluidZone();
@@ -1502,6 +1530,7 @@
     setMobileScrollLock(true);
     panel.setAttribute('aria-hidden', 'false');
     inputEl.focus({ preventScroll: true });
+    window.dispatchEvent(new CustomEvent('simon-chat:state', { detail: { open: true } }));
   }
   function closePanel() {
     if (!isOpen) return;
@@ -1511,6 +1540,7 @@
     document.body.classList.remove('ac-drawer-open');
     setMobileScrollLock(false);
     panel.setAttribute('aria-hidden', 'true');
+    window.dispatchEvent(new CustomEvent('simon-chat:state', { detail: { open: false } }));
   }
   function formatTimestamp(date) {
     const pad = n => String(n).padStart(2, '0');
@@ -1572,6 +1602,35 @@
   initContactEntry();
   panel.setAttribute('aria-hidden', 'true');
 
+  window.SimonChat = Object.freeze({
+    open: function (options) {
+      openPanel(options);
+    },
+    close: closePanel,
+    isOpen: function () {
+      return isOpen;
+    },
+  });
+
+  window.addEventListener('knowledge-constellation:select', function (event) {
+    const node = event.detail && event.detail.node;
+    if (!node) return;
+    openPanel({
+      initialQuery: node.query,
+      source: 'knowledge_constellation',
+      nodeId: node.id,
+    });
+  });
+
+  const constellationFallback = document.getElementById('constellation-fallback');
+  if (constellationFallback) {
+    constellationFallback.addEventListener('click', function (event) {
+      event.preventDefault();
+      event.stopPropagation();
+      openPanel();
+    });
+  }
+
   if (finePointerMq.matches) {
     document.addEventListener('mousemove', function (e) {
       updateFluidZone(e.clientX, e.clientY);
@@ -1579,7 +1638,7 @@
 
     document.addEventListener('click', function (e) {
       if (isOpen || !inFluidZone) return;
-      if (e.target.closest('.ac-drawer, .ac-scrim, nav, .ac-strip, .ac-mobile-strip, #tweaks-panel, #blog-modal, #blog-reader')) return;
+      if (e.target.closest('.ac-drawer, .ac-scrim, nav, .ac-strip, .ac-mobile-strip, #knowledge-constellation-controls, #tweaks-panel, #blog-modal, #blog-reader')) return;
       if (!pointInFluid(e.clientX, e.clientY)) return;
       e.preventDefault();
       openFromFluidField(e.clientX, e.clientY);

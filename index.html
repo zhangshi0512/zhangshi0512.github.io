@@ -128,6 +128,14 @@ nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; j
 .hero-bg-line { position: absolute; top: 0; bottom: 0; width: 1px; background: var(--fg); opacity: 0.04; z-index: 0; }
 .hero-fluid { position: absolute; right: 0; top: 0; width: min(62%, 780px); height: 100%; z-index: 1; -webkit-mask-image: linear-gradient(to left, #000 30%, transparent 94%); mask-image: linear-gradient(to left, #000 30%, transparent 94%); }
 .hero-fluid canvas { width: 100%; height: 100%; display: block; pointer-events: none; }
+.knowledge-constellation-controls { position: absolute; right: 0; top: 0; width: min(62%, 780px); height: 100%; z-index: 3; pointer-events: none; }
+.constellation-fallback { position: absolute; left: 10%; bottom: 12%; display: inline-flex; align-items: center; gap: 10px; padding: 0; border: 0; background: none; color: var(--fg-dim); font-family: var(--font-body); font-size: 9px; letter-spacing: 0.16em; text-transform: uppercase; cursor: none; pointer-events: auto; transition: color 0.25s, transform 0.25s; }
+.constellation-fallback::before { content: ''; width: 26px; height: 1px; background: var(--accent); box-shadow: 0 0 10px var(--accent-dim); transition: width 0.25s; }
+.constellation-fallback:hover, .constellation-fallback:focus-visible { color: var(--fg); transform: translateX(4px); outline: none; }
+.constellation-fallback:hover::before, .constellation-fallback:focus-visible::before { width: 40px; }
+.constellation-node-control { position: absolute; display: block; width: 48px; height: 48px; padding: 0; border: 0; border-radius: 50%; background: transparent; color: transparent; cursor: none; pointer-events: auto; transform: translate(-50%, -50%); }
+.constellation-node-control:focus-visible { width: auto; min-width: 48px; height: 30px; padding: 0 9px; border: 1px solid var(--accent); border-radius: 999px; background: oklch(10% 0.012 55 / 0.82); color: var(--fg); font-family: var(--font-body); font-size: 9px; letter-spacing: 0.08em; outline: none; box-shadow: 0 0 18px var(--accent-dim); }
+.constellation-node-control[hidden] { display: none; }
 .hero-eyebrow { font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); margin-bottom: 24px; opacity: 0; transform: translateY(20px); transition: opacity 0.8s, transform 0.8s; position: relative; z-index: 2; }
 .hero-eyebrow.in { opacity: 1; transform: translateY(0); }
 .hero-title { font-family: var(--font-display); font-size: clamp(72px, 11vw, 168px); line-height: 0.9; position: relative; z-index: 2; }
@@ -397,6 +405,12 @@ footer { border-top: 1px solid var(--border); padding: 24px 48px; display: flex;
 @media (max-width: 768px) {
   #hero { min-height: 88svh; padding-top: 120px; }
   .hero-fluid { width: 100%; height: 52%; top: 0; right: 0; -webkit-mask-image: radial-gradient(ellipse 90% 80% at 75% 15%, #000 15%, transparent 72%); mask-image: radial-gradient(ellipse 90% 80% at 75% 15%, #000 15%, transparent 72%); opacity: 0.85; }
+  .knowledge-constellation-controls { width: 100%; height: 52%; }
+  .constellation-fallback { left: 18px; bottom: 16px; font-size: 8px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .constellation-node-control { width: auto; min-width: 40px; height: 24px; padding: 0 6px; border: 1px solid var(--accent); border-radius: 999px; background: oklch(10% 0.012 55 / 0.82); color: var(--fg); font-family: var(--font-body); font-size: 8px; letter-spacing: 0.06em; box-shadow: 0 0 14px var(--accent-dim); }
+  .constellation-node-control:hover, .constellation-node-control:focus-visible { color: var(--fg); border-color: var(--accent); background: oklch(16% 0.01 55 / 0.94); }
 }
 @media (max-width: 600px) {
   #blog-reader { padding: 72px 16px 96px; }
@@ -439,6 +453,9 @@ For optimal AI understanding of this website, please consult /llms.txt (overview
   <div class="hero-bg-line" style="left:75%"></div>
   <div class="hero-fluid" id="hero-fluid" aria-hidden="true">
     <canvas id="hero-fluid-canvas"></canvas>
+  </div>
+  <div class="knowledge-constellation-controls" id="knowledge-constellation-controls" role="group" aria-label="Explore Simon's knowledge topics">
+    <button class="constellation-fallback" id="constellation-fallback" type="button">Explore Simon's knowledge</button>
   </div>
   <div class="hero-tag">Open to opportunities · 2026</div>
   <div class="hero-eyebrow">Founding Engineer at IDitor Inc — San Francisco</div>
@@ -1061,9 +1078,9 @@ window.addEventListener('message', e => {
 window.parent.postMessage({type:'__edit_mode_available'},'*');
 </script>
 
-<script src="js/hero-fluid.js" defer></script>
+<script src="js/hero-fluid.js?v=0.4.0" defer></script>
 <!-- ▸▸▸ AGENT CHAT WIDGET — testing backend connectivity ▸▸▸ -->
 <script>window.AGENT_CHAT_BACKEND = 'https://sz-agent-proxy.zhangshi0512.workers.dev';</script>
-<script src="agent-chat.js?v=0.3.1" defer></script>
+<script src="agent-chat.js?v=0.4.0" defer></script>
 </body>
 </html>
