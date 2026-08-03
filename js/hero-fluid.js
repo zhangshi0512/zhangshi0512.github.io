@@ -189,7 +189,10 @@
   }
 
   function drawConstellation(ctx, time) {
-    if (!constellation) return;
+    // Reduced-motion uses the visible DOM topic controls as the complete
+    // constellation UI. Keeping a second Canvas rendering here duplicates
+    // their labels when the chat drawer is closed and the background redraws.
+    if (!constellation || reducedMotion) return;
     const nodes = visibleNodes();
     const visibleIds = new Set(nodes.map(node => node.id));
     const positions = new Map(nodes.map(node => [node.id, pointForNode(node, time)]));
