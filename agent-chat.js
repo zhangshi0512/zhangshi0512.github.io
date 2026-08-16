@@ -11,7 +11,7 @@
   'use strict';
 
   // ─── Config ───────────────────────────────────────────────
-  const WIDGET_VERSION = '0.4.1';
+  const WIDGET_VERSION = '0.4.2';
   const BACKEND = window.AGENT_CHAT_BACKEND ||
     'https://simonsterrific-shizhang-agent.hf.space';
   const MAX_HISTORY = 12;
@@ -181,10 +181,15 @@
 
     /* Input */
     .ac-disclaimer{flex:0 0 auto;padding:6px 18px 0;font-family:var(--font-body,'DM Mono',monospace);font-size:8px;line-height:1.45;color:oklch(45% 0.006 80);text-align:center;border-top:1px solid oklch(25% 0.008 55/0.45)}
-    .ac-input-wrap{flex:0 0 auto;display:flex;align-items:center;gap:10px;padding:12px 18px;border-top:1px solid oklch(25% 0.008 55/0.55)}
-    .ac-input{flex:1 1 auto;background:oklch(16% 0.01 55);border:1px solid oklch(25% 0.008 55);border-radius:6px;padding:10px 12px;font-family:var(--font-body,'DM Mono',monospace);font-size:12px;color:var(--fg,oklch(95% 0.008 80));outline:none;resize:none;line-height:1.5;max-height:80px;transition:border-color .2s}
+    .ac-input-wrap{flex:0 0 auto;display:flex;align-items:flex-end;gap:10px;padding:12px 18px;border-top:1px solid oklch(25% 0.008 55/0.55)}
+    .ac-input{flex:1 1 auto;background:oklch(16% 0.01 55);border:1px solid oklch(25% 0.008 55);border-radius:6px;padding:10px 12px;font-family:var(--font-body,'DM Mono',monospace);font-size:12px;color:var(--fg,oklch(95% 0.008 80));outline:none;resize:none;line-height:1.5;max-height:132px;overflow-y:auto;transition:border-color .2s;scrollbar-width:thin;scrollbar-color:oklch(72% 0.20 240 / 0.32) transparent}
     .ac-input:focus{border-color:var(--accent,oklch(72% 0.20 240))}
     .ac-input::placeholder{color:oklch(40% 0.006 80)}
+    .ac-input::-webkit-scrollbar{width:5px}
+    .ac-input::-webkit-scrollbar-track{background:transparent;margin:6px 0}
+    .ac-input::-webkit-scrollbar-thumb{background:oklch(72% 0.20 240 / 0.28);border-radius:99px}
+    .ac-input::-webkit-scrollbar-thumb:hover{background:oklch(72% 0.20 240 / 0.5)}
+    .ac-input::-webkit-scrollbar-button{display:none;width:0;height:0}
     .ac-send{background:var(--accent,oklch(72% 0.20 240));color:oklch(10% 0.012 55);border:none;border-radius:6px;width:36px;height:36px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex:0 0 auto;transition:opacity .2s}
     .ac-send:hover{opacity:.8}
     .ac-send:disabled{opacity:.35;pointer-events:none}
@@ -1502,11 +1507,17 @@
 
   // ─── UI Events ────────────────────────────────────────────
 
+  const INPUT_MAX_HEIGHT = 132;
+
+  function fitInputHeight() {
+    inputEl.style.height = 'auto';
+    inputEl.style.height = Math.min(inputEl.scrollHeight, INPUT_MAX_HEIGHT) + 'px';
+  }
+
   function applyInitialQuery(initialQuery) {
     if (typeof initialQuery !== 'string' || !initialQuery.trim()) return;
     inputEl.value = initialQuery.trim().slice(0, 1000);
-    inputEl.style.height = 'auto';
-    inputEl.style.height = Math.min(inputEl.scrollHeight, 80) + 'px';
+    fitInputHeight();
   }
 
   function openPanel(options) {
@@ -1665,10 +1676,7 @@
     }
   });
 
-  inputEl.addEventListener('input', function () {
-    inputEl.style.height = 'auto';
-    inputEl.style.height = Math.min(inputEl.scrollHeight, 80) + 'px';
-  });
+  inputEl.addEventListener('input', fitInputHeight);
 
   sendBtn.addEventListener('click', function () {
     const t = inputEl.value.trim();
