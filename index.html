@@ -163,6 +163,7 @@ section { padding: 120px 48px; }
 /* ABOUT */
 #about { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: start; border-top: 1px solid var(--border); }
 .about-left .big-text { font-family: var(--font-display); font-size: clamp(42px, 5.5vw, 88px); line-height: 1; }
+.char-word { display: inline-block; white-space: nowrap; }
 .char-reveal { display: inline-block; opacity: 0; transform: translateY(30px) rotate(4deg); transition: opacity 0.5s, transform 0.5s; }
 .char-reveal.visible { opacity: 1; transform: translateY(0) rotate(0deg); }
 .about-right { padding-top: 60px; }
@@ -902,12 +903,23 @@ window.addEventListener('scroll', () => {
 function splitChars(el) {
   const text = el.textContent;
   el.innerHTML = '';
-  text.split('').forEach((ch, i) => {
-    const s = document.createElement('span');
-    s.className = 'char-reveal';
-    s.textContent = ch === ' ' ? '\u00A0' : ch;
-    s.style.transitionDelay = (i*0.02)+'s';
-    el.appendChild(s);
+  let i = 0;
+  text.split(/(\s+)/).forEach(token => {
+    if (/^\s+$/.test(token)) {
+      el.appendChild(document.createTextNode(' '));
+      return;
+    }
+    const word = document.createElement('span');
+    word.className = 'char-word';
+    Array.from(token).forEach(ch => {
+      const s = document.createElement('span');
+      s.className = 'char-reveal';
+      s.textContent = ch;
+      s.style.transitionDelay = (i * 0.02) + 's';
+      word.appendChild(s);
+      i += 1;
+    });
+    el.appendChild(word);
   });
 }
 splitChars(document.getElementById('about-text'));
