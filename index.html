@@ -402,9 +402,6 @@ footer { border-top: 1px solid var(--border); padding: 24px 48px; display: flex;
 .reader-body li { margin-bottom: 0.5em; }
 .reader-body a { color: var(--accent); text-decoration: none; border-bottom: 1px solid transparent; transition: border-color 0.2s; }
 .reader-body a:hover { border-color: var(--accent); }
-@media (max-width: 1100px) {
-  .hero-fluid, .knowledge-constellation-controls { width: min(54%, 640px); }
-}
 @media (max-width: 768px) {
   #hero { min-height: 88svh; padding-top: 120px; }
   .hero-fluid { width: 100%; height: 46%; top: 0; right: 0; -webkit-mask-image: radial-gradient(ellipse 90% 80% at 72% 18%, #000 18%, transparent 74%); mask-image: radial-gradient(ellipse 90% 80% at 72% 18%, #000 18%, transparent 74%); opacity: 0.9; }
@@ -1079,7 +1076,7 @@ window.addEventListener('message', e => {
 window.parent.postMessage({type:'__edit_mode_available'},'*');
 </script>
 
-<script src="js/hero-fluid.js?v=0.5.0" defer></script>
+<script src="js/hero-fluid.js?v=0.5.1" defer></script>
 <!-- ▸▸▸ AGENT CHAT WIDGET — testing backend connectivity ▸▸▸ -->
 <script>window.AGENT_CHAT_BACKEND = 'https://sz-agent-proxy.zhangshi0512.workers.dev';</script>
 <script src="agent-chat.js?v=0.4.0" defer></script>

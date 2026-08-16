@@ -18,12 +18,12 @@
   const coarsePointer = window.matchMedia('(hover: none), (pointer: coarse)');
   const MAX_NODES = 32;
   const MAX_EDGES = 40;
-  const OBSTACLE_SELECTORS = [
+  const TEXT_OBSTACLE_SELECTORS = [
     '.hero-tag',
     '.hero-title',
     '.hero-eyebrow',
-    '.hero-bottom',
-    'nav',
+    '.hero-desc',
+    '.hero-scroll',
     '#constellation-fallback',
   ];
 
@@ -46,6 +46,7 @@
   let impressionTracked = false;
   let labelMetrics = new Map();
   let cachedObstacles = [];
+  let lastPhysicsTime = 0;
   const controlButtons = new Map();
   const resolved = new Map();
 
@@ -193,34 +194,61 @@
     return constellation.nodes;
   }
 
+  function addLocalRect(obstacles, hostRect, rect, pad) {
+    if (!rect || rect.width < 3 || rect.height < 3) return;
+    const local = {
+      x: rect.left - hostRect.left,
+      y: rect.top - hostRect.top,
+      w: rect.width,
+      h: rect.height,
+    };
+    if (local.x + local.w < -8 || local.y + local.h < -8 || local.x > width + 8 || local.y > height + 8) return;
+    obstacles.push(inflate(local, pad));
+  }
+
+  function collectTextRects(el, hostRect, obstacles, pad) {
+    const range = document.createRange();
+    const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
+    let node;
+    let added = 0;
+    while ((node = walker.nextNode())) {
+      if (!node.textContent || !node.textContent.trim()) continue;
+      range.selectNodeContents(node);
+      const rects = range.getClientRects();
+      for (let i = 0; i < rects.length; i++) {
+        addLocalRect(obstacles, hostRect, rects[i], pad);
+        added += 1;
+      }
+    }
+    if (!added) addLocalRect(obstacles, hostRect, el.getBoundingClientRect(), pad);
+  }
+
   function collectObstacles() {
     const hostRect = host.getBoundingClientRect();
     const obstacles = [];
-    const mode = layoutMode();
-    const fadePad = mode === 'mobile' ? 8 : Math.round(width * 0.16);
-    obstacles.push({ x: -40, y: -40, w: fadePad + 40, h: height + 80 });
-    obstacles.push({ x: -20, y: -40, w: width + 40, h: mode === 'mobile' ? 28 : 64 });
-    obstacles.push({ x: -20, y: height - 28, w: width + 40, h: 48 });
+    const nav = document.querySelector('nav');
+    if (nav) addLocalRect(obstacles, hostRect, nav.getBoundingClientRect(), 6);
 
-    OBSTACLE_SELECTORS.forEach(function (selector) {
+    TEXT_OBSTACLE_SELECTORS.forEach(function (selector) {
       document.querySelectorAll(selector).forEach(function (el) {
         if (!el || el.hidden) return;
         const style = window.getComputedStyle(el);
         if (style.display === 'none' || style.visibility === 'hidden') return;
-        const rect = el.getBoundingClientRect();
-        if (rect.width < 4 || rect.height < 4) return;
-        const local = {
-          x: rect.left - hostRect.left,
-          y: rect.top - hostRect.top,
-          w: rect.width,
-          h: rect.height,
-        };
-        if (local.x + local.w < -12 || local.y + local.h < -12 || local.x > width + 12 || local.y > height + 12) return;
-        const pad = el.classList.contains('hero-tag') ? 18 : el.classList.contains('hero-title') ? 14 : 10;
-        obstacles.push(inflate(local, pad));
+        const pad = el.classList.contains('hero-tag') ? 16 : (el.classList.contains('hero-title') || el.closest('.hero-title')) ? 12 : 8;
+        collectTextRects(el, hostRect, obstacles, pad);
       });
     });
     return obstacles;
+  }
+
+  function fieldBounds() {
+    const mode = layoutMode();
+    return {
+      minX: mode === 'mobile' ? width * 0.08 : width * 0.05,
+      maxX: width - (mode === 'mobile' ? 18 : 22),
+      minY: mode === 'mobile' ? 30 : 70,
+      maxY: height - (mode === 'mobile' ? 34 : 48),
+    };
   }
 
   function measureLabel(node) {
@@ -288,76 +316,77 @@
     }
     let nx = node.layout.x;
     let ny = node.layout.y;
-    if (mode === 'tablet') {
-      nx = 0.38 + node.layout.x * 0.52;
-      ny = 0.16 + node.layout.y * 0.68;
-    }
     return { x: nx * width, y: ny * height };
   }
 
   function resolveLayout() {
-    resolved.clear();
     if (!constellation || !width || !height) return;
     const mode = layoutMode();
     const nodes = visibleNodes();
     cachedObstacles = collectObstacles();
     const obstacles = cachedObstacles;
-    const bounds = {
-      minX: mode === 'mobile' ? width * 0.12 : width * 0.22,
-      maxX: width - (mode === 'mobile' ? 22 : 28),
-      minY: mode === 'mobile' ? 36 : 78,
-      maxY: height - (mode === 'mobile' ? 40 : 64),
-    };
+    const bounds = fieldBounds();
+    const previous = new Map(resolved);
 
+    resolved.clear();
     const items = nodes.map(function (node) {
       const seed = seedPosition(node, mode);
+      const prev = previous.get(node.id);
       return {
         id: node.id,
         node: node,
-        x: clamp(seed.x, bounds.minX, bounds.maxX),
-        y: clamp(seed.y, bounds.minY, bounds.maxY),
-        side: 'right',
+        homeX: clamp(seed.x, bounds.minX, bounds.maxX),
+        homeY: clamp(seed.y, bounds.minY, bounds.maxY),
+        x: prev ? prev.x : clamp(seed.x, bounds.minX, bounds.maxX),
+        y: prev ? prev.y : clamp(seed.y, bounds.minY, bounds.maxY),
+        vx: prev ? prev.vx : 0,
+        vy: prev ? prev.vy : 0,
+        side: prev ? prev.side : 'right',
         showLabel: false,
       };
     });
 
-    for (let iter = 0; iter < 56; iter++) {
+    for (let iter = 0; iter < 40; iter++) {
       for (let i = 0; i < items.length; i++) {
         const item = items[i];
-        const sBox = starBox(item.x, item.y, item.node);
+        const sBox = starBox(item.homeX, item.homeY, item.node);
         for (let o = 0; o < obstacles.length; o++) {
           if (!overlaps(sBox, obstacles[o])) continue;
           const ob = obstacles[o];
           const dx = (sBox.x + sBox.w / 2) - (ob.x + ob.w / 2);
           const dy = (sBox.y + sBox.h / 2) - (ob.y + ob.h / 2);
           const len = Math.hypot(dx, dy) || 1;
-          item.x += (dx / len) * 7;
-          item.y += (dy / len) * 7;
+          item.homeX += (dx / len) * 5;
+          item.homeY += (dy / len) * 5;
         }
         for (let j = i + 1; j < items.length; j++) {
           const other = items[j];
-          const minDist = item.node.kind === 'domain' && other.node.kind === 'domain' ? 54 : 36;
-          const dx = item.x - other.x;
-          const dy = item.y - other.y;
+          const minDist = item.node.kind === 'domain' && other.node.kind === 'domain' ? 58 : 38;
+          const dx = item.homeX - other.homeX;
+          const dy = item.homeY - other.homeY;
           const dist = Math.hypot(dx, dy) || 0.01;
           if (dist >= minDist) continue;
           const push = (minDist - dist) / 2;
           const ux = dx / dist;
           const uy = dy / dist;
-          item.x += ux * push;
-          item.y += uy * push;
-          other.x -= ux * push;
-          other.y -= uy * push;
+          item.homeX += ux * push;
+          item.homeY += uy * push;
+          other.homeX -= ux * push;
+          other.homeY -= uy * push;
         }
-        item.x = clamp(item.x, bounds.minX, bounds.maxX);
-        item.y = clamp(item.y, bounds.minY, bounds.maxY);
+        item.homeX = clamp(item.homeX, bounds.minX, bounds.maxX);
+        item.homeY = clamp(item.homeY, bounds.minY, bounds.maxY);
       }
     }
 
     const occupied = [];
     items.forEach(function (item) {
+      if (!previous.has(item.id)) {
+        item.x = item.homeX;
+        item.y = item.homeY;
+      }
       const always = item.node.kind === 'domain' || coarsePointer.matches;
-      const box = chooseLabelSide(item.x, item.y, item.node, obstacles, occupied);
+      const box = chooseLabelSide(item.homeX, item.homeY, item.node, obstacles, occupied);
       if (box && always) {
         item.side = box.side;
         item.showLabel = true;
@@ -369,6 +398,110 @@
         item.showLabel = false;
       }
       resolved.set(item.id, item);
+    });
+  }
+
+  function repelFromObstacle(item, ob, strength) {
+    const inside = item.x >= ob.x && item.x <= ob.x + ob.w && item.y >= ob.y && item.y <= ob.y + ob.h;
+    if (inside) {
+      const dx = item.x - (ob.x + ob.w / 2);
+      const dy = item.y - (ob.y + ob.h / 2);
+      const len = Math.hypot(dx, dy) || 1;
+      item.vx += (dx / len) * 0.28;
+      item.vy += (dy / len) * 0.28;
+      return;
+    }
+    const cx = clamp(item.x, ob.x, ob.x + ob.w);
+    const cy = clamp(item.y, ob.y, ob.y + ob.h);
+    const dx = item.x - cx;
+    const dy = item.y - cy;
+    const dist = Math.hypot(dx, dy);
+    const min = 20;
+    if (dist <= 0 || dist >= min) return;
+    const force = ((min - dist) / min) * strength;
+    item.vx += (dx / dist) * force;
+    item.vy += (dy / dist) * force;
+  }
+
+  function stepPhysics(time) {
+    if (!constellation || !resolved.size) return;
+    const dt = lastPhysicsTime ? Math.min(32, time - lastPhysicsTime) / 16.67 : 1;
+    lastPhysicsTime = time;
+    if (reducedMotion) return;
+
+    const items = visibleNodes().map(function (node) { return resolved.get(node.id); }).filter(Boolean);
+    const bounds = fieldBounds();
+    const glowX = width * 0.58;
+    const glowY = height * 0.42;
+
+    items.forEach(function (item) {
+      item.vx += (item.homeX - item.x) * 0.018 * dt;
+      item.vy += (item.homeY - item.y) * 0.018 * dt;
+      item.vx += (glowX - item.x) * 0.00055 * dt;
+      item.vy += (glowY - item.y) * 0.00055 * dt;
+
+      if (attract.active) {
+        const dx = attract.x - item.x;
+        const dy = attract.y - item.y;
+        const falloff = 1 / (1 + (dx * dx + dy * dy) / 42000);
+        item.vx += dx * 0.0007 * falloff * dt;
+        item.vy += dy * 0.0007 * falloff * dt;
+      }
+
+      for (let o = 0; o < cachedObstacles.length; o++) {
+        repelFromObstacle(item, cachedObstacles[o], 0.12 * dt);
+      }
+    });
+
+    if (constellation.edges) {
+      constellation.edges.forEach(function (edge) {
+        const source = resolved.get(edge.source);
+        const target = resolved.get(edge.target);
+        if (!source || !target) return;
+        const dx = target.x - source.x;
+        const dy = target.y - source.y;
+        const dist = Math.hypot(dx, dy) || 1;
+        const rest = 86;
+        const pull = (dist - rest) * 0.00028 * dt;
+        const ux = dx / dist;
+        const uy = dy / dist;
+        source.vx += ux * pull;
+        source.vy += uy * pull;
+        target.vx -= ux * pull;
+        target.vy -= uy * pull;
+      });
+    }
+
+    for (let i = 0; i < items.length; i++) {
+      for (let j = i + 1; j < items.length; j++) {
+        const a = items[i];
+        const b = items[j];
+        const dx = a.x - b.x;
+        const dy = a.y - b.y;
+        const dist = Math.hypot(dx, dy) || 0.01;
+        const minDist = a.node.kind === 'domain' && b.node.kind === 'domain' ? 52 : 34;
+        if (dist >= minDist) continue;
+        const push = ((minDist - dist) / minDist) * 0.08 * dt;
+        const ux = dx / dist;
+        const uy = dy / dist;
+        a.vx += ux * push;
+        a.vy += uy * push;
+        b.vx -= ux * push;
+        b.vy -= uy * push;
+      }
+    }
+
+    items.forEach(function (item) {
+      item.vx *= Math.pow(0.9, dt);
+      item.vy *= Math.pow(0.9, dt);
+      const speed = Math.hypot(item.vx, item.vy);
+      const maxSpeed = 0.62;
+      if (speed > maxSpeed) {
+        item.vx = (item.vx / speed) * maxSpeed;
+        item.vy = (item.vy / speed) * maxSpeed;
+      }
+      item.x = clamp(item.x + item.vx * dt, bounds.minX, bounds.maxX);
+      item.y = clamp(item.y + item.vy * dt, bounds.minY, bounds.maxY);
     });
   }
 
@@ -390,15 +523,10 @@
     return 3.6 + ((node.weight || 0.4) * 4.2);
   }
 
-  function pointForNode(node, time) {
+  function pointForNode(node) {
     const layout = resolved.get(node.id);
-    const base = layout ? { x: layout.x, y: layout.y } : seedPosition(node, layoutMode());
-    if (reducedMotion) return base;
-    const drift = node.kind === 'domain' ? 1.8 : 1.1;
-    return {
-      x: base.x + Math.sin(time * 0.00034 + node.phase) * drift,
-      y: base.y + Math.cos(time * 0.00028 + node.phase * 1.3) * drift,
-    };
+    if (layout) return { x: layout.x, y: layout.y };
+    return seedPosition(node, layoutMode());
   }
 
   function drawSpark(ctx, x, y, size, alpha) {
@@ -419,7 +547,7 @@
     if (!constellation) return;
     const nodes = visibleNodes();
     const visibleIds = new Set(nodes.map(node => node.id));
-    const positions = new Map(nodes.map(node => [node.id, pointForNode(node, time)]));
+    const positions = new Map(nodes.map(node => [node.id, pointForNode(node)]));
     const obstacles = cachedObstacles;
 
     ctx.save();
@@ -594,10 +722,12 @@
     ctx.fillRect(0, 0, width, height);
     ctx.restore();
     drawConstellation(ctx, time);
+    syncControlPositions();
   }
 
   function loop(time) {
     if (!running) return;
+    stepPhysics(time);
     drawFrame(time);
     rafId = requestAnimationFrame(loop);
   }
@@ -635,10 +765,19 @@
   }
 
   function positionControl(node, button) {
-    const point = pointForNode(node, reducedMotion ? startTime : performance.now());
+    const point = pointForNode(node);
     button.style.left = (point.x / width * 100) + '%';
     button.style.top = (point.y / height * 100) + '%';
     button.dataset.kind = node.kind;
+  }
+
+  function syncControlPositions() {
+    if (!width || !height) return;
+    controlButtons.forEach(function (button, id) {
+      if (button.hidden) return;
+      const node = constellation && constellation.nodeById.get(id);
+      if (node) positionControl(node, button);
+    });
   }
 
   function createNodeControl(node) {
