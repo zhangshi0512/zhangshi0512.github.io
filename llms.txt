@@ -4,13 +4,12 @@
 
 ## Navigation
 
-- [Home](https://shizhang.github.io/): Main portfolio — hero, about, skills, work projects, resume timeline, blog preview, contact section. Dark theme with Bebas Neue + DM Mono typography, cursor effects, hero distortion, and scroll-triggered animations.
-- [Blog](https://shizhang.github.io/blog.html): Full essay archive with all blog posts listed chronologically. Reader uses GitHub-hosted markdown files from `_posts/`.
-- [Projects](https://shizhang.github.io/projects.html): Filterable project gallery (All / Web / Mobile / Computer Vision / AI/ML).
-- [Resume](https://shizhang.github.io/resume.html): Detailed education and professional experience with card-stack layout.
-- [Biography](https://shizhang.github.io/biography.html): Full career narrative with Mermaid diagrams showing career transition path.
-- [Contact](https://shizhang.github.io/contact.html): Email, LinkedIn, X, GitHub, Behance, Ideogram links.
-- [Blog Dashboard](https://shizhang.github.io/blog_dashboard.html): GitHub-integrated post editor for CRUD on markdown posts in `_posts/`.
+- [Home](https://zhangshi0512.github.io/): Main portfolio — hero, about, skills, work projects, resume timeline, blog preview, contact section. Dark theme with Bebas Neue + DM Mono typography, cursor effects, hero distortion, and scroll-triggered animations.
+- [Blog](https://zhangshi0512.github.io/blog.html): Full essay archive with all blog posts listed chronologically. Reader uses GitHub-hosted markdown files from `_posts/`.
+- [Projects](https://zhangshi0512.github.io/projects.html): Filterable project gallery (All / Web / Mobile / Computer Vision / AI/ML).
+- [Resume](https://zhangshi0512.github.io/resume.html): Detailed education and professional experience with card-stack layout.
+- [Biography](https://zhangshi0512.github.io/biography.html): Full career narrative with Mermaid diagrams showing career transition path.
+- [Contact](https://zhangshi0512.github.io/contact.html): Email, LinkedIn, X, GitHub, Behance, Ideogram links.
 
 ## About
 
@@ -58,9 +57,10 @@ Shi Zhang is a founding software engineer at IDitor Inc, a San Francisco-based A
 
 ## Blog Posts
 
-- [From Data-Intensive to Token-Intensive Systems](https://shizhang.github.io/blog.html?post=2026-03-22-From-Data-Intensive-to-Token-Intensive-Systems) — 2026-03-22
-- [What AI Actually Does to the Economy That No One Is Talking About](https://shizhang.github.io/blog.html?post=2026-05-28-What-AI-Actually-Does-to-the-Economy-That-No-One-Is-Talking-About) — 2026-05-28
-- [Trust is the New Moat: Why GTM Must Evolve in the AI Era](https://shizhang.github.io/blog.html?post=2026-06-15-Trust-is-the-New-Moat-Why-GTM-Must-Evolve-in-the-AI-Era) — 2026-06-15
-- [Advanced Context Engineering for AI Agents](https://shizhang.github.io/blog.html?post=2025-10-16-Advanced-Context-Engineering-for-AI-Agents) — 2025-10-16
-- [Claude Code Engineer Interview](https://shizhang.github.io/blog.html?post=2025-12-08-Claude-Code-Engineer-Interview) — 2025-12-08
-- [Cognitive Railroads](https://shizhang.github.io/blog.html?post=2025-12-19-Cognitive-Railroads) — 2025-12-19
+- [Beyond the Agent Hype: Harness Engineering and the Missing Memory Layer](https://zhangshi0512.github.io/2026/07/04/Beyond-the-Agent-Hype-Harness-Engineering-and-the-Missing-Memory-Layer.html) — 2026-07-04
+- [Trust is the New Moat: Why GTM Must Evolve in the AI Era](https://zhangshi0512.github.io/2026/06/15/Trust-is-the-New-Moat-Why-GTM-Must-Evolve-in-the-AI-Era.html) — 2026-06-15
+- [What AI Actually Does to the Economy That No One Is Talking About](https://zhangshi0512.github.io/2026/05/28/What-AI-Actually-Does-to-the-Economy-That-No-One-Is-Talking-About.html) — 2026-05-28
+- [From Data-Intensive to Token-Intensive Systems](https://zhangshi0512.github.io/2026/03/22/From-Data-Intensive-to-Token-Intensive-Systems.html) — 2026-03-22
+- [Cognitive Railroads](https://zhangshi0512.github.io/2025/12/19/Cognitive-Railroads.html) — 2025-12-19
+- [Claude Code Engineer Interview](https://zhangshi0512.github.io/2025/12/08/Claude-Code-Engineer-Interview.html) — 2025-12-08
+- [Advanced Context Engineering for AI Agents](https://zhangshi0512.github.io/2025/10/16/Advanced-Context-Engineering-for-AI-Agents.html) — 2025-10-16

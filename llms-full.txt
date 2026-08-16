@@ -126,24 +126,28 @@ RAG chatbot that processes documents for contextual responses using local and ex
 
 ### Advanced Context Engineering for AI Agents (2025-10-16)
 Practical lessons from Manis in production. Covers three core techniques: context reduction (threshold-based compaction → lossy summarization), context isolation (sandboxing per-agent contexts via branching and forking), and context offloading (externalizing tool results, selective restoration). Argues context engineering draws a strategic boundary between the application layer and model layer, allowing teams to move quickly without model fine-tuning.
-- https://shizhang.github.io/blog.html?post=2025-10-16-Advanced-Context-Engineering-for-AI-Agents
+- https://zhangshi0512.github.io/2025/10/16/Advanced-Context-Engineering-for-AI-Agents.html
 
 ### Five Surprising Development Lessons from a Claude Code Engineer Interview (2025-12-08)
 Insights from Anthropic's Claude Code engineers Boris and Cat. Covers: (1) paradigm-shifting tools often emerge from pragmatic experiments, not grand plans; (2) deliberate openness to misuse reveals latent demand; (3) "ant fooding" — eating your own dog food — creates tight feedback loops; (4) embrace impermanence by building throwaway features; (5) plain text beats vector search for codebase navigation.
-- https://shizhang.github.io/blog.html?post=2025-12-08-Claude-Code-Engineer-Interview
+- https://zhangshi0512.github.io/2025/12/08/Claude-Code-Engineer-Interview.html
 
 ### How Generative AI Accelerates Eras and Compresses Processes — "Cognitive Railroads" (2025-12-19)
 A historical parallel between the 19th-century railway revolution and generative AI. Railroads compressed physical space-time; AI compresses cognition-time, transforming intentions into digital artifacts near-instantly. Explores how compression forces societies to reorganize — standardized time then, context architecture now. Argues AI makes "the future testable" in the same way railroads made faraway places reachable.
-- https://shizhang.github.io/blog.html?post=2025-12-19-Cognitive-Railroads
+- https://zhangshi0512.github.io/2025/12/19/Cognitive-Railroads.html
 
 ### From Data-Intensive to Token-Intensive Systems (2026-03-22)
 Argues generative AI shifts the software paradigm from data-intensive (storing/retrieving records, ACID, I/O bottlenecks) to token-intensive (orchestrating context, GPU compute, token budget management). Software engineering becomes probabilistic, not deterministic. Failure modes: token exhaustion, hallucinations, context corruption.
-- https://shizhang.github.io/blog.html?post=2026-03-22-From-Data-Intensive-to-Token-Intensive-Systems
+- https://zhangshi0512.github.io/2026/03/22/From-Data-Intensive-to-Token-Intensive-Systems.html
 
 ### What AI Actually Does to the Economy (That No One Is Talking About) (2026-05-28)
 Argues AI's transformative economic impact is not just replacing codified labor but making tacit knowledge — skills you perform well but cannot easily articulate — encodable for the first time. This erodes the traditional moat for knowledge workers. Distinguishes AI from prior technological revolutions (steam, electricity, IT) which targeted structured, codifiable tasks.
-- https://shizhang.github.io/blog.html?post=2026-05-28-What-AI-Actually-Does-to-the-Economy-That-No-One-Is-Talking-About
+- https://zhangshi0512.github.io/2026/05/28/What-AI-Actually-Does-to-the-Economy-That-No-One-Is-Talking-About.html
 
 ### Trust is the New Moat: Why GTM Must Evolve in the AI Era (2026-06-15)
 In the AI era, trust has replaced traffic as the most expensive currency for market entry. Four pillars for go-to-market: (1) open source as a trust mechanism, (2) balancing privacy with proactive AI via end-to-end encryption and anthropomorphic design, (3) verifiable neutrality and Generative Engine Optimization (GEO), (4) community-as-product — users as the first sales team.
-- https://shizhang.github.io/blog.html?post=2026-06-15-Trust-is-the-New-Moat-Why-GTM-Must-Evolve-in-the-AI-Era
+- https://zhangshi0512.github.io/2026/06/15/Trust-is-the-New-Moat-Why-GTM-Must-Evolve-in-the-AI-Era.html
+
+### Beyond the Agent Hype: Harness Engineering and the Missing Memory Layer (2026-07-04)
+Defines Agent = LLM + Harness. Breaks harness systems into the CAR framework — Control, Agency, and Runtime — and argues the next bottleneck after harness engineering is a distributed memory layer. Compares agent sandboxes to early EC2: execution environments are commoditizing, but persistent memory (the EBS equivalent) has not arrived.
+- https://zhangshi0512.github.io/2026/07/04/Beyond-the-Agent-Hype-Harness-Engineering-and-the-Missing-Memory-Layer.html

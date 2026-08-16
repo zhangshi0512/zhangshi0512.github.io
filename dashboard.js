@@ -2,7 +2,7 @@
 // --- configuration ---
 const CONFIG = {
     repoOwner: 'zhangshi0512',
-    repoName: 'shizhang.github.io',
+    repoName: 'zhangshi0512.github.io',
     branch: 'main', 
     path: '_posts'
 };

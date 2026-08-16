@@ -1,4 +1,4 @@
-# robots.txt for shizhang.github.io
+# robots.txt for zhangshi0512.github.io
 # AI crawler controls + standard search engine rules
 
 # --- AI Training Crawlers (disallowed for training purposes) ---
@@ -29,4 +29,4 @@ Allow: /
 Crawl-delay: 10
 
 # --- Sitemap ---
-Sitemap: https://shizhang.github.io/sitemap.xml
+Sitemap: https://zhangshi0512.github.io/sitemap.xml
