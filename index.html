@@ -133,23 +133,23 @@ nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; j
 .constellation-fallback::before { content: ''; width: 26px; height: 1px; background: var(--accent); box-shadow: 0 0 10px var(--accent-dim); transition: width 0.25s; }
 .constellation-fallback:hover, .constellation-fallback:focus-visible { color: var(--fg); transform: translateX(4px); outline: none; }
 .constellation-fallback:hover::before, .constellation-fallback:focus-visible::before { width: 40px; }
-.constellation-node-control { position: absolute; display: block; width: 48px; height: 48px; padding: 0; border: 0; border-radius: 50%; background: transparent; color: transparent; cursor: none; pointer-events: auto; transform: translate(-50%, -50%); }
-.constellation-node-control:focus-visible { width: auto; min-width: 48px; height: 30px; padding: 0 9px; border: 1px solid var(--accent); border-radius: 999px; background: oklch(10% 0.012 55 / 0.82); color: var(--fg); font-family: var(--font-body); font-size: 9px; letter-spacing: 0.08em; outline: none; box-shadow: 0 0 18px var(--accent-dim); }
+.constellation-node-control { position: absolute; display: block; width: 36px; height: 36px; padding: 0; border: 0; border-radius: 50%; background: transparent; color: transparent; cursor: none; pointer-events: auto; transform: translate(-50%, -50%); }
+.constellation-node-control:focus-visible { width: auto; min-width: 36px; height: 28px; padding: 0 9px; border: 1px solid var(--accent); border-radius: 999px; background: oklch(10% 0.012 55 / 0.82); color: var(--fg); font-family: var(--font-body); font-size: 9px; letter-spacing: 0.08em; outline: none; box-shadow: 0 0 18px var(--accent-dim); }
 .constellation-node-control[hidden] { display: none; }
-.hero-eyebrow { font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); margin-bottom: 24px; opacity: 0; transform: translateY(20px); transition: opacity 0.8s, transform 0.8s; position: relative; z-index: 2; }
+.hero-eyebrow { font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); margin-bottom: 24px; opacity: 0; transform: translateY(20px); transition: opacity 0.8s, transform 0.8s; position: relative; z-index: 4; }
 .hero-eyebrow.in { opacity: 1; transform: translateY(0); }
-.hero-title { font-family: var(--font-display); font-size: clamp(72px, 11vw, 168px); line-height: 0.9; position: relative; z-index: 2; }
+.hero-title { font-family: var(--font-display); font-size: clamp(72px, 11vw, 168px); line-height: 0.9; position: relative; z-index: 4; }
 .hero-title-line { display: block; overflow: hidden; }
 .hero-title-inner { display: block; transform: translateY(110%); transition: transform 0.9s cubic-bezier(0.16,1,0.3,1); }
 .hero-title-inner.in { transform: translateY(0); }
 .hero-title em { font-style: normal; color: var(--accent); }
 .hero-title .outline { -webkit-text-stroke: 1px var(--fg); color: transparent; }
-.hero-bottom { display: flex; justify-content: space-between; align-items: flex-end; margin-top: 60px; opacity: 0; transform: translateY(20px); transition: opacity 0.8s, transform 0.8s; position: relative; z-index: 2; }
+.hero-bottom { display: flex; justify-content: space-between; align-items: flex-end; margin-top: 60px; opacity: 0; transform: translateY(20px); transition: opacity 0.8s, transform 0.8s; position: relative; z-index: 4; }
 .hero-bottom.in { opacity: 1; transform: translateY(0); }
 .hero-desc { max-width: 340px; font-size: 13px; color: var(--fg-dim); line-height: 1.8; }
 .hero-scroll { display: flex; align-items: center; gap: 12px; font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--fg-dim); }
 .hero-scroll-line { width: 48px; height: 1px; background: var(--fg-dim); }
-.hero-tag { position: absolute; top: 48%; right: 48px; font-size: 11px; color: var(--fg-dim); letter-spacing: 0.12em; writing-mode: vertical-rl; opacity: 0; transition: opacity 1s; z-index: 2; }
+.hero-tag { position: absolute; top: 48%; right: 48px; font-size: 11px; color: var(--fg-dim); letter-spacing: 0.12em; writing-mode: vertical-rl; opacity: 0; transition: opacity 1s; z-index: 4; pointer-events: none; }
 .hero-tag.in { opacity: 1; }
 /* MARQUEE */
 .marquee-wrap { border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 20px 0; overflow: hidden; white-space: nowrap; }
@@ -402,15 +402,16 @@ footer { border-top: 1px solid var(--border); padding: 24px 48px; display: flex;
 .reader-body li { margin-bottom: 0.5em; }
 .reader-body a { color: var(--accent); text-decoration: none; border-bottom: 1px solid transparent; transition: border-color 0.2s; }
 .reader-body a:hover { border-color: var(--accent); }
+@media (max-width: 1100px) {
+  .hero-fluid, .knowledge-constellation-controls { width: min(54%, 640px); }
+}
 @media (max-width: 768px) {
   #hero { min-height: 88svh; padding-top: 120px; }
-  .hero-fluid { width: 100%; height: 52%; top: 0; right: 0; -webkit-mask-image: radial-gradient(ellipse 90% 80% at 75% 15%, #000 15%, transparent 72%); mask-image: radial-gradient(ellipse 90% 80% at 75% 15%, #000 15%, transparent 72%); opacity: 0.85; }
-  .knowledge-constellation-controls { width: 100%; height: 52%; }
-  .constellation-fallback { left: 18px; bottom: 16px; font-size: 8px; }
-}
-@media (prefers-reduced-motion: reduce) {
-  .constellation-node-control { width: auto; min-width: 40px; height: 24px; padding: 0 6px; border: 1px solid var(--accent); border-radius: 999px; background: oklch(10% 0.012 55 / 0.82); color: var(--fg); font-family: var(--font-body); font-size: 8px; letter-spacing: 0.06em; box-shadow: 0 0 14px var(--accent-dim); }
-  .constellation-node-control:hover, .constellation-node-control:focus-visible { color: var(--fg); border-color: var(--accent); background: oklch(16% 0.01 55 / 0.94); }
+  .hero-fluid { width: 100%; height: 46%; top: 0; right: 0; -webkit-mask-image: radial-gradient(ellipse 90% 80% at 72% 18%, #000 18%, transparent 74%); mask-image: radial-gradient(ellipse 90% 80% at 72% 18%, #000 18%, transparent 74%); opacity: 0.9; }
+  .knowledge-constellation-controls { width: 100%; height: 46%; }
+  .constellation-fallback { left: 18px; bottom: 14px; font-size: 8px; }
+  .hero-tag { writing-mode: horizontal-tb; top: 86px; right: 18px; font-size: 9px; letter-spacing: 0.14em; }
+  .constellation-node-control { width: 44px; height: 44px; }
 }
 @media (max-width: 600px) {
   #blog-reader { padding: 72px 16px 96px; }
@@ -1078,7 +1079,7 @@ window.addEventListener('message', e => {
 window.parent.postMessage({type:'__edit_mode_available'},'*');
 </script>
 
-<script src="js/hero-fluid.js?v=0.4.0" defer></script>
+<script src="js/hero-fluid.js?v=0.5.0" defer></script>
 <!-- ▸▸▸ AGENT CHAT WIDGET — testing backend connectivity ▸▸▸ -->
 <script>window.AGENT_CHAT_BACKEND = 'https://sz-agent-proxy.zhangshi0512.workers.dev';</script>
 <script src="agent-chat.js?v=0.4.0" defer></script>

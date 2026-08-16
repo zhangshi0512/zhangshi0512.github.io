@@ -27,7 +27,7 @@
     .ac-scrim.ac-open{opacity:1;pointer-events:all}
 
     .ac-fluid-hit{position:absolute;inset:0;z-index:2;background:transparent;border:none;padding:0;cursor:none}
-    body.fluid-zone .hero-fluid{z-index:3}
+    body.fluid-zone .hero-fluid{z-index:1}
     .ac-fluid-tap-hint{position:absolute;right:10%;top:42%;z-index:3;font-family:var(--font-display,'Bebas Neue',sans-serif);font-size:11px;letter-spacing:.2em;color:var(--accent,oklch(72% 0.20 240));opacity:.65;pointer-events:none;animation:ac-hint-pulse 2.5s ease-in-out infinite}
     .ac-fluid-tap-hint.ac-hidden{display:none}
     @keyframes ac-hint-pulse{0%,100%{opacity:.4}50%{opacity:.85}}

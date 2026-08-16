@@ -54,7 +54,7 @@
       "summary": "Other questions and observations from Simon's writing archive.",
       "articleCount": 130,
       "weight": 0.42,
-      "layout": { "x": 0.92, "y": 0.32 },
+      "layout": { "x": 0.84, "y": 0.28 },
       "query": "Explore other topics in Simon's writing archive."
     },
     {
@@ -84,7 +84,7 @@
       "summary": "Simon’s background, current work, and multidisciplinary path.",
       "articleCount": 1,
       "weight": 0.38,
-      "layout": { "x": 0.92, "y": 0.67 },
+      "layout": { "x": 0.82, "y": 0.58 },
       "query": "What is Simon's background and current work?"
     },
     {
@@ -147,7 +147,7 @@
       "label": "Design Industry",
       "summary": "Architecture and design-industry analysis.",
       "articleCount": 156,
-      "layout": { "x": 0.92, "y": 0.47 },
+      "layout": { "x": 0.86, "y": 0.46 },
       "query": "Ask Simon about the architecture and design industry."
     },
     {
