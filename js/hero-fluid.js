@@ -427,29 +427,34 @@
     if (!constellation || !resolved.size) return;
     const dt = lastPhysicsTime ? Math.min(32, time - lastPhysicsTime) / 16.67 : 1;
     lastPhysicsTime = time;
-    if (reducedMotion) return;
 
     const items = visibleNodes().map(function (node) { return resolved.get(node.id); }).filter(Boolean);
     const bounds = fieldBounds();
-    const glowX = width * 0.58;
-    const glowY = height * 0.42;
+    const t = time - startTime;
+    const wander = reducedMotion ? 3.2 : 11;
+    const mousePull = reducedMotion ? 0.0012 : 0.0048;
 
     items.forEach(function (item) {
-      item.vx += (item.homeX - item.x) * 0.018 * dt;
-      item.vy += (item.homeY - item.y) * 0.018 * dt;
-      item.vx += (glowX - item.x) * 0.00055 * dt;
-      item.vy += (glowY - item.y) * 0.00055 * dt;
+      const targetX = item.homeX + Math.sin(t * 0.00042 + item.node.phase) * wander;
+      const targetY = item.homeY + Math.cos(t * 0.00034 + item.node.phase * 1.27) * wander * 0.72;
+      item.vx += (targetX - item.x) * 0.028 * dt;
+      item.vy += (targetY - item.y) * 0.028 * dt;
 
       if (attract.active) {
         const dx = attract.x - item.x;
         const dy = attract.y - item.y;
-        const falloff = 1 / (1 + (dx * dx + dy * dy) / 42000);
-        item.vx += dx * 0.0007 * falloff * dt;
-        item.vy += dy * 0.0007 * falloff * dt;
+        const dist2 = dx * dx + dy * dy;
+        const falloff = 1 / (1 + dist2 / 28000);
+        item.vx += dx * mousePull * falloff * dt;
+        item.vy += dy * mousePull * falloff * dt;
+        if (item.id === activeNodeId) {
+          item.vx += dx * 0.0022 * dt;
+          item.vy += dy * 0.0022 * dt;
+        }
       }
 
       for (let o = 0; o < cachedObstacles.length; o++) {
-        repelFromObstacle(item, cachedObstacles[o], 0.12 * dt);
+        repelFromObstacle(item, cachedObstacles[o], 0.16 * dt);
       }
     });
 
@@ -461,8 +466,8 @@
         const dx = target.x - source.x;
         const dy = target.y - source.y;
         const dist = Math.hypot(dx, dy) || 1;
-        const rest = 86;
-        const pull = (dist - rest) * 0.00028 * dt;
+        const rest = source.node.kind === 'domain' && target.node.kind === 'subtopic' ? 78 : 92;
+        const pull = (dist - rest) * 0.0007 * dt;
         const ux = dx / dist;
         const uy = dy / dist;
         source.vx += ux * pull;
@@ -479,9 +484,9 @@
         const dx = a.x - b.x;
         const dy = a.y - b.y;
         const dist = Math.hypot(dx, dy) || 0.01;
-        const minDist = a.node.kind === 'domain' && b.node.kind === 'domain' ? 52 : 34;
+        const minDist = a.node.kind === 'domain' && b.node.kind === 'domain' ? 56 : 36;
         if (dist >= minDist) continue;
-        const push = ((minDist - dist) / minDist) * 0.08 * dt;
+        const push = ((minDist - dist) / minDist) * 0.14 * dt;
         const ux = dx / dist;
         const uy = dy / dist;
         a.vx += ux * push;
@@ -492,10 +497,10 @@
     }
 
     items.forEach(function (item) {
-      item.vx *= Math.pow(0.9, dt);
-      item.vy *= Math.pow(0.9, dt);
+      item.vx *= Math.pow(0.88, dt);
+      item.vy *= Math.pow(0.88, dt);
       const speed = Math.hypot(item.vx, item.vy);
-      const maxSpeed = 0.62;
+      const maxSpeed = reducedMotion ? 0.55 : 1.35;
       if (speed > maxSpeed) {
         item.vx = (item.vx / speed) * maxSpeed;
         item.vy = (item.vy / speed) * maxSpeed;
@@ -735,10 +740,7 @@
   function start() {
     if (running || chatOpen) return;
     running = true;
-    if (reducedMotion) {
-      drawFrame(startTime);
-      return;
-    }
+    lastPhysicsTime = 0;
     rafId = requestAnimationFrame(loop);
   }
 
@@ -762,6 +764,46 @@
     } else {
       window.dispatchEvent(new CustomEvent('knowledge-constellation:select', { detail: { node: node } }));
     }
+  }
+
+  function nearestNodeAt(x, y) {
+    const nodes = visibleNodes();
+    let best = null;
+    let bestDist = Infinity;
+    for (let i = 0; i < nodes.length; i++) {
+      const node = nodes[i];
+      const point = pointForNode(node);
+      const layout = resolved.get(node.id);
+      const radius = (node.kind === 'domain' ? 28 : 18) + nodeRadius(node);
+      const dist = Math.hypot(point.x - x, point.y - y);
+      if (dist < radius && dist < bestDist) {
+        best = node;
+        bestDist = dist;
+      }
+      if (layout && (layout.showLabel || node.id === activeNodeId || isNodeInActiveCluster(node))) {
+        const box = labelBox(point.x, point.y, node, layout.side);
+        if (x >= box.x - 4 && x <= box.x + box.w + 4 && y >= box.y - 4 && y <= box.y + box.h + 4 && dist < bestDist + 24) {
+          best = node;
+          bestDist = Math.min(bestDist, dist);
+        }
+      }
+    }
+    return best;
+  }
+
+  function hoverAtClient(clientX, clientY) {
+    const rect = host.getBoundingClientRect();
+    if (!rect.width) return null;
+    const x = clientX - rect.left;
+    const y = clientY - rect.top;
+    if (x < 0 || y < 0 || x > rect.width || y > rect.height) {
+      if (!coarsePointer.matches) setActiveNode(null);
+      return null;
+    }
+    const node = nearestNodeAt(x, y);
+    if (node) setActiveNode(node.id);
+    else if (!coarsePointer.matches) setActiveNode(null);
+    return node;
   }
 
   function positionControl(node, button) {
@@ -844,6 +886,7 @@
     mouse.x = (event.clientX - rect.left) / rect.width - 0.5;
     mouse.y = (event.clientY - rect.top) / rect.height - 0.5;
     mouse.active = event.clientX >= rect.left;
+    hoverAtClient(event.clientX, event.clientY);
   }, { passive: true });
 
   hero.addEventListener('pointerleave', function () {
@@ -894,6 +937,19 @@
     },
     focusTopic: function (nodeId) {
       if (constellation && constellation.nodeById.has(nodeId)) setActiveNode(nodeId);
+    },
+    handlePointerClick: function (clientX, clientY) {
+      const rect = host.getBoundingClientRect();
+      if (!rect.width) return false;
+      const node = nearestNodeAt(clientX - rect.left, clientY - rect.top);
+      if (!node) return false;
+      if (coarsePointer.matches && touchSelectedNodeId !== node.id) {
+        touchSelectedNodeId = node.id;
+        setActiveNode(node.id);
+        return true;
+      }
+      openNode(node);
+      return true;
     },
   };
 

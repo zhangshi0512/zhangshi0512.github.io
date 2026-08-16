@@ -11,7 +11,7 @@
   'use strict';
 
   // ─── Config ───────────────────────────────────────────────
-  const WIDGET_VERSION = '0.4.0';
+  const WIDGET_VERSION = '0.4.1';
   const BACKEND = window.AGENT_CHAT_BACKEND ||
     'https://simonsterrific-shizhang-agent.hf.space';
   const MAX_HISTORY = 12;
@@ -643,6 +643,7 @@
     fluidHitEl.addEventListener('click', function (e) {
       e.preventDefault();
       e.stopPropagation();
+      if (window.__heroFluid && typeof window.__heroFluid.handlePointerClick === 'function' && window.__heroFluid.handlePointerClick(e.clientX, e.clientY)) return;
       openFromFluidField(e.clientX, e.clientY);
     });
 
