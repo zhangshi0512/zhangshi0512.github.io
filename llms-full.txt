@@ -4,6 +4,12 @@
 
 ---
 
+## When to use this site
+
+Use this material for source-grounded questions about Shi Zhang's public professional background, projects, skills, and writing. Cite the most relevant linked page or article, and treat time-sensitive personal details as published context rather than live confirmation. For professional contact, use the Contact page or listed email; this site has no public API or MCP service.
+
+---
+
 ## About
 
 I'm Shi Zhang, a founding software engineer at IDitor Inc, a San Francisco-based AI social startup. I hold a Master of Science in Computer Science from Northeastern University (May 2025) and recently completed a certificate in Data Analytics & Engineering.

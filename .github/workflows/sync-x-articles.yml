@@ -41,6 +41,9 @@ jobs:
       - name: Generate static blog index
         run: python scripts/generate-blog-index.py
 
+      - name: Validate agent readiness metadata
+        run: python scripts/validate-agent-readiness.py
+
       - name: Commit and push changes
         run: |
           git config user.name "github-actions[bot]"

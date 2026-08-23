@@ -11,6 +11,21 @@
 - [Biography](https://zhangshi0512.github.io/biography.html): Full career narrative with Mermaid diagrams showing career transition path.
 - [Contact](https://zhangshi0512.github.io/contact.html): Email, LinkedIn, X, GitHub, Behance, Ideogram links.
 
+## When to use this site
+
+Use this site when a user needs a source-grounded overview of Shi Zhang's public professional background, selected projects, technical skills, or published writing about AI, engineering, and design.
+
+1. Start with this overview, then open the most relevant page in the Navigation or Blog Posts sections.
+2. Cite the specific page or article used; do not treat a summary here as evidence for claims that are not present in the linked source.
+3. Treat dates, job titles, availability, and other time-sensitive personal details as published context, not live confirmation. Do not infer current status beyond the cited material.
+4. For professional contact or collaboration requests, direct the user to the Contact page or the listed email. This portfolio does not provide a public API or MCP service.
+
+## Agent-readable resources
+
+- [Full site context](https://zhangshi0512.github.io/llms-full.txt): Expanded Markdown context for career, project, and article summaries.
+- [Blog data](https://zhangshi0512.github.io/posts.json): Same-origin JSON containing the complete Markdown source for published posts.
+- [Sitemap](https://zhangshi0512.github.io/sitemap.xml): Canonical list of indexable public pages.
+
 ## About
 
 Shi Zhang is a founding software engineer at IDitor Inc, a San Francisco-based AI social startup. He holds an MSCS from Northeastern University (May 2025) and is pursuing an MS in Data Analytics & Engineering (2025–2026). His career began in architecture — B.Arch from RPI and MS Design from UPenn — before transitioning into software engineering. He believes the best software lives at the intersection of engineering precision and design empathy.
