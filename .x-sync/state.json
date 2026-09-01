@@ -1,8 +1,8 @@
 {
   "username": "Simonsterrific",
   "user_id": null,
-  "since_id": "2082832194259804179",
-  "last_synced_at": "2026-08-01T02:14:15.941033Z",
+  "since_id": "2094040899294777617",
+  "last_synced_at": "2026-09-01T03:08:36.624391Z",
   "sync_method": "twikit",
   "articles": {
     "2060023993152008679": {
@@ -25,6 +25,27 @@
       "content_sha": "8a25653473e9d7e6",
       "source_url": "https://x.com/Simonsterrific/status/2073382538912071874",
       "synced_at": "2026-08-01T02:14:14.495748Z"
+    },
+    "2084285280916562316": {
+      "filename": "2026-08-03-What-Is-the-Real-Bottleneck-of-AI-Agents-in-2026.md",
+      "published_at": "2026-08-03T14:28:29+00:00",
+      "content_sha": "bbe0af59eb6560ab",
+      "source_url": "https://x.com/Simonsterrific/status/2084285280916562316",
+      "synced_at": "2026-09-01T03:08:35.403578Z"
+    },
+    "2085368493550252071": {
+      "filename": "2026-08-06-After-Harness-whats-the-next-technology-the-Agent-field-will-rally-around.md",
+      "published_at": "2026-08-06T14:12:47+00:00",
+      "content_sha": "76acd16fa0a00257",
+      "source_url": "https://x.com/Simonsterrific/status/2085368493550252071",
+      "synced_at": "2026-09-01T03:08:35.958630Z"
+    },
+    "2094040899294777617": {
+      "filename": "2026-08-30-Copy-Palantirs-FDE-Layer-Burns-Companies-Quicker.md",
+      "published_at": "2026-08-30T12:33:50+00:00",
+      "content_sha": "f3459f888b5d30fa",
+      "source_url": "https://x.com/Simonsterrific/status/2094040899294777617",
+      "synced_at": "2026-09-01T03:08:36.624353Z"
     }
   }
 }
