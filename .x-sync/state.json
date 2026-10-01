@@ -1,8 +1,8 @@
 {
   "username": "Simonsterrific",
   "user_id": null,
-  "since_id": "2094040899294777617",
-  "last_synced_at": "2026-09-01T03:08:36.624391Z",
+  "since_id": "2104226893948236213",
+  "last_synced_at": "2026-10-01T03:40:30.595587Z",
   "sync_method": "twikit",
   "articles": {
     "2060023993152008679": {
@@ -46,6 +46,13 @@
       "content_sha": "f3459f888b5d30fa",
       "source_url": "https://x.com/Simonsterrific/status/2094040899294777617",
       "synced_at": "2026-09-01T03:08:36.624353Z"
+    },
+    "2102065903517253824": {
+      "filename": "2026-09-21-Jev-Alternative-Route-of-The-Model-Is-the-Agent.md",
+      "published_at": "2026-09-21T16:02:20+00:00",
+      "content_sha": "6f412739dc6f9573",
+      "source_url": "https://x.com/Simonsterrific/status/2102065903517253824",
+      "synced_at": "2026-10-01T03:40:30.485250Z"
     }
   }
 }
