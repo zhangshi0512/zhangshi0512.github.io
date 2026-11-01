@@ -1,8 +1,8 @@
 {
   "username": "Simonsterrific",
   "user_id": null,
-  "since_id": "2104226893948236213",
-  "last_synced_at": "2026-10-01T03:40:30.595587Z",
+  "since_id": "2112549815561421284",
+  "last_synced_at": "2026-11-01T03:52:42.823114Z",
   "sync_method": "twikit",
   "articles": {
     "2060023993152008679": {
@@ -53,6 +53,41 @@
       "content_sha": "6f412739dc6f9573",
       "source_url": "https://x.com/Simonsterrific/status/2102065903517253824",
       "synced_at": "2026-10-01T03:40:30.485250Z"
+    },
+    "2106408823531708557": {
+      "filename": "2026-10-03-Claude-Code-Mod-VS-DeepSeek-Plugins.md",
+      "published_at": "2026-10-03T15:39:33+00:00",
+      "content_sha": "fe7da6da8825f0df",
+      "source_url": "https://x.com/Simonsterrific/status/2106408823531708557",
+      "synced_at": "2026-11-01T03:52:41.066423Z"
+    },
+    "2107114218411393338": {
+      "filename": "2026-10-05-Why-Enterprises-Still-Hire-Agent-Engineers.md",
+      "published_at": "2026-10-05T14:22:32+00:00",
+      "content_sha": "588a4bf09c27e7dc",
+      "source_url": "https://x.com/Simonsterrific/status/2107114218411393338",
+      "synced_at": "2026-11-01T03:52:41.514391Z"
+    },
+    "2108196084938055832": {
+      "filename": "2026-10-08-The-Junior-Pipeline-Is-Shrinking.md",
+      "published_at": "2026-10-08T14:01:29+00:00",
+      "content_sha": "01b44a3e233865e9",
+      "source_url": "https://x.com/Simonsterrific/status/2108196084938055832",
+      "synced_at": "2026-11-01T03:52:41.941892Z"
+    },
+    "2110022880864120890": {
+      "filename": "2026-10-13-The-Seat-Was-Never-the-Product.md",
+      "published_at": "2026-10-13T15:00:31+00:00",
+      "content_sha": "5d41368283d6d766",
+      "source_url": "https://x.com/Simonsterrific/status/2110022880864120890",
+      "synced_at": "2026-11-01T03:52:42.336356Z"
+    },
+    "2112549815561421284": {
+      "filename": "2026-10-20-Stop-Reviewing-AI-Code-Race-It-Instead.md",
+      "published_at": "2026-10-20T14:21:39+00:00",
+      "content_sha": "862bb721d4b8f0f0",
+      "source_url": "https://x.com/Simonsterrific/status/2112549815561421284",
+      "synced_at": "2026-11-01T03:52:42.823066Z"
     }
   }
 }
