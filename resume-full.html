@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Shi Zhang - Resume</title>
+  <style>
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: #fff;
+      color: #000;
+      font-family: "Times New Roman", Times, serif;
+    }
+
+    @media screen {
+      html, body { background: #f3f4f6; }
+    }
+
+    @page {
+      size: letter;
+      margin: 0.42in;
+      background: #fff;
+    }
+
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 18px;
+    }
+
+    .toolbar {
+      width: 8.5in;
+      display: flex;
+      justify-content: flex-end;
+      margin-bottom: 10px;
+    }
+
+    .toolbar a {
+      border: 1px solid #bfc5cc;
+      background: #fff;
+      color: #111;
+      padding: 8px 13px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-family: Arial, Helvetica, sans-serif;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .page {
+      width: 8.5in;
+      min-height: 11in;
+      background: #fff;
+      box-shadow: 0 12px 30px rgba(0,0,0,.08);
+      padding: 0.43in 0.45in 0.42in;
+    }
+
+    h1, h2, h3, p, ul { margin: 0; }
+
+    .header {
+      text-align: center;
+      margin-bottom: 8px;
+    }
+
+    .name {
+      font-size: 29px;
+      font-weight: 700;
+      line-height: 1;
+      margin-bottom: 5px;
+    }
+
+    .headline {
+      font-size: 13px;
+      margin-bottom: 5px;
+    }
+
+    .contact, .links, .visa {
+      font-size: 11px;
+      line-height: 1.28;
+    }
+
+    .links { margin-top: 1px; }
+    .visa { margin-top: 2px; }
+
+    a {
+      color: inherit;
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+
+    .section {
+      margin-top: 9px;
+    }
+
+    .section-title {
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.2px;
+      text-transform: uppercase;
+      border-bottom: 1.8px solid #000;
+      margin-bottom: 5px;
+      padding-bottom: 1px;
+    }
+
+    .entry {
+      margin-bottom: 7px;
+    }
+
+    .entry-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 12px;
+      font-size: 11.1px;
+      line-height: 1.22;
+    }
+
+    .entry-title {
+      font-weight: 700;
+    }
+
+    .entry-date {
+      white-space: nowrap;
+    }
+
+    .entry-sub {
+      font-size: 10.4px;
+      line-height: 1.22;
+      margin-top: 2px;
+    }
+
+    .entry-role-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 12px;
+      font-size: 10.65px;
+      line-height: 1.22;
+      margin-top: 2px;
+    }
+
+    .entry-role {
+      font-weight: 700;
+      font-style: italic;
+    }
+
+    ul.bullets {
+      margin-top: 2px;
+      padding-left: 18px;
+      font-size: 10.15px;
+      line-height: 1.22;
+    }
+
+    ul.bullets li { margin: 1px 0; }
+
+    .project-line, .edu-line, .skill-line {
+      font-size: 10.35px;
+      line-height: 1.24;
+      margin-bottom: 3px;
+    }
+
+    .project-line strong, .edu-line strong, .skill-line strong {
+      font-weight: 700;
+    }
+
+    .edu-school-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 12px;
+      font-size: 10.7px;
+      line-height: 1.22;
+    }
+
+    .muted { color: #222; }
+
+    @media print {
+      body {
+        background: #fff;
+        padding: 0;
+      }
+      .toolbar {
+        display: none !important;
+      }
+      .page {
+        width: auto;
+        min-height: auto;
+        box-shadow: none;
+        padding: 0;
+        margin: 0;
+      }
+      a {
+        color: inherit;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="toolbar">
+    <a href="javascript:void(0)" onclick="window.print()">Download PDF</a>
+  </div>
+
+  <main class="page">
+    <header class="header">
+      <h1 class="name">Shi Zhang</h1>
+      <div class="headline">Software Engineer | Full-Stack, AI-Native Products, and Memory-Aware Developer Tools</div>
+      <div class="contact">San Francisco, CA | (518) 496-8262 | <a href="mailto:zhangshi0512@gmail.com">zhangshi0512@gmail.com</a></div>
+      <div class="links"><a href="https://www.linkedin.com/in/zhangshisimon/" target="_blank" rel="noopener noreferrer">LinkedIn</a> | <a href="https://github.com/zhangshi0512" target="_blank" rel="noopener noreferrer">GitHub</a> | <a href="https://zhangshi0512.github.io/projects.html" target="_blank" rel="noopener noreferrer">Portfolio</a></div>
+      <div class="visa">Authorized to work in the U.S. under H-1B</div>
+    </header>
+
+    <section class="section" style="margin-top: 10px;">
+      <div class="project-line" style="font-size: 10.6px; line-height: 1.26; margin-bottom: 2px;">
+        Full-stack software engineer with an M.S. in Computer Science and prior design background, building AI-native products, retrieval systems, developer tools, and scalable backend services across web, mobile, and cloud workflows.
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title">Experience</h2>
+
+      <div class="entry">
+        <div class="entry-head">
+          <div class="entry-title">Agora, Shanghai, China - AI Software Engineer (Conversational AI)</div>
+          <div class="entry-date">Aug 2026 - Present</div>
+        </div>
+        <div class="entry-sub">R&amp;D, Cloud Platform / Cloud Apps Platform (UAP Team).</div>
+        <ul class="bullets">
+          <li>Building brain and memory systems for Voice AI Agents within the Conversational AI engineering team.</li>
+        </ul>
+      </div>
+
+      <div class="entry">
+        <div class="entry-head">
+          <div class="entry-title">IDitor Inc, San Francisco Bay Area, CA</div>
+          <div class="entry-date">Sep 2024 - Aug 2026</div>
+        </div>
+        <div class="entry-role-row">
+          <div class="entry-role">Generative AI Mobile App Developer <span class="muted" style="font-weight: 400; font-style: normal;">(San Francisco, CA)</span></div>
+          <div class="entry-date">Jul 2025 - Aug 2026</div>
+        </div>
+        <div class="entry-sub">Contribution to the full lifecycle of AI social product <a href="https://www.iditor.com/" target="_blank" rel="noopener noreferrer">EchoChat</a>.</div>
+        <ul class="bullets">
+          <li>Architected a multi-platform social ecosystem across Flutter mobile and Next.js web clients with a microservices backend; integrated Gemini, OpenAI, and Claude for automated Life Story generation, AI-moderated feeds, and image validation/transformation.</li>
+          <li>Engineered vector-based embedding systems for user matching and a custom random-walker clustering pipeline across 30k+ geospatial memories, creating a dynamic social map and improving retrieval quality.</li>
+          <li>Built Python/Selenium scraping pipelines and agent-driven research workflows to enrich event and social data; deployed serverless infrastructure on Vercel and Supabase with GitHub Actions CI/CD and real-time analytics dashboards.</li>
+          <li>Open-sourced the <a href="https://github.com/Atlas-Graph-Academy/EchoMemory-Cloud-OpenClaw-Plugin" target="_blank" rel="noopener noreferrer">OpenClaw Plugin</a> and <a href="https://github.com/Atlas-Graph-Academy/EchoMem" target="_blank" rel="noopener noreferrer">EchoMem Skill</a> to sync local markdown memory into EchoMem Cloud and enable retrieval inside OpenClaw workflows.</li>
+        </ul>
+        <div class="entry-role-row" style="margin-top: 4px;">
+          <div class="entry-role">Software Engineer Intern <span class="muted" style="font-weight: 400; font-style: normal;">(Hillsborough, CA)</span></div>
+          <div class="entry-date">Sep 2024 - Jun 2025</div>
+        </div>
+        <div class="entry-sub">Contribution to the RESTful APIs for a social app using TypeScript and Next.js.</div>
+        <ul class="bullets">
+          <li>Created a user-matching service using TypeScript and Supabase, applying cosine similarity and semantic search to improve recommendation accuracy by 20%.</li>
+          <li>Established a performant, scalable, real-time search engine for finding friends using Next.js, Supabase, and Vercel KV.</li>
+          <li>Designed and implemented a chat-simulation API leveraging the OpenAI API for dynamic, AI-driven conversations, then optimized backend architecture to reduce response times by 30%.</li>
+        </ul>
+      </div>
+
+      <div class="entry">
+        <div class="entry-head">
+          <div class="entry-title">Graph Academy, Cupertino, CA - Software Engineer Intern</div>
+          <div class="entry-date">May 2024 - Aug 2024</div>
+        </div>
+        <div class="entry-sub">Contribution to an AI-driven dating app using TypeScript, Next.js, React, and Node.js.</div>
+        <ul class="bullets">
+          <li>Utilized TypeScript and modular component design to maintain scalability and support a 35% increase in concurrent users without performance issues.</li>
+          <li>Designed and set up comprehensive navigation in Next.js, achieving a 30% increase in user engagement through smoother page transitions.</li>
+          <li>Created dynamic camera and profile-selection features and spearheaded Firebase/Google Analytics tracking, boosting personalized interaction by 20% and accelerating new-user registration by 50%.</li>
+        </ul>
+      </div>
+
+      <div class="entry">
+        <div class="entry-head">
+          <div class="entry-title">Northeastern University, Seattle, WA - Research Assistant</div>
+          <div class="entry-date">May 2023 - Dec 2023</div>
+        </div>
+        <div class="entry-sub">Cloud database benchmarking and NLP-based resume matching research.</div>
+        <ul class="bullets">
+          <li>Adapted YCSB+T to benchmark NoSQL and distributed SQL databases, enabling direct workload comparisons and analyzing performance trade-offs in cloud environments.</li>
+          <li>Conducted NLP and transformer-based research for semantic resume matching; improved recruiter efficiency by 25% by aligning resumes to job descriptions and search queries.</li>
+          <li>Built visualization outputs for embedding correlations and contributed to open-source platform and educational resource development.</li>
+        </ul>
+      </div>
+
+      <div class="entry">
+        <div class="entry-head">
+          <div class="entry-title">Ballinger, Philadelphia, PA - Architectural Designer</div>
+          <div class="entry-date">Feb 2020 - Nov 2022</div>
+        </div>
+        <ul class="bullets">
+          <li>Managed project documentation across schematic design, design development, and construction documentation phases for a 1.6 million sq. ft. healthcare project.</li>
+          <li>Streamlined data workflows between Excel and Revit with Python scripts and collaborated with Mechanical, Electrical, and Plumbing teams for monthly value engineering.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title">Selected Open-Source Projects &amp; Awards</h2>
+      <div class="project-line"><strong><a href="https://github.com/zhangshi0512/CodeMem" target="_blank" rel="noopener noreferrer">CodeMem</a></strong> - <strong>Finalist (Top 15 of 420+ entries), <a href="https://evermind.ai/activities#awards" target="_blank" rel="noopener noreferrer">Memory Genesis Competition 2026</a></strong> (hosted by EverMind; supported by OpenAI &amp; AWS). MCP-based long-term pair programmer for AI coding assistants, with persistent cross-session memory, project-scoped retrieval, and context recall across compatible tools.</div>
+      <div class="project-line"><strong><a href="https://github.com/zhangshi0512/Pollenboard" target="_blank" rel="noopener noreferrer">PollenBoard</a></strong> - Next.js and TypeScript app for creating, sharing, and exploring AI-generated images, audio, and text with responsive feeds, speech-to-text prompting, and export/share flows.</div>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title">Skills</h2>
+      <div class="skill-line"><strong>Languages:</strong> Golang, Python, Java, TypeScript, JavaScript, Kotlin, C++, SQL, HTML/CSS</div>
+      <div class="skill-line"><strong>Backend & Data:</strong> Node.js, Spring Boot, REST APIs, PostgreSQL, MySQL, MongoDB, Supabase, Firebase, Vercel KV</div>
+      <div class="skill-line"><strong>Frontend & Tools:</strong> Next.js, React, Flutter, Docker, GitHub Actions, CI/CD, Selenium, Linux</div>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title">Education & Certificates</h2>
+
+      <div class="edu-line">
+        <div class="edu-school-row">
+          <div><strong>Northeastern University</strong>, Seattle, WA</div>
+          <div>May 2025</div>
+        </div>
+        <div>Master of Science in Computer Science - GPA: 3.879/4.0</div>
+      </div>
+
+      <div class="edu-line">
+        <div class="edu-school-row">
+          <div><strong>University of Pennsylvania</strong>, Philadelphia, PA</div>
+          <div>Dec 2019</div>
+        </div>
+        <div>Master of Science in Design</div>
+      </div>
+
+      <div class="edu-line">
+        <div class="edu-school-row">
+          <div><strong>Rensselaer Polytechnic Institute</strong>, Troy, NY</div>
+          <div>May 2018</div>
+        </div>
+        <div>Bachelor of Architecture, Cum Laude</div>
+      </div>
+
+      <div class="skill-line"><strong>Awards:</strong> Finalist, Memory Genesis Competition 2026 - EverMind (Apr 2026)</div>
+      <div class="skill-line"><strong>Certificates:</strong> AWS Academy Data Engineering (Apr 2025); Generative AI Fundamentals - Databricks Academy (Aug 2024)</div>
+    </section>
+  </main>
+</body>
+</html>
