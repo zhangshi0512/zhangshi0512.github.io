@@ -1,0 +1,35 @@
+name: Notify shizhang-agent of resume changes
+
+# Instantly triggers the backend's profile sync after a resume/profile edit.
+# Requires a PAT with `repo` scope stored as AGENT_REPO_TOKEN. Without the
+# secret this step is skipped and the backend's daily scheduled sync still
+# picks up the change within 24 hours.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "index.html"
+      - "resume.html"
+      - "resume-full.html"
+      - "biography.html"
+  workflow_dispatch:
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Dispatch repository_dispatch
+        env:
+          TOKEN: ${{ secrets.AGENT_REPO_TOKEN }}
+        run: |
+          if [ -z "$TOKEN" ]; then
+            echo "AGENT_REPO_TOKEN is not configured; skipping instant dispatch."
+            exit 0
+          fi
+          curl --fail --silent --show-error -X POST \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer $TOKEN" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            https://api.github.com/repos/zhangshi0512/shizhang-agent/dispatches \
+            -d '{"event_type":"frontend-updated","client_payload":{"source":"shizhang.github.io"}}'
